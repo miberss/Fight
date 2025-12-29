@@ -5,6 +5,7 @@ function load_player_machine():
 
 function a_player_machine(player_wrapper: PlayerWrapper struct, state: string) :: StateMachine struct:
     set {_dev::*} to a_transition_with("dev", {-states::build}, {-states::dev}), a_transition_with("dev", {-states::play}, {-states::dev})
-    set {_play::*} to a_transition_with("play", {-states::build}, {-states::play}), a_transition_with("play", {-states::dev}, {-states::play})
+    set {_play::*} to a_transition_with("play", {-states::build}, {-states::play}), a_transition_with("play", {-states::dev}, {-states::play}), a_transition_with("respawn", {-states::spectate}, {-states::play})
     set {_build::*} to a_transition_with("build", {-states::play}, {-states::build}), a_transition_with("build", {-states::dev}, {-states::build})
-    return a_machine_with(({_dev::*}, {_play::*}, {_build::*}), {-states::%{_state}%}, {_player_wrapper}, true)
+    set {_spectator} to a_transition_with("spectate", {-states::play}, {-states::spectate})
+    return a_machine_with(({_dev::*}, {_play::*}, {_build::*}, {_spectator}), {-states::%{_state}%}, {_player_wrapper}, true)

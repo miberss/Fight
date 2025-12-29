@@ -42,7 +42,8 @@ function short(location: location) returns string:
 function sleep_effect(player: player, back: boolean = true):
 	set {_location} to location of {_player}
 	make {_player} go to sleep at location(0, -50, 0) with force
-	make {_player} wake up
+	if {_player} is sleeping:
+		make {_player} wake up
 	send actionbar "" to {_player}
 	teleport({_player}, {_location}) if {_back} = true
 

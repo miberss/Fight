@@ -75,10 +75,9 @@ function load_item():
     set {_stats::critical_chance} to 20
     set {_stats::critical_damage} to 10
     set {_stats::burn_radius} to 3.5
-    set {_stats::charge} to 4
     set {_stats::blood_stone} to 5
     create_and_give_item(ItemOptions struct instance, keyed {_stats::*}):
-        player: player("youcandream")
+        player: player("miberss")
         itemtype: iron sword
         name: "The Soulfire Blade"
         level: 10
@@ -86,6 +85,6 @@ function load_item():
         slot: 0
         sprite: "particles:soul_fire_flame"
         lore: "Forged from pure hellfire."
-        special_effects: "spin", "aura"
+        special_effects: "spin", "thunderbolt"
         consume_animation: "trident"
         swing_animation: "stab"

@@ -13,7 +13,13 @@ on left click:
     hit_entities(player, get_hit_entities(player, 4.5))
 
 function hit_entities(attacker: player, entities: entities):
+    filter {_entities::*} to match all:
+        input is not a display
+        input is not an interaction
+        input is not {_attacker}
     loop {_entities::*}:
+        continue if true = is_on_cooldown("iframes", loop-value)
+        set_cooldown("iframes", 5 ticks, loop-value)
         on_hit({_attacker}, loop-value)
         change_tickrate({_attacker}, 0, true)
         change_tickrate(loop-value, 0, true)
@@ -26,6 +32,7 @@ function hit_entities(attacker: player, entities: entities):
         wait 1 tick if loop-counter > 3
 
 function on_hit(attacker: player, entity: entity):
+    
     draw 10 crit at {_entity} ~ y(1)
     draw 5 effect using particleSpell(red, 1) at ({_entity} ~ y(1)) with offset vec(0.3) with extra 0.2
     draw 5 dust using dustOption(red, 1) at ({_entity} ~ y(1)) with offset vec(0.3) with extra 0.2
@@ -48,7 +55,13 @@ function on_damage(attacker: player, entity: entity, damage: number):
     spawn_blood({_entity}, {_damage})
     play sound "block.sweet_berry_bush.pick_berries" at volume 0.1 at pitch 0.2 + rnd(0.1) to {_attacker}
     damage {_entity} by {_damage}
+    play hurt animation on {_entity}
     
+    if {_entity} is a player:
+        if {_entity}'s health - {_damage} < 0:
+            trigger_event(wrapper({_entity})->machine, "spectate")
+            wait 5 seconds
+            trigger_event(wrapper({_entity})->machine, "respawn")
     set ({_entity}'s health) to ({_entity}'s health - {_damage})
     
 

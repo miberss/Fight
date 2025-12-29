@@ -1,9 +1,6 @@
 using for loops
 
 on skript load:
-    set {-first_join} to a_promise()
-    wait for {-first_join} and store the result in {_}
-    delete {-first_join}
     load_all()
 
 function load_all():
@@ -21,11 +18,9 @@ function load_all():
     
     load_dev_state()
     load_play_state()
+    load_spectate_state()
     load_build_state()
     load_player_machine()
-    
-    complete {-load} with 0
-    delete {-load}
 
 on load:
     load_all()
@@ -39,12 +34,6 @@ on damage:
     cancel event
 
 on join:
-    if {-load} is set:
-        wait for {-load} and store the result in {_}
-    else if {-first_join} is set:
-        complete {-first_join} with 0
-        set {-load} to a_promise()
-        wait for {-load} and store the result in {_}
     set_wrapper_for(player)
 
 on leave:

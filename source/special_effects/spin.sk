@@ -5,9 +5,29 @@
 local function create() :: textcomponents:
     set {_title} to a_effect_title("SPIN", light blue)
     set {_key} to a_key("drop")
-    set {_time} to a_lore_unit(2.2, "s")
+    set {_time} to a_lore_unit(1, "s")
     set {_radius} to a_lore_unit(3.5, "m")
     set {_text::1} to a_effect_description(merge components {_key}, minimessage from " Spins you around and hits")
-    set {_text::2} to a_effect_description(merge components minimessage from " enemies in a radius ", {_radius})
-    set {_text::3} to a_effect_description(merge components minimessage from " shortly ", {_time})
+    set {_text::2} to a_effect_description(merge components minimessage from "enemies in a radius ", {_radius})
+    set {_text::3} to a_effect_description(merge components minimessage from "shortly ", {_time})
     return {_title}, {_text::*}
+
+on drop:
+    cancel event
+    stop if is_on_cooldown("spin", player) = true
+    set_cooldown("spin", 1 second, player)
+    do_a_spin(player)
+
+function do_a_spin(player: player):
+    wait 1 tick
+    set {_forward} to vector in direction of {_player}
+    set pitch of {_forward} to 0
+    change_tickrate({_player}, 0, true)
+    loop 30 times:
+        rotate {_forward} around y-axis by ease_out_circle(loop-counter / 30) * 44.6
+        set yaw of {_player} to yaw of {_forward}
+        draw 2 sweep_attack at {_player}'s head ~ {_forward} * 3
+        set {_entities::*} to ...(world of {_player}).getNearbyEntities({_player}'s head, 3.5, 3.5, 3.5)
+        hit_entities({_player}, {_entities::*})
+        wait 1 tick if mod(loop-counter, 10) = 0
+    change_tickrate({_player}, 20, false)

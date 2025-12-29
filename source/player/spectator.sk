@@ -1,0 +1,19 @@
+using script reflection
+
+function load_spectate_state():
+    set {-states::spectate} to a_state_with("spectate", function "start", function "tick", function "end")
+
+local function start(event: string, machine: StateMachine struct):
+    set {_wrapper} to {_machine}->context
+    set {_player} to {_wrapper}->player
+    set {_player}'s gamemode to spectator
+    wait 1 tick
+    transition_to({_player}, location(0, 20, 0))
+
+local function tick(machine: StateMachine struct):
+    set {_wrapper} to {_machine}->context
+    set {_player} to {_wrapper}->player
+    send actionbar component colored_component("SPECTATOR MODE", rgb(120, 180, 255)) to {_player}
+    teleport {_player} to location(0, 20, 0, world "world", 0, 90)
+
+local function end(event: string, machine: StateMachine struct):
