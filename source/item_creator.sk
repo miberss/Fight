@@ -69,7 +69,7 @@ function load_item():
         delete_item(loop-value)
         delete {-item::%loop-index%}
     set {_stats::damage} to 10
-    set {_stats::secondary_speed} to 2
+    set {_stats::secondary_speed} to 0.4
     set {_stats::primary_speed} to 0.8
     set {_stats::range} to 4
     set {_stats::critical_chance} to 20

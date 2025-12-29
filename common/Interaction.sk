@@ -4,7 +4,7 @@ import:
 entity property interaction width:
     return type: number
     get:
-        expr-1.getInteractionWidth()
+        return expr-1.getInteractionWidth()
     set:
         expr-1.setInteractionWidth(change value)
     add:
@@ -19,7 +19,7 @@ entity property interaction width:
 entity property interaction height:
     return type: number
     get:
-        expr-1.getInteractionHeight()
+        return expr-1.getInteractionHeight()
     set:
         expr-1.setInteractionHeight(change value)
     add:

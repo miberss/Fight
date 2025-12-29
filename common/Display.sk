@@ -19,3 +19,18 @@ function a_text_display() :: display:
 function interpolate(displays: displays):
     set interpolation duration of {_displays::*} to 1 tick
     set interpolation delay of {_displays::*} to 0 ticks
+
+display property component text:
+    return type: textcomponent
+    get:
+        return expr-1.text()
+    set:
+        expr-1.text((change value).getComponent())
+    add:
+        expr-1.text((merge components (expr-1.text(), change value)).getComponent())
+    remove:
+        expr-1.text(blank().getComponent())
+    delete:
+        expr-1.text(blank().getComponent())
+    reset:
+        expr-1.text(blank().getComponent())

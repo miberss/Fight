@@ -9,3 +9,6 @@ function a_player_machine(player_wrapper: PlayerWrapper struct, state: string) :
     set {_build::*} to a_transition_with("build", {-states::play}, {-states::build}), a_transition_with("build", {-states::dev}, {-states::build})
     set {_spectator} to a_transition_with("spectate", {-states::play}, {-states::spectate})
     return a_machine_with(({_dev::*}, {_play::*}, {_build::*}, {_spectator}), {-states::%{_state}%}, {_player_wrapper}, true)
+
+function state(player: player) :: State struct:
+    return wrapper({_player})->machine->state

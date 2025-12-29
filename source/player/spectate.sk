@@ -13,7 +13,7 @@ local function start(event: string, machine: StateMachine struct):
 local function tick(machine: StateMachine struct):
     set {_wrapper} to {_machine}->context
     set {_player} to {_wrapper}->player
-    send actionbar component colored_component("SPECTATOR MODE", rgb(120, 180, 255)) to {_player}
+    send actionbar component colored_component("SPECTATE MODE", rgb(120, 180, 255)) to {_player}
     teleport {_player} to location(0, 20, 0, world "world", 0, 90)
 
 local function end(event: string, machine: StateMachine struct):

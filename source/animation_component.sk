@@ -82,6 +82,7 @@ function flash_animation(component: AnimationComponent struct):
     
 
     play sound "entity.splash_potion.break" with seed 1 with volume 0.4 with pitch 2 at ({_component}->loc)
+    play sound "minecraft:item.trident.return" with seed 1 with volume 0.4 with pitch 1 at ({_component}->loc)
     draw 50 effect using particleSpell(rgb(255,255,255), 0.4) at ({_component}->loc) with delta vec(1, 0, 1) with extra 1
     break_sounds_in_radius({_component}->loc ~ y(-1), {_o}->size / 10)
 

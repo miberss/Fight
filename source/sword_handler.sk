@@ -5,10 +5,26 @@ function sword_handler_load():
 
 # doesn't work if you are in creative, since it gives you an extra two entity interaction range.
 
-on left click:
-    
+on consume:
     cancel event
-    if wrapper(player)->machine->state != {-states::play}:
+    if state(player) != {-states::play}:
+        stop
+    complete {-cancel::%player%} with true
+
+on right click with a gunpowder:
+    if state(player) != {-states::play}:
+        cancel event
+        stop
+    set {-cancel::%player%} to a_promise()
+    wait for {-cancel::%player%} and store the result in {_cancel}
+    on_secondary_attack(player)
+
+function on_secondary_attack(player: player):
+    hit_entities({_player}, get_hit_entities({_player}, 8.5))
+
+on left click:
+    cancel event
+    if state(player) != {-states::play}:
         stop
     hit_entities(player, get_hit_entities(player, 4.5))
 
@@ -98,19 +114,17 @@ function spawn_damage_indicator(entity_head: location, damage: number, is_critic
         set {_percent} to loop-value / {_count}
         teleport({_indicator}, {_free_area})
         set {_easing} to ease_in_out_circle({_percent})
+        interpolate({_displays::*})
         set {_scale} to vec({_easing} + 0.5) * 1.6
-        set {_component} to (minimessage from "<transition:%{_mid}%:%{_mid}%:#ffffff:%{_mid}%:%{_mid}%:%{_easing}%>%{_damage_text}%</transition>")
-        set interpolation duration of {_displays::*} to 1 tick
-        set interpolation delay of {_displays::*} to 0 ticks
         set display scale of {_indicator} to {_scale}
         if {_percent} > 0.6:
             set opacity of {_indicator} to 128 - 255 * (1 / {_easing})
-        {_indicator}.text({_component}.getComponent())
+
+        set component text of {_indicator} to (minimessage from "<transition:%{_mid}%:%{_mid}%:#ffffff:%{_mid}%:%{_mid}%:%{_easing}%>%{_damage_text}%</transition>")
         
         wait 1 tick
     
     kill {_indicator}
-    a_star({_free_area}, 3, 5, {_mid})
 
 function get_hit_entities(attacker: player, distance: number = 4, entities: entities = {_}) :: entities:
     # find range
