@@ -1,0 +1,26 @@
+# This module provides a way to load player heads from a texture,
+# then reference them with an ID
+#
+# This module requires the following other modules: NONE
+
+#> Gets a head from a texture string.
+#>
+#> @param texture The texture of the head
+#> @return The head
+function new_player_head(texture: string) :: item:
+    return player head with nbt (nbt from "{""minecraft:profile"":{id:[I;0,0,0,0],properties:[{name:""textures"",value:""%{_texture}%""}]}}")
+
+#> Loads a head under an ID, and names the head to the ID
+#>
+#> @param id The ID that you would like to reference the head under
+#> @param texture The texture of the head
+function load_player_head(id: string, texture: string):
+    set {-mib_lib::head::%{_id}%::texture} to {_texture}
+    set {-mib_lib::head::%{_id}%::item} to new_player_head({_texture}) named "<white>%{_id}%"
+
+#> Gets a head from an ID
+#>
+#> @param id The ID of the head
+#> @return The head
+function get_head(id: string):: item:
+    return {-mib_lib::head::%{_id}%::item}

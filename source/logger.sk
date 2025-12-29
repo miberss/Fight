@@ -1,0 +1,13 @@
+function log(type: string, component: textcomponent):
+    server_message_save({_type})
+    send_and_log({_component}, players where [{message_blacklist::%input%::%{_type}%} is not set])
+
+function console_log(type: string, string: string):
+    server_message_save({_type})
+    send_and_log(minimessage from {_component}, console)
+
+function add_to_blacklist(player: player, type: string):
+    set {message_blacklist::%{_player}%::%{_type}%} to {_type}
+
+function remove_from_blacklist(player: player, type: string):
+    delete {message_blacklist::%{_player}%::%{_type}%}

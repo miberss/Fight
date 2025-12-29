@@ -1,0 +1,71 @@
+# This module provides a way to modify positions and vectors,
+#
+# This module requires the following other modules: NONE
+
+using for loops
+
+#> Gets all of the points on a circle given a radius
+#> Use over filtering all blocks in a radius for a 2d check.
+#> 5x more performant than a 3d with filter.
+#>
+#> @param radius The radius of the circle
+#> @return points The vectors corrosponding to the offsets
+function all_in_circle(radius: integer) :: vectors:
+	set {_radius} to abs({_radius})
+	set {_i_radius} to {_radius} * -1
+	set {_r_square} to {_radius} ^ 2
+	set {_integers::*} to (integers from {_i_radius} to {_radius})
+	for {_y} in {_integers::*}:
+		for {_x} in {_integers::*}:
+			if ({_x} ^ 2 + {_y} ^ 2) > {_r_square}:
+				continue
+			set {_i} to {_i} + 1
+			set {_points::%{_i}%} to vector({_x}, 0, {_y})
+	return {_points::*}
+
+#> The same as `all_in_circle`, however it will cache radii in memory for later use.
+#> This is useful for some games as it can boost performaces of getting a same radius filled circle multiple times
+#>
+#> @param radius The radius of the circle
+#> @param points The vectors corrosponding to the offsets
+function all_in_circle_fast(radius: integer) :: vectors:
+	suppress variable save warnings
+	if {-mib_lib::position::radius::%{_radius}%} is set:
+		return ...{-mib_lib::position::radius::%{_radius}%}
+	set {_points::*} to all_in_circle({_radius})
+	set {-mib_lib::position::radius::%{_radius}%} to [{_points::*}]
+	return {_points::*}
+
+function short(location: location) returns string:
+    return "%floor(x-coord of {_location})% %floor(y-coord of {_location})% %floor(z-coord of {_location})%"
+
+function sleep_effect(player: player, back: boolean = true):
+	set {_location} to location of {_player}
+	make {_player} go to sleep at location(0, -50, 0) with force
+	make {_player} wake up
+	send actionbar "" to {_player}
+	teleport({_player}, {_location}) if {_back} = true
+
+function teleport(entities: entities, location: location):
+	teleport {_entities::*} to {_location} retaining vehicle and passengers
+
+function transition_to(player: player, location: location):
+	sleep_effect({_player})
+	teleport({_player}, {_location})
+
+function location(vector: vector) :: location:
+	return location((x of {_vector}), (y of {_vector}), (z of {_vector}))
+
+function with_yaw(location: location, yaw: number) :: location:
+	set yaw of {_location} to {_yaw}
+	return {_location}
+
+function with_pitch(location: location, pitch: number) :: location:
+	set pitch of {_location} to {_pitch}
+	return {_location}
+
+function with_yaw_pitch(location: location, pitch: number, yaw: number) :: location:
+	return with_yaw(with_pitch({_location}, {_pitch}), {_yaw})
+
+function flatten(location: location) :: location:
+	return with_yaw(with_pitch({_location}, 0), 0)

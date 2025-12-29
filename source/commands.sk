@@ -1,0 +1,20 @@
+function load_commands():
+	loop all script commands:
+		set {-commands::%loop-value%} to loop-value
+
+on send command list:
+	if player is op:
+		stop
+
+	set command list to all script commands
+
+on command:
+	if all:
+		sender is not console
+		sender is not op
+		{-commands::%command label%} is not set
+	then:
+		cancel event
+
+on unknown command:
+	set component unknown command message to (minimessage from "<color:#ff004d>'/%event-string%'<br>╘ Command not found!")

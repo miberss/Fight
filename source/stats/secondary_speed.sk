@@ -1,0 +1,10 @@
+local function load():
+    save_component("stat:secondary_speed", a_stat_field(StatFieldBuilder struct instance)):
+        emoji: "⌚"
+        color: rgb(40, 230, 95)
+        name: "Secondary Speed"
+        extra: 1
+
+local function update(bindable: bindable struct, stat_data: StatData struct) :: textcomponent:
+    set_consume_duration({_stat_data}->item, {_stat_data}->bindable->value * 1 second)
+    return a_filled_stat_field("secondary_speed", a_unit({_stat_data}->bindable->value, "s"))

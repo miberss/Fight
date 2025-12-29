@@ -1,0 +1,4 @@
+local function create() :: textcomponents:
+    set {_title} to a_effect_title("WRATH", red)
+    set {_text::1} to a_effect_description(minimessage from "does something hopefully")
+    return {_title}, {_text::*}

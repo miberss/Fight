@@ -1,0 +1,43 @@
+options:
+    white: rgb(230, 230, 230)
+    light_gray: rgb(154, 146, 187)
+    gray: rgb(69, 69, 93)
+    green: rgb(60, 200, 150)
+    red: rgb(190, 50, 140)
+    plus: rgb(151, 213, 140)
+    negative: rgb(228, 164, 164)
+    arrow_right: ⏵
+    angular_bracket:
+        l: ‹
+        r: ›
+
+function save_component(id: string, component: textcomponent):
+    set {-components::%{_id}%} to {_component}
+
+function component_from_id(id: string) :: textcomponent:
+    return {-components::%{_id}%}
+
+function load_components():
+    save_component("arrow_right", colored_component("{@arrow_right}", {@gray}))
+    save_component("green_arrow_right", colored_component("{@arrow_right}", {@green}))
+    save_component("reply_button", wrap_around(colored_component("↑", {@gray}), c("|"), c("|"), 0.8))
+    save_component("replied_button", wrap_around(colored_component("^", yellow), c("|"), c("|"), 0.9))
+    save_component("delete_button", colored_component("✘", red))
+    save_component("blood_stone", merge components (wrap_around(colored_component("☠", red), c("["), c("]"), 0.8), px(1)))
+    save_component("unfilled_blood_stone", merge components (wrap_around(colored_component("☠", {@gray}), c("["), c("]"), 0.8), px(1)))
+    save_component("bar", colored_component("‘", {@gray}))
+
+function a_real(value: number) :: text component:
+    return component_real({_value}, {@white}, {@plus}, {@negative})
+
+function a_unit(value: number, unit: string) :: text component:
+    return component_unit({_value}, {_unit}, {@white}, {@light_gray})
+
+function a_fraction(numerator: number, denominator: number) :: text component:
+    return component_fraction({_numerator}, {_denominator}, {@white}, {@light_gray})
+
+function a_percent(value: number) :: text component:
+    return component_percent({_value}, {@white}, {@light_gray})
+
+function a_angular_brackets(component: textcomponent) :: textcomponent:
+    return wrap_around({_component}, c("{@angular_bracket.l}"), c("{@angular_bracket.r}"), 0.9)

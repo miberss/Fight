@@ -1,0 +1,24 @@
+using script reflection
+
+function load_build_state():
+    set {-states::build} to a_state_with("build", function "start", function "tick", function "end")
+
+local function start(event: string, machine: StateMachine struct):
+    set {_wrapper} to {_machine}->context
+    set {_player} to {_wrapper}->player
+    set {_player}'s gamemode to creative
+
+local function tick(machine: StateMachine struct):
+    set {_wrapper} to {_machine}->context
+    set {_player} to {_wrapper}->player
+    send actionbar component colored_component("BUILD MODE", rgb(50, 230, 100)) to {_player}
+
+local function end(event: string, machine: StateMachine struct):
+    set {_wrapper} to {_machine}->context
+    set {_player} to {_wrapper}->player
+    set {_player}'s gamemode to spectator
+
+command /build:
+    permission: op
+    trigger:
+        trigger_event(wrapper(player)->machine, "build")

@@ -1,0 +1,9 @@
+struct Range:
+    low: number = 0
+    high: number = 1
+
+function range(low: number, high: number) returns Range struct:
+    return Range struct instance:
+        low: {_low}
+        high: {_high}
+

@@ -1,0 +1,2 @@
+function a_promise(amount_of_time: timespan = 10 years) returns future:
+    return future with {_amount_of_time} timeout

@@ -1,0 +1,92 @@
+
+using for loops
+using script reflection
+
+import:
+	java.util.HashMap
+
+struct State:
+	const name: string
+	start: function
+	tick: function
+	end: function
+
+struct Transition:
+	const event: string
+	const from: State struct
+	const to: State struct
+
+struct StateMachine:
+	const transitions: object # HashMap<State, HashMap<String, Transition>>
+	state: State struct 
+	context: object
+	debug: boolean
+
+	dynamic state_name: string = this->state->name
+
+function a_machine_with(transitions: Transition structs, state: State struct, context: object, debug: boolean = false) :: StateMachine struct:
+
+	set {_transition_map} to new HashMap()
+
+	for {_transition} in {_transitions::*}:
+		set {_from} to {_transition}->from
+		set {_event} to {_transition}->event
+
+		if {_transition_map}.containsKey({_from}->name) is false:
+			{_transition_map}.put({_from}->name, new HashMap())
+
+		set {_by_event} to {_transition_map}.get({_from}->name)
+
+		if {_by_event}.containsKey({_event}):
+			throw runtime error "Duplicate transition %{_event}% from state %{_from}->name%"
+
+		{_by_event}.put({_event}, {_transition})
+	
+	set {_machine} to StateMachine struct instance:
+		transitions: {_transition_map}
+		state: {_state}
+		context: {_context}
+		debug: {_debug}
+	run ({_state}->start) with args {_event}, {_machine}
+	return {_machine}
+
+function a_transition_with(event: string, from: State struct, to: State struct) :: Transition struct:
+	return Transition struct instance:
+		event: {_event}
+		from: {_from}
+		to: {_to}
+
+function a_state_with(name: string, start: function, tick: function, end: function) :: State struct:
+	return State struct instance:
+		name: {_name}
+		start: {_start}
+		tick: {_tick}
+		end: {_end}
+
+function transition_of(machine: StateMachine struct, event: string) :: Transition struct:
+    set {_state} to {_machine}->state
+
+    if {_machine}->transitions.containsKey({_state}->name) is false:
+        stop
+
+    set {_by_event} to {_machine}->transitions.get({_state}->name)
+
+    return {_by_event}.get({_event})
+
+function trigger_event(machine: StateMachine struct, event: string) :: boolean:
+	set {_transition} to transition_of({_machine}, {_event})
+	if {_transition} is not set:
+		return false
+	set {_from} to {_machine}->state
+	set {_to} to {_transition}->to
+
+	run ({_from}->end) with args {_event}, {_machine}
+	set {_machine}->state to {_to}
+	run ({_to}->start) with args {_event}, {_machine}
+
+	return true
+
+function machine_tick(machine: StateMachine struct):
+    set {_state} to {_machine}->state
+    if {_state}->tick is set:
+        run ({_state}->tick) with args {_machine}

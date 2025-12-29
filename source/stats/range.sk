@@ -1,0 +1,9 @@
+local function load():
+    save_component("stat:range", a_stat_field(StatFieldBuilder struct instance)):
+        emoji: "↑"
+        color: pink
+        name: "Range"
+        extra: 3
+
+local function update(bindable: bindable struct, stat_data: StatData struct) :: textcomponent:
+    return a_filled_stat_field("range", a_real({_stat_data}->bindable->value))

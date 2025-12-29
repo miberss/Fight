@@ -1,0 +1,13 @@
+#struct SpecialEffectData
+
+#local function add() :: textcomponent:
+
+local function create() :: textcomponents:
+    set {_title} to a_effect_title("SPIN", light blue)
+    set {_key} to a_key("drop")
+    set {_time} to a_lore_unit(2.2, "s")
+    set {_radius} to a_lore_unit(3.5, "m")
+    set {_text::1} to a_effect_description(merge components {_key}, minimessage from " Spins you around and hits")
+    set {_text::2} to a_effect_description(merge components minimessage from " enemies in a radius ", {_radius})
+    set {_text::3} to a_effect_description(merge components minimessage from " shortly ", {_time})
+    return {_title}, {_text::*}

@@ -1,0 +1,91 @@
+struct ItemOptions:
+    player: player
+    itemtype: itemtype
+    name: string
+    level: integer
+    rank: string
+    slot: integer
+    sprite: string
+    lore: string
+    special_effects: strings
+    consume_animation: string
+    swing_animation: string
+
+using reflection
+using for loops
+
+function create_and_give_item(o: ItemOptions struct, stats: objects) :: Item struct:
+    set {_player} to {_o}->player
+    set {_uuid} to random uuid
+
+    set {_level_component} to a_level({_o}->level)
+    set {_name_component} to shadow(component(proper case {_o}->name), rgb(0,0,0,255))
+    set {_item_name} to merge(({-rank::%{_o}->rank%}, sprite({_o}->sprite), {_name_component}, {_level_component}), px(2))
+
+    set {-item::%{_uuid}%} to Item struct instance:
+        owner: {_player}
+        slot: {_o}->slot
+        uuid: {_uuid}
+        swing_animation: {_o}->swing_animation
+        consume_animation: {_o}->consume_animation
+
+    set slot {_o}->slot of {_player} to make_base_item("%{_o}->itemtype%", {_item_name}, {_uuid})
+    render_lore({-item::%{_uuid}%}, {_o}, keyed {_stats::*})
+
+function render_lore(item: Item struct, o: ItemOptions struct, stats: objects):
+    set {_section::1::1} to Writing struct instance:
+        components: a_lore({_o}->lore)
+
+    for {_name}, {_value} in {_stats::*}:
+        set {_section::2::%loop-counter%} to create_stat_data({_name}, {_value})
+
+    for {_special} in {_o}->special_effects:
+        set {_section::3::%loop-counter%} to special_effect({_special})
+
+    for {_idx} in indexes of {_section::*}:
+        
+        sort {_section::%{_idx}%::*} by [input->real_line_depth]
+        for {_object} in {_section::%{_idx}%::*}:
+            set {_object}->real_line_depth to {_size-counter} - 1 + loop-counter-2
+            if {_object} is a StatData struct:
+                add_stat({_item}, {_object})
+                trigger_update({_object}->bindable, {_object}->bindable->value)
+                continue
+            for {_component} in {_object}->components:
+                set_line({_item}->owner, {_item}->slot, {_object}->real_line_depth + loop-counter-3, {_component})
+                add 1 to {_size-counter}
+
+        set {_size-counter} to {_size-counter} + size of {_section::%{_idx}%::*} + 1
+    
+    set_line({_item}->owner, {_item}->slot, {_size-counter}, blank())
+
+function delete_item(item: Item struct):
+    loop ...{_item}->stat_data.values():
+        run {-stat::%loop-value->id%}->remove with args loop-value
+    delete {_item}
+
+function load_item():
+    loop {-item::*}:
+        delete_item(loop-value)
+        delete {-item::%loop-index%}
+    set {_stats::damage} to 10
+    set {_stats::secondary_speed} to 2
+    set {_stats::primary_speed} to 0.8
+    set {_stats::range} to 4
+    set {_stats::critical_chance} to 20
+    set {_stats::critical_damage} to 10
+    set {_stats::burn_radius} to 3.5
+    set {_stats::charge} to 4
+    set {_stats::blood_stone} to 5
+    create_and_give_item(ItemOptions struct instance, keyed {_stats::*}):
+        player: player("youcandream")
+        itemtype: iron sword
+        name: "The Soulfire Blade"
+        level: 10
+        rank: "rare"
+        slot: 0
+        sprite: "particles:soul_fire_flame"
+        lore: "Forged from pure hellfire."
+        special_effects: "spin", "aura"
+        consume_animation: "trident"
+        swing_animation: "stab"

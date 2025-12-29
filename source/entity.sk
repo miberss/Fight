@@ -1,0 +1,8 @@
+struct EntityType:
+    type: entitytype
+ 
+
+function load_entity_types():
+
+function spawn_entity(id: string, amount: integer):
+    set {_type} to {-enemy-type::%{_id}%}

@@ -1,0 +1,119 @@
+using script reflection
+using for loop
+
+on script load:
+    load_animation_components()
+
+function load_animation_components():
+    save_animation_component("flash", AnimationComponent struct instance):
+        handler: function "flash_animation"
+        duration: 1 second
+
+struct AnimationComponent:
+    handler: function
+    duration: timespan
+    end: future
+    options: struct
+    loc: location
+    dynamic count: integer = ticks of this->duration
+
+function save_animation_component(id: string, component: AnimationComponent struct):
+    set {-animation-component::%{_id}%} to {_component}
+
+function a_animation_component(id: string, location: location, options: struct) :: AnimationComponent struct:
+    set {_component} to struct copy of {-animation-component::%{_id}%}
+    set {_component}->end to a_promise()
+    set {_component}->loc to {_location}
+    set {_component}->options to {_options}
+    run {_component}->handler with args {_component}
+    return {_component}
+
+struct FlashOptions:
+    size: number
+
+function break_sounds_in_radius(location: location, radius: number):
+    loop shuffled (all_in_circle_fast(({_radius})) mapped with [block at ({_location} ~ input)]):
+        play sound (break sound of type of loop-value) with volume 0.02 at loop-value
+        draw 10 (block) using (type of loop-value) at loop-value ~ y(1) with delta y(1) with extra 1
+        make (players) see damage of (loop-value) as rnd(0.3, 0.7) from random integer between 1 and 10000
+        wait 1 tick if mod(loop-counter, 10) = 0
+
+function flash_animation(component: AnimationComponent struct):
+    set {_o} to {_component}->options
+    set {_o}->size to {_o}->size * 5
+
+    # transparent display
+    set {_e} to a_text_display()
+    set text of {_e} to "⏺"
+    set opacity of {_e} to -100
+    set {_e::transparent} to {_e}
+
+    # outline display
+    set {_e} to a_text_display()
+    set text of {_e} to "⭘"
+    set {_e::outline} to {_e}
+
+    set color of {_e::*} to rgb(0,0,0,0)
+    force {_e::*} to be visible through walls
+
+    set {_transform} to vec(-0.0125, 0, 0.14)
+    
+    rotate {_e::*} around x-axis by -90
+
+    # interaction
+    set {_e} to a_interaction()
+    set interaction scale of {_e} to vec({_o}->size / 4, {_o}->size / 5, 0)
+    set {_e::interaction} to {_e}
+
+    teleport({_e::*}, flatten({_component}->loc))
+    loop {_component}->count times:
+
+        set {_easing} to ease_in_out_cubic(loop-counter / {_component}->count)
+        interpolate({_e::*})
+        set display scale of {_e::*} to vec({_o}->size) * {_easing}
+        
+        rotate {_e::*}, {_transform} around y-axis by min(({_easing} + 1) * 12 + rnd(0.5), 20)
+        set transformation translation of {_e::*} to {_transform} * ({_o}->size * {_easing})
+
+        set opacity of {_e::transparent} to 10 + ({_easing} * 150)
+        play sound "block.copper_bulb.turn_off" with volume {_easing} with pitch {_easing} at ({_component}->loc) 
+        wait 1 tick
+    
+    
+
+    play sound "entity.splash_potion.break" with seed 1 with volume 0.4 with pitch 2 at ({_component}->loc)
+    draw 50 effect using particleSpell(rgb(255,255,255), 0.4) at ({_component}->loc) with delta vec(1, 0, 1) with extra 1
+    break_sounds_in_radius({_component}->loc ~ y(-1), {_o}->size / 10)
+
+    draw 10 firework at {_component}->loc with delta vec(1) with extra 0.3
+    complete {_component}->end with {_e::interaction}
+    wait 1 tick
+    kill {_e::*}
+    a_star({_component}->loc, {_o}->size, {_component}->count)
+
+
+function a_star(location: location, size: number, count: integer, color: string = "#ffffff"):
+    set {_e} to a_text_display()
+    set text of {_e} to "<%{_color}%>☆"
+    set {_e} to {_e}
+
+    set color of {_e} to rgb(0,0,0,0)
+    set billboard of {_e} to center
+    force {_e} to be visible through walls
+
+    set {_transform} to vec(-0.0125, -0.1375, 0)
+    wait 1 tick
+    teleport({_e}, {_location})
+    set display scale of {_e} to vec({_size})
+    set transformation translation of {_e} to {_transform} * {_size}
+
+    loop {_count} times:
+        set {_easing} to ease_in_cubic(loop-counter / {_count})
+        interpolate({_e})
+        set display scale of {_e} to vec({_size}) - vec({_size} * {_easing}) 
+        set transformation translation of {_e} to {_transform} * (vec({_size}) - vec({_size} * {_easing}))
+        set opacity of {_e} to {_easing} * 100 + 100
+        wait 1 tick
+    kill {_e}
+
+    

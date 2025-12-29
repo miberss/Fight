@@ -1,0 +1,98 @@
+using script reflection
+using for loop
+
+struct Bindable:
+	old_value: object
+	value: object
+	callbacks: objects
+
+function Bindable(value: object = {_}, callbacks: objects = {_}) :: Bindable struct:
+	return Bindable struct instance:
+		value: {_value}
+		callbacks: {_callbacks::*}
+
+expression [a] bindable [with %-object%] [using callback[s] %-objects%]:
+	get:
+		return Bindable(expr-1, exprs-2)
+
+Bindable struct property (old|previous) [bindable] value:
+	return type: object
+	get:
+		return expr-1->old_value
+
+Bindable struct property [current] [bindable] value:
+	return type: object
+	get:
+		return bind_get(expr-1)
+	add:
+		bind_add(expr-1, change value)
+	set:
+		bind_set(expr-1, change value)
+	remove:
+		bind_remove(expr-1, change value)
+	delete:
+		bind_delete(expr-1)
+
+effect bind %objects% to %Bindable struct%:
+	trigger:
+		bind_bind(expr-2, exprs-1)
+
+effect unbind %objects% from %Bindable struct%:
+	trigger:
+		bind_unbind(expr-2, exprs-1)
+
+function bind_get(bindable: Bindable struct) :: object:
+	return field value of {_bindable}
+
+function bind_add(bindable: Bindable struct, value: object) :: boolean:
+	set field old_value of {_bindable} to field value of {_bindable}
+	set {_temp_value} to field value of {_bindable}
+	add {_value} to {_temp_value}
+	set field value of {_bindable} to {_temp_value}
+	trigger_update({_bindable}, {_value})
+
+function bind_set(bindable: Bindable struct, value: object) :: boolean:
+	set field old_value of {_bindable} to field value of {_bindable}
+	set field value of {_bindable} to {_value}
+	trigger_update({_bindable}, {_value})
+
+function bind_set_silently(bindable: Bindable struct, value: object) :: boolean:
+	set field value of {_bindable} to {_value}
+
+function bind_remove(bindable: Bindable struct, value: object):: boolean:
+	set field old_value of {_bindable} to field value of {_bindable}
+	set {_temp_value} to field value of {_bindable}
+	remove {_value} from {_temp_value}
+	set field value of {_bindable} to {_temp_value}
+	trigger_update({_bindable}, {_value})
+
+function bind_delete(bindable: Bindable struct) :: boolean:
+	set field old_value of {_bindable} to field value of {_bindable}
+	delete field value of {_bindable}
+	trigger_update({_bindable}, {_value})
+
+function bind_dispose(bindable: Bindable struct) :: boolean:
+	delete {_bindable}
+
+function bind_bind(bindable: Bindable struct, callbacks: objects) :: boolean:
+	add {_callbacks::*} to field callbacks of {_bindable}
+
+function bind_unbind(bindable: Bindable struct, callbacks: objects) :: boolean:
+	for {_remove} in ({_callbacks::*} where [input is a function]):
+		for {_callback} in (field callbacks of {_bindable} where [fn_equal(input, {_remove}) = true]):
+			remove {_callback} from field callbacks of {_bindable}
+	remove {_callbacks::*} from field callbacks of {_bindable}
+
+local function fn_equal(a: function, b: function) :: boolean:
+	if all:
+		name of {_a} = name of {_b}
+		{_a}.source() = {_b}.source()
+	then:
+		return true
+
+function trigger_update(bindable: Bindable struct, value: object):
+	for {_callback} in field callbacks of {_bindable}:
+		if {_callback} is a section:
+			run section {_callback} with arguments {_bindable}, {_value}
+		else:
+			run {_callback} with arguments {_bindable}, {_value}

@@ -1,0 +1,395 @@
+###
+# Chat Filter Skript
+# A flexible chat filter with support for alternate characters, separators, repeated letters, exceptions, and severity levels
+# Requires:
+# - oopsk (for structs)
+# - skript-reflect (for pre-compiled regex patterns)
+#
+# author: sovde
+# version: 1.0
+# license: MIT (do what you want with it)
+###
+
+# How to use:
+# on load:
+# 1. Customize the alternate characters and separators to suit your needs
+# 2. Add filtered phrases with add_filtered_phrase()
+# 
+# If you change alternates or separators after adding phrases, call regenerate_patterns() to update the patterns
+# 
+# when filtering messages, use filter_message(message, sender) which returns a struct with details of any matches found:
+# on chat:
+#    set {_result} to filter_message(message, sender)
+#    if {_result}->matched is true:
+#        cancel event
+#        send "Your message was blocked due to inappropriate content."
+#
+# The command testFilter <text> can be used to test filtering of a message: '/testFilter badword'
+# The command stresstest can be used to benchmark performance of filtering 100,000 messages. It takes about 6 seconds on my machine with the default phrases.
+#
+#
+# NOTE: filtered phrases are NOT saved between server restarts, so you need to add them on load each time. 
+#       This can be worked around, but it was intentional to keep the script simple and focused on filtering logic.
+
+function load_chat_filter():
+    # clear existing data
+    clear {-{@cf}::alternates::*}
+    clear {-{@cf}::separators::*}
+    clear {-{@cf}::filtered phrases::*}
+
+    # define alternate characters to use in patterns
+    # common alternatives are provided, but you can customize as needed with add_alternate_characters()
+    use_generic_alternate_characters() 
+    use_greek_alternate_characters()
+    use_small_caps_alternate_characters()
+
+    # will match things like b.a-dw_o r d for strictness 0, 1
+    use_separators("-", "_", ".", " ")
+
+    # add filtered phrases
+    add_common_filtered_phrases()
+
+# Common phrases to filter - customize as needed
+local function add_common_filtered_phrases():
+    # parameters: phrase, severity, requires word boundary (true/false def: false), strictness (0-3 def: 2), exceptions (list def: none)
+    # note that phrases are case insensitive, so "badword" matches "BadWord", "bAdWoRd", etc.
+    # Also, using a lot of phrases with low strictness can slow down filtering, so use higher strictness where possible.
+    # this set of phrases takes about 0.06 ms per 100 character message on my machine. You can do a stresstest with /stresstest command.
+    
+    # common swear words
+    add_filtered_phrase("fuck", 4)
+    add_filtered_phrase("shit", 2, false, 2, "mishit")
+    add_filtered_phrase("ass", 1, true) # requires boundary to avoid matching "assume", "pass", etc
+    add_filtered_phrase("asshole", 2)
+    add_filtered_phrase("bitch", 3)
+    add_filtered_phrase("whore", 3)
+    
+    add_filtered_phrase("cunt", 4)
+    add_filtered_phrase("gay", 2)
+    add_filtered_phrase("kys", 3)
+    add_filtered_phrase("dick", 2)
+    add_filtered_phrase("cock", 2, true) # requires boundary to avoid matching "cocktail", "cockroach", etc
+    add_filtered_phrase("cocksucker", 2) # there's others, up to you if you think it's worth catching
+    add_filtered_phrase("pussy", 2, false, 2, "pussycat")
+
+    # slurs:
+    # use strictness 0 to catch as much as possible
+
+    # retard
+    add_filtered_phrase("retard", 5, false, 0, "retardant") # fire retardants are fine
+    add_filtered_phrase("a regard", 5, true, 3) # to catch people trying to use "regard" as a workaround e.g. "you are a regard"
+
+    # nigger
+    add_filtered_phrase("nigg", 10, false, 0, "snigger")
+    add_filtered_phrase("niglet", 10, false, 0)
+    add_filtered_phrase("niger", 2, true, 3) # (match exact word) country, not slur, but still often misused
+
+    # faggot
+    add_filtered_phrase("fag", 10, false, 0, "fage") # all words with "fage" are allowed, like "roofage".
+
+# typical english alternate characters
+local function use_generic_alternate_characters():
+    add_alternate_characters("a", "4@")
+    add_alternate_characters("b", "86")
+    add_alternate_characters("c", "(")
+    # add_alternate_characters("d", "")
+    add_alternate_characters("e", "3")
+    # add_alternate_characters("f", "")
+    add_alternate_characters("g", "9")
+    add_alternate_characters("h", "#")
+    add_alternate_characters("i", "l1!|")
+    # add_alternate_characters("j", "")
+    # add_alternate_characters("k", "")
+    add_alternate_characters("l", "i1!|")
+    # add_alternate_characters("m", "")
+    # add_alternate_characters("n", "")
+    add_alternate_characters("o", "0")
+    # add_alternate_characters("p", "")
+    # add_alternate_characters("q", "")
+    # add_alternate_characters("r", "")
+    add_alternate_characters("s", "5$")
+    add_alternate_characters("t", "7+")
+    add_alternate_characters("u", "v")
+    add_alternate_characters("v", "u")
+    # add_alternate_characters("w", "")
+    add_alternate_characters("x", "%%")
+    # add_alternate_characters("y", "")
+    add_alternate_characters("z", "2")
+
+# greek letters that look like english letters
+local function use_greek_alternate_characters():
+    add_alternate_characters("a", "ΑαΛλ")
+    add_alternate_characters("b", "Ββ")
+    add_alternate_characters("c", "Ϲςϲ")
+    add_alternate_characters("d", "Δδ")
+    add_alternate_characters("e", "ΣΕε")
+    add_alternate_characters("f", "Γ")
+    # add_alternate_characters("g", "")
+    add_alternate_characters("h", "Ηη")
+    add_alternate_characters("i", "Ιι")
+    add_alternate_characters("j", "ϳ")
+    add_alternate_characters("k", "Κκ")
+    # add_alternate_characters("l", "")
+    add_alternate_characters("m", "Μμ")
+    add_alternate_characters("n", "Νη")
+    add_alternate_characters("o", "ΩΟοσΦφ")
+    add_alternate_characters("p", "Ρρ")
+    add_alternate_characters("q", "Ϙϙ")
+    add_alternate_characters("r", "Ρρ")
+    # add_alternate_characters("s", "")
+    add_alternate_characters("t", "Ττ")   
+    add_alternate_characters("u", "υ")
+    add_alternate_characters("v", "ν")
+    add_alternate_characters("w", "ω")
+    add_alternate_characters("x", "Χχ")
+    add_alternate_characters("y", "Υγ")
+    add_alternate_characters("z", "Ζζ")
+
+# small caps letters that look like english letters
+local function use_small_caps_alternate_characters():
+    loop "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀꜱᴛᴜᴠᴡxʏᴢ" split at "" without trailing string:
+        set {_char} to character at index loop-counter of "abcdefghijklmnopqrstuvwxyz"
+        add_alternate_characters({_char}, loop-value)
+
+# adds a filtered phrase to the list
+# Filtered phrases are case insensitive
+#
+# severity is a number indicating how severe the phrase is (for logging or action purposes). You define your own scale.
+# exceptions is a list of phrases that will not trigger the filter if found in the message
+# requires boundary indicates whether the phrase should only match if it is a whole word (using true avoids matching substrings like "bad" in "badminton")
+# strictness:
+# 0 - allow any alternate characters, separators, repeated letters
+# 1 - allow alternate characters, repeated letters
+# 2 - allow alternate characters, but not repeated letters or separators (default)
+# 3 - exact match only
+#
+# example: add_filtered_phrase("badword", 5, "notbadword", 1)
+# - matches "b.a.d.w.o.r.d", "baddddword", "xxxbadwordyyy"
+# - does NOT match "notbadword"
+function add_filtered_phrase(phrase: text, severity: number, requires boundary: boolean = false, strictness: number = 2, exceptions: texts = {_none}):
+    set {_filtered phrase} to a FilteredPhrase struct instance:
+        phrase: {_phrase}
+        requires boundary: {_requires boundary}
+        severity: {_severity}
+        strictness: {_strictness}
+        exceptions: {_exceptions::*}
+        pattern: generate_pattern({_phrase}, {_requires boundary}, {_strictness})
+    add {_filtered phrase} to {-{@cf}::filtered phrases::*}
+
+# stores the result of filtering a message with details of any matches found
+struct FilterResult:
+    matched: boolean # whether any matches were found
+    severity: number # highest severity of any matches found
+    matched text: texts # list of matched phrases found
+    matched positions: numbers # list of start positions of matched phrases found
+    full text: text # the full original message text
+    sender: sender # the sender of the message
+
+# filters a message, returning a filter_result struct with details of any matches found
+# if match all is false (default), returns on first match found
+# if match all is true, continues searching for all matches and returns them all
+#
+# This is moderately safe to run asynchronously, as long as only one call to filter_message() is made at a time.
+# Using it in the async chat event should be relatively safe, though not guaranteed if you have a lot of players chatting at once.
+function filter_message(message: text, sender: sender, match all: boolean = false) :: struct:
+    set {_result} to a FilterResult struct instance:
+        matched: false
+        severity: 0
+        full text: {_message}
+        sender: {_sender}
+    
+    loop {-{@cf}::filtered phrases::*}:
+        set {_start-time} to unix timestamp of now
+        set {_filtered phrase} to loop-value
+        # check for existence before removing exceptions
+        set {_matcher} to {_filtered phrase}->pattern.matcher({_message})
+        if {_matcher}.find() is false:
+            continue
+        # remove exceptions from message
+        set {_without exceptions} to {_message}
+        loop {_filtered phrase}->exceptions:
+            set {_replacement} to "*" repeated length of loop-value-2 times
+            replace all loop-value-2 in {_without exceptions} with {_replacement}
+        # check for actual matches
+        set {_matcher} to {_filtered phrase}->pattern.matcher({_without exceptions})
+        set {_start} to 0
+        while {_matcher}.find({_start}):
+            set {_matched} to {_matcher}.group(1)
+            set {_result}->matched to true
+            set {_result}->severity to max(({_result}->severity ? 0), {_filtered phrase}->severity)
+            add {_matcher}.group(1) to {_result}->matched text
+            add {_matcher}.start(1) + {_start} to {_result}->matched positions
+            
+            if {_match all} is false:
+                return {_result}
+            # continue searching for more matches
+            set {_start} to {_matcher}.end(1)
+            continue
+    return {_result}
+
+#
+# Private API
+#
+
+import:
+    java.util.regex.Pattern
+
+options:
+    cf: chat-filter # variable prefix
+
+struct FilteredPhrase:
+    phrase: text
+    requires boundary: boolean = false
+    severity: number
+    strictness: number
+    exceptions: texts
+    pattern: javaobject # Pattern
+
+# regenerates all patterns from phrases, to be called after changing alternates or separators
+function regenerate_patterns():
+    loop {-{@cf}::filtered phrases::*}:
+        set {_phrase} to loop-value->phrase
+        set {_requires boundary} to loop-value->requires boundary
+        set {_strictness} to loop-value->strictness
+        set loop-value->pattern to generate_pattern({_phrase}, {_requires boundary}, {_strictness})
+    sort {-{@cf}::filtered phrases::*} in descending order by (input->strictness)    
+
+# generates a regex Pattern object for a phrase, based on boundary and strictness
+local function generate_pattern(phrase: text, boundary: boolean, strictness: number) :: javaobject:
+    set {_pattern} to ""
+    # generate alternate characters map
+    set {_characters::*} to {_phrase} split at "" without trailing string
+    loop {_characters::*}:
+        set {_char} to loop-value
+        set {_alt pattern} to get_alternates_pattern({_char}, {_strictness})
+        if {_strictness} is 0 or 1:
+            # allow repeated letters
+            set {_alt pattern} to "%{_alt pattern}%+"
+        set {_alt patterns::%loop-counter%} to {_alt pattern}
+
+
+    if {_strictness} is 0:
+        # allow separators between letters
+        set {_pattern} to join {_alt patterns::*} with get_separators_pattern()
+    else:
+        set {_pattern} to join {_alt patterns::*} with ""
+
+    # matching group
+    set {_pattern} to "(%{_pattern}%)"
+
+    # word boundaries
+    if {_boundary} is true:
+        set {_pattern} to "\b%{_pattern}%\b"
+    
+    # case insensitive
+    set {_pattern} to "%{_pattern}%"
+
+    return Pattern.compile({_pattern}, Pattern.CASE_INSENSITIVE)
+
+# sets the list of separator characters to use in patterns
+local function use_separators(separators: texts):
+    clear {-{@cf}::separators::*}
+    loop {_separators::*}:
+        set {_char} to loop-value
+        if {_char} is "-", "]", "[", or "^":
+            set {_char} to "\%{_char}%"
+        set {-{@cf}::separators::%loop-index%} to {_char}
+
+# returns a regex pattern string matching zero or more separator characters
+local function get_separators_pattern() :: text:
+    if {-{@cf}::separators::*} is set:
+        return "[%join {-{@cf}::separators::*}%]*"
+    return ""
+
+# returns a regex pattern string matching the character and its alternates based on strictness
+local function get_alternates_pattern(char: text, strictness: number) :: text:
+    if any:
+        {_strictness} is 3
+        {-{@cf}::alternates::%{_char}%} is not set
+        {-{@cf}::alternates::%{_char}%} is empty
+    then:
+        return {_char}
+    # get alternate chars from map
+    return join "[", {_char}, {-{@cf}::alternates::%{_char}%}, and "]"
+
+# adds alternate characters for a given character
+local function add_alternate_characters(char: text, alternates: text):
+    set {_alternates::*} to split {_alternates} at "" without trailing string
+    loop {_alternates::*}:
+        if loop-value is "[", "]", "-", or "^":
+            set {_alternates::%loop-index%} to "\%loop-value%"
+    set {-{@cf}::alternates::%{_char}%} to join ({{@cf}::alternate patterns::%{_char}%} ? ""), {_alternates::*}
+
+# TESTS
+local function test(phrase: text, expected match: boolean, expected filters: texts = {_none}):
+    set {_result} to filter_message({_phrase}, {_}, true)
+    if {_result}->matched is not {_expected match}:
+        broadcast "Test failed for phrase %{_phrase}%: expected match %{_expected match}%, got %{_result}->matched%"
+        stop
+    
+    if {_result}->matched text is not {_expected filters::*}:
+        {_expected match} is true
+        broadcast "Test failed for phrase %{_phrase}%: expected filters %{_expected filters::*}%, got %{_result}->matched text%"
+        stop
+
+    broadcast "Test passed for phrase %{_phrase}%"
+
+function run_tests():
+    # clear existing data
+    clear {-{@cf}::alternates::*}
+    clear {-{@cf}::separators::*}
+    clear {-{@cf}::filtered phrases::*}
+
+    # define alternate characters to use in patterns
+    use_generic_alternate_characters() 
+    use_separators("-", "_", ".", " ")
+
+    # add filtered phrases
+    add_filtered_phrase("badword", 5, false, 1, "notbadword")
+
+    # tests for badword
+    test("badword", true, "badword")
+    test("baddddword", true, "baddddword")
+    test("xxxbadwordyyy", true, "badword")
+    test("notbadword", false)
+    test("badwording", true, "badword")
+    test("badword!", true, "badword")
+    test("badw0rd", true, "badw0rd")
+    test("b4dw0rd", true, "b4dw0rd")
+    test("b@dw0rd", true, "b@dw0rd")
+    test("b.a.d.w.o.r.d", false)
+    test("b-a_d.word", false)
+
+    # test low strictness
+
+    # clear existing data
+    clear {-{@cf}::alternates::*}
+    clear {-{@cf}::separators::*}
+    clear {-{@cf}::filtered phrases::*}
+
+    # define alternate characters to use in patterns
+    use_generic_alternate_characters() 
+    use_separators("-", "_", ".", " ")
+    # add filtered phrases
+    add_filtered_phrase("badword", 5, false, 0, "notbadword")
+
+
+    #separators
+    test("b.a.d.w.o.r.d", true, "b.a.d.w.o.r.d")
+    test("b-a_d.word", true, "b-a_d.word")
+    test("b@d-w0rd", true, "b@d-w0rd")
+    test("b@d--w0rd", true, "b@d--w0rd")
+    test("b@d--w0rddddd", true, "b@d--w0rddddd")
+    test("b@d--w0rding", true, "b@d--w0rd")
+    test("b@d--w0rd!", true, "b@d--w0rd")
+    test("badword", true, "badword")
+    test("baddddword", true, "baddddword")
+    test("xxxbadwordyyy", true, "badword")
+    test("notbadword", false)
+    test("badwording", true, "badword")
+    test("badword!", true, "badword")
+    test("badw0rd", true, "badw0rd")
+    test("b4dw0rd", true, "b4dw0rd")
+    test("b@dw0rd", true, "b@dw0rd")
+
+    broadcast "All tests finished"

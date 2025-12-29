@@ -1,0 +1,141 @@
+using for loops
+
+import:
+    org.bukkit.map.MinecraftFont
+    net.kyori.adventure.text.format.ShadowColor
+
+function width(string: string) :: integer:
+    return MinecraftFont.Font.getWidth({_string})
+
+function shadow(component: textcomponent) :: textcomponent:
+    {_component}.setComponent({_component}.getComponent().shadowColor(ShadowColor.none()))
+    return {_component}
+
+function shadow(component: textcomponent, color: color) :: textcomponent:
+    {_component}.setComponent({_component}.getComponent().shadowColor(ShadowColor.shadowColor((red value of {_color}), (green value of {_color}), (blue value of {_color}), (alpha value of {_color}))))
+    return {_component}
+
+function sprite(path: string, frame: integer = {_}) :: textcomponent:
+    if {_frame} is set:
+        add "_%{_frame}%" to {_path}
+    set {_parts::*} to {_path} split at ":", "%%" 
+    return object text component with atlas {_parts::1} with sprite {_parts::2}
+
+function merge(components: textcomponents, joiner: textcomponent = empty text component) :: textcomponent:
+    return merge components {_components::*} with {_joiner}
+
+function c(text: text) :: textcomponent:
+    return text component of {_text}
+
+function cs(texts: texts) :: textcomponents:
+    return text component of {_texts::*}
+
+function component() :: textcomponent:
+    return empty text component
+
+function component(text: text) :: textcomponent:
+    return text component of {_text}
+
+function components(texts: texts) :: textcomponents:
+    return text component of {_texts::*}
+
+function new_line_component() :: textcomponent:
+    return (minimessage from "<br>")
+
+function blank() :: textcomponent:
+    return c("")
+
+function px(px: integer) :: textcomponent:
+    set {_component} to c(((character at codepoint 8204) repeated {_px} times) ? "")
+    set bold format of {_component} to true
+    return {_component}
+
+function component_lore(item: item, lore: textcomponent) :: item:
+    set lore of {_item} to "%{_lore}%" split at nl
+    return {_item}
+
+struct ComponentOptions:
+    components:  textcomponents
+    spacer:      textcomponent
+    separator:   textcomponent
+    conjunctive: textcomponent
+
+function prefix_suffix(components: textcomponents, prefix: textcomponent = c(""), suffix: textcomponent = c("")) :: textcomponents:
+    return {_components::*} mapped with [merge components ({_prefix}, input, {_suffix})]
+
+function list_component(options: componentoptions struct) :: textcomponents:
+    for {_component} in {_options}->components:
+        set {_list::%loop-counter * 3 - 2%} to {_component}
+        set {_list::%loop-counter * 3 - 1%} to {_options}->separator
+        set {_list::%loop-counter * 3%} to {_options}->spacer
+
+    # get size (more efficient since no loop over large amount of elements?)
+    set {_size} to (size of {_options}->components) * 3
+
+    # remove trailing space
+    delete {_list::%{_size}%}
+
+    if {_options}->conjunctive is set:
+        # insert conjunctive and spacer before last item
+        set {_list::%{_size} - 4%} to {_options}->conjunctive
+        set {_list::%{_size} - 4.5%} to {_options}->spacer
+    else:
+        delete {_list::%{_size} - 1%}
+
+    return {_list::*}
+
+function colored_component(text: text, color: color) :: textcomponent:
+    set {_component} to c({_text})
+    set color format of {_component} to {_color}
+    return {_component}
+
+function indent(components: textcomponents, amount_px: integer) :: textcomponents:
+    return prefix_suffix(({_components::*}), px({_amount_px}))
+
+function wrap_around(component: textcomponent, left: textcomponent, right: textcomponent, brightness: number) :: textcomponent:
+    set {_children::*} to (component children of {_component}) ? ({_component}, {_component})
+    set color format of {_left} to change_brightness(color format of (first element of {_children::*}), {_brightness})
+    set color format of {_right} to change_brightness(color format of (last element of {_children::*}), {_brightness})
+    return merge components ({_left}, {_component}, {_right})
+
+function change_brightness(color: color, amount: number) :: color:
+    set {_r} to clamp(red value of {_color} * {_amount}, 0, 255)
+    set {_g} to clamp(green value of {_color} * {_amount}, 0, 255)
+    set {_b} to clamp(blue value of {_color} * {_amount}, 0, 255)
+    return rgb({_r}, {_g}, {_b})
+
+function shift_brightness(component: textcomponent, amount: number) :: textcomponent:
+    set color format of {_component} to change_brightness(color format of {_component}, {_amount})
+    return {_component}
+
+function a_notch_bar(component_a: textcomponent, component_b: textcomponent, max: integer, count: integer) :: textcomponent:
+    set {_count} to min({_max}, {_count})
+    return merge components (({_count} times) mapped with [{_component_a}], ({_max} - {_count} times) mapped with [{_component_b}])
+
+function a_fancy_notch_bar(component_a: textcomponent, component_b: textcomponent, max: integer, count: integer) :: textcomponent:
+    set {_count} to min({_max}, {_count})
+    set {_a::*} to ({_count} times) mapped with [shift_brightness({_component_a}, 0.8 + input / ({_count} * 2))]
+    set {_b::*} to ({_max} - {_count} times) mapped with [{_component_b}]
+    return merge components {_a::*}, {_b::*}
+
+function rgba(r: number, g: number, b: number, a: number) :: color:
+    return rgb({_r}, {_g}, {_b}, {_a} * 255)
+
+function rgba(r: number, g: number, b: number) :: color:
+    return rgb({_r}, {_g}, {_b}, 255)
+
+function append_component_name(item: item, component: textcomponent):
+    set component item name of {_item} to merge components (component item name of {_item}, {_component})
+
+function component_real(value: number, color: color, positive: color, negative: color, spacing: integer = 1) :: textcomponent:
+    set {_symbol} to colored_component("+", {_positive}) if ({_value} > 0) else colored_component("-", {_negative})
+    return merge components {_symbol}, px({_spacing}), colored_component("%{_value}%", {_color})
+
+function component_unit(value: number, unit: string, color: color, secondary_color: color, spacing: integer = 1) :: textcomponent:
+    return merge components colored_component("%{_value}%", {_color}), px({_spacing}), colored_component({_unit}, {_secondary_color})
+
+function component_fraction(numerator: number, denominator: number, numerator_color: color, denominator_color: color, spacing: integer = 2) :: textcomponent:
+    return merge components colored_component("%{_numerator}%", {_numerator_color}), px({_spacing} / 2), colored_component("/", {_denominator_color}), px({_spacing} / 2), colored_component("%{_denominator}%", {_denominator_color})
+
+function component_percent(value: number, color: color, secondary_color: color, spacing: integer = 1) :: text component:
+    return merge components colored_component("%{_value}%", {_color}), px({_spacing}), colored_component("%%", {_secondary_color})

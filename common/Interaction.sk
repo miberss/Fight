@@ -1,0 +1,58 @@
+import:
+    org.bukkit.entity.Interaction
+
+entity property interaction width:
+    return type: number
+    get:
+        expr-1.getInteractionWidth()
+    set:
+        expr-1.setInteractionWidth(change value)
+    add:
+        expr-1.setInteractionWidth(expr-1.getInteractionWidth() + change value)
+    remove:
+        expr-1.setInteractionWidth((expr-1.getInteractionWidth()) - change value)
+    delete:
+        expr-1.setInteractionWidth(0)
+    reset:
+        expr-1.setInteractionWidth(1)
+
+entity property interaction height:
+    return type: number
+    get:
+        expr-1.getInteractionHeight()
+    set:
+        expr-1.setInteractionHeight(change value)
+    add:
+        expr-1.setInteractionHeight(expr-1.getInteractionHeight() + change value)
+    remove:
+        expr-1.setInteractionHeight((expr-1.getInteractionHeight()) - change value)
+    delete:
+        expr-1.setInteractionHeight(0)
+    reset:
+        expr-1.setInteractionHeight(1)
+
+entity property interaction scale:
+    return type: vector
+    get:
+        return vector(interaction width of expr-1, interaction height of expr-1, interaction width of expr-1)
+    set:
+        set interaction width of expr-1 to ((x of change value) + (z of change value)) / 2
+        set interaction height of expr-1 to (y of change value)
+    add:
+        add ((x of change value) + (z of change value)) / 2 to interaction width of expr-1
+        add (y of change value) to interaction height of expr-1
+    remove:
+        remove ((x of change value) + (z of change value)) / 2 from interaction width of expr-1
+        remove (y of change value) from interaction height of expr-1
+    delete:
+        delete interaction width of expr-1
+        delete interaction height of expr-1
+    reset:
+        reset interaction width of expr-1
+        reset interaction height of expr-1
+
+function a_interaction() :: entity:
+    spawn interaction at location(0, -50, 0):
+        set {_entity} to entity
+        make entity not persist
+    return {_entity}

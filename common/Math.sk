@@ -1,0 +1,124 @@
+# This module provides many useful math functions.
+#
+# This module requires the following other modules: NONE
+
+on script load:
+	suppress the variable save warnings
+	set {-mib_lib::math::hex} to [split "0123456789ABCDEF" at "" without trailing text]
+
+#> Returns a random integer between **from** and **to**.
+#> A simple wrapper function around "random integer from x to y" since it provides to clutter.
+#>
+#> @param to The maximum integer value.
+#> @param from The minimum integer value. Defaults to **0**.
+#> @return A random integer from **from** to **to**.
+function rndi(to: integer, from: integer = 0) :: integer:
+	return random integer from {_from} to {_to}
+
+#> Returns a random floating-point number between **from** and **to**.
+#> A simple wrapper function around "random number from x to y" since it provides to clutter.
+#>
+#> @param to The maximum number value.
+#> @param from The minimum number value. Defaults to **0**.
+#> @return A random number from **from** to **to**.
+function rnd(to: number, from: number = 0) :: number:
+	return random number from {_from} to {_to}
+
+#> Linearly interpolates between **a** and **b** at **time**
+#> the `time` parameter defaults to 0.5 since that provides
+#> a way to get the halfway point between two numbers
+#>
+#> @param a The start number.
+#> @param b The end number.
+#> @param time A value indicating the interpolation factor.
+#> @return The interpolated number between **a** and **b**.
+function lerp(a: number, b: number, time: number = 0.5) :: number:
+	return {_a} * (1 - {_time}) + {_b} * {_time}
+
+#> Returns the sign of a number.
+#>
+#> @param value The number to check.
+#> @return -1 if negative, 1 if positive, 0 if zero.
+function sign(value: number) :: integer:
+	return -1 if {_value} < 0
+	return 1 if {_value} > 0
+	return 0
+
+#> Smoothly interpolates a value between 0 and 1 using the SmoothStep function.
+#> Useful for easing animations or transitions.
+#>
+#> @param value A number between 0 and 1.
+#> @return The smoothed value.
+function smooth_step(value: number) :: number:
+	return {_value} * {_value} * (3 - 2 * {_value})
+
+#> Oscillates a value back and forth between 0 and n.
+#>
+#> Example: `ping_pong(0.25)` → `0.25`, `ping_pong(1.25)` → `0.75`
+#> Example: `ping_pong(0.25, 0.25)` → `1`, `ping_pong(1.25, 0.5)` → `0.25`
+#>
+#> @param value The input number.
+#> @param n Where the value turns
+#> @return A number oscillating between 0 and n.
+function ping_pong(value: number, n: number = 1) :: number:
+	return 0 if {_n} = 0 # Divide by 0 errors
+	return abs(fract(({_value} - {_n}) / ({_n} * 2)) * {_n} * 2 - {_n})
+
+#> Returns the decimal part of a positive number
+#> Returns 1 - decimal part of a negative number
+#>
+#> @param value The input number
+#> @return A number between 0 and 1
+function fract(value: number) :: number:
+	return {_value} - floor({_value})
+
+#> Wraps a number around a range [low, high].
+#>
+#> Example: `wrap(12, 0, 10)` → `2`
+#>
+#> @param value The number to wrap.
+#> @param low The lower bound (inclusive).
+#> @param high The upper bound (exclusive).
+#> @return The wrapped number within [low, high].
+function wrap(value: number, low: number, high: number) :: number:
+	return mod(({_value} - {_low}), ({_high} - {_low})) + {_low}
+
+#> Converts an integer to its hexadecimal string representation.
+#> Supports values up to the maximum integer limit.
+#>
+#> Example: `hex(1000)` → `3E8`
+#>
+#> @param value The integer to convert.
+#> @return The hexadecimal string.
+function hex(value: integer) :: string:
+	return "0" if {_value} <= 0
+	return {-mib_lib::math::hex}[{_value}] if {_value} < 16
+	return hex({_value} >> 4) + {-mib_lib::math::hex}[{_value} & 0xF]
+
+#> Returns the closest angle to one of the discrete angles: 0, 90, 180, or 270 degrees.
+#>
+#> Given any numeric input angle in degrees, this function finds which of the
+#> four standard angles (0°, 90°, 180°, or 270°) is nearest to the input.
+#>
+#> @param value The input angle in degrees, can be negative / positive
+#> @return The closest angle among [0, 90. 180, 270]
+function closest_angle_value(value: number) :: integer:
+	return clamp(round({_x} / 90), 0, 3) * 90
+
+function vec(x: number, y: number, z: number) :: vector:
+	return vector({_x}, {_y}, {_z})
+
+function vec(n: number) :: vector:
+	return vector({_n}, {_n}, {_n})
+
+function x(n: number) :: vector:
+	return vector({_n}, 0, 0)
+
+function y(n: number) :: vector:
+	return vector(0, {_n}, 0)
+
+function z(n: number) :: vector:
+	return vector(0, 0, {_n})
+
+function noise(generator: object, vector: vector) :: number:
+	return sknoise value of {_generator} at (x of {_vector}), (y of {_vector}), (z of {_vector})

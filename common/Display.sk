@@ -1,0 +1,21 @@
+function a_display(type: entity type) :: display:
+    spawn {_type} at location(0, -50, 0):
+        set {_entity} to display
+        set teleport duration of entity to 2 tick
+        set sky light override of entity to 15
+        set block light override of entity to 15
+        make entity not persist
+    return {_entity}
+
+function a_block_display() :: display:
+    return a_display(a block display)
+
+function a_item_display() :: display:
+    return a_display(a item display)
+
+function a_text_display() :: display:
+    return a_display(a text display)
+
+function interpolate(displays: displays):
+    set interpolation duration of {_displays::*} to 1 tick
+    set interpolation delay of {_displays::*} to 0 ticks

@@ -1,0 +1,84 @@
+options:
+    gray: rgb(69, 69, 93)
+    spacing: px(2)
+
+using script reflection
+using for loops
+
+function load_ranks():
+    set {-rank::basic} to a_rank("basic", rgba(154, 146, 187))
+    set {-rank::rare} to a_rank("rare", rgba(114, 120, 230))
+
+function a_list(stat: textcomponents) :: textcomponents:
+    add indent(prefix_suffix({_stat::*}, (merge components ({-components::arrow-right}, {@spacing}))), 6) to {_component::*}
+    return {_component::*}
+
+function a_lore(lore: string) :: textcomponent:
+    set {_lore} to colored_component("“ %{_lore}% „ ", change_brightness({@gray}, 1.4))
+    set italic format of {_lore} to true
+    return merge components (px(2), {_lore})
+
+function a_rank(rank: string, color: color) :: textcomponent:
+    return wrap_around(colored_component(uppercase {_rank}, {_color}), c("["), c("]"), 0.8)
+
+function a_level(level: integer) :: textcomponent:
+    return a_angular_brackets(colored_component("%{_level}%", yellow))
+
+function create_stat_data(id: string, value: object) :: StatData struct:
+    set {_stat_data} to StatData struct instance:
+        id: {_id}
+    set {_stat_data}->type to result of {-stat::%{_id}%}->add with args {_stat_data}
+
+    if {-stat::%{_id}%}->tick is set:
+        run 0 tick later repeating every 1 tick:
+            exit loop if {-item::%{_stat_data}->item->uuid%} is not set
+            run {-stat::%{_id}%}->tick with args {_stat_data}
+
+    create section with {_bindable}, {_value} stored in {_update}:
+        set {_component} to result of ({-stat::%{_id}%}->update) with args {_bindable}, {_stat_data}
+        set_line({_stat_data}->item->owner, {_stat_data}->item->slot, {_stat_data}->real_line_depth, (merge components px({_stat_data}->indent), {_component}))
+        set ({_stat_data}->item->owner)'s metadata "slot=%{_stat_data}->item->slot%" to now
+
+    set {_stat_data}->bindable to bindable with {_value} using callback {_update}
+    return {_stat_data}
+
+function add_special_effect(item: Item struct, special_effect_data: SpecialEffectData struct):
+    set {_special_effect_data}->item to {_item}
+    {_item}->special_effect.put({_special_effect_data}->id, {_special_effect_data})
+
+function add_stat(item: Item struct, stat_data: StatData struct):
+    set {_stat_data}->item to {_item}
+    {_item}->stat_data.put({_stat_data}->id, {_stat_data})
+
+function special_effect(id: string) :: SpecialEffectData struct:
+    return SpecialEffectData struct instance:
+        special_effect: {-special_effect::%{_id}%}
+        components: {-special_effect::%{_id}%}->components
+
+function set_line(player: player, slot: integer, line: number, component: textcomponent):
+    set italic format of {_component} to false
+    set color format of {_component} to white
+    set line {_line} of component item lore of (slot {_slot} of {_player}) to {_component}
+
+function make_base_item(model: string, name: textcomponent, uuid: string) :: item:
+    set {_item} to gunpowder
+    set string tag "uuid" of custom nbt of {_item} to {_uuid}
+    set item model of {_item} to {_model}
+    set item flags of {_item} to all item flags
+    set component item name of {_item} to {_name}
+    set max stack size of {_item} to 1
+    return {_item}
+
+function set_stat(item: item, id: string, value: object):
+    set {_uuid} to string tag "uuid" of custom nbt of {_item}
+    set {-item::%{_uuid}%}->stat_data.get({_id})->bindable's value to {_value} 
+    
+on inventory slot change:
+    event-item != 0 airs
+    if player's metadata "slot=%(index of event-slot)%" is not set:
+        set player's metadata "slot=%(index of event-slot)%" to (now - (1 tick))
+    if time since player's metadata "slot=%(index of event-slot)%" >= 1 tick:
+        set {-item::%string tag "uuid" of (custom nbt of event-item)%}->slot to (index of event-slot)
+
+on consume:
+    cancel event

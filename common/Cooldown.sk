@@ -1,0 +1,85 @@
+# This module provides a system for managing cooldowns.
+#
+# This module requires the following other modules: NONE
+
+#> Sets a cooldown with an id and holder
+#> **holder** can be any metadata holder, such as an entity, block, or world.
+#> It is used to specify who the cooldown belongs to.
+#>
+#> @param id The id of the cooldown
+#> @param duration The duration of the cooldown
+#> @param holder (Optional) The holder of the cooldown
+function set_cooldown(id: string, duration: timespan, holder: metadataholder = {_}):
+    set {-mib_lib::cooldown::%{_id}%::%{_holder}%::duration} to {_duration}
+    set {-mib_lib::cooldown::%{_id}%::%{_holder}%::start} to now
+
+#> Deletes a cooldown with an id and holder
+#> **holder** can be any metadata holder, such as an entity, block, or world.
+#> It is used to specify who the cooldown belongs to.
+#>
+#> @param id The id of the cooldown
+#> @param holder (Optional) The holder of the cooldown
+function delete_cooldown(id: string, holder: metadataholder = {_}):
+    delete {-mib_lib::cooldown::%{_id}%::%{_holder}%::*}
+
+#> Returns the remaining time of the cooldown with an id and holder
+#> If the cooldown is over, it will automatically delete it and return 0 seconds.
+#>
+#> @param id The id of the cooldown
+#> @param holder (Optional) The holder of the cooldown
+#> @return The remaining time of the cooldown
+function get_remaining_cooldown(id: string, holder: metadataholder = {_}) :: timespan:
+    set {_remaining} to get_cooldown_duration({_id}, {_holder}) - (time since get_cooldown_start({_id}, {_holder}))
+    return {_remaining} if {_remaining} > 0 seconds
+    delete_cooldown({_id}, {_holder})
+    return 0 seconds
+
+#> Returns the start date of a cooldown with an id and holder
+#>
+#> @param id The id of the cooldown
+#> @param holder (Optional) The holder of the cooldown
+#> @return The start date of the cooldown
+function get_cooldown_start(id: string, holder: metadataholder = {_}) :: date:
+    return {-mib_lib::cooldown::%{_id}%::%{_holder}%::start}
+
+#> Returns the duration of a cooldown with an id and holder
+#>
+#> @param id The id of the cooldown
+#> @param holder (Optional) The holder of the cooldown
+#> @return The duration of the cooldown
+function get_cooldown_duration(id: string, holder: metadataholder = {_}) :: timespan:
+    return {-mib_lib::cooldown::%{_id}%::%{_holder}%::duration}
+
+#> Returns whether the cooldown with an id and holder is active
+#>
+#> @param id The id of the cooldown
+#> @param holder (Optional) The holder of the cooldown
+#> @return Whether the cooldown is active
+function is_on_cooldown(id: string, holder: metadataholder = {_}) :: boolean:
+    return whether get_remaining_cooldown({_id}, {_holder}) > 0 seconds
+
+# ------------------------
+# A very simple and rigid timespan formatter
+# Vanilla 2.8.x
+
+on load:
+    set {-unix-zero-date} to date(1970, 1, 1)
+    set {-default-timespan-format} to "HH:mm:ss"
+
+# uses SimpleDateFormat patterns for formatting.
+# https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/text/SimpleDateFormat.html
+#
+# This means that elements have maximum values. For example, hours cannot exceed 24 before rolling over to days.
+# Nor can minutes exceed 59.
+#
+# Custom text can be inserted by using single quotes: "HH 'hours' mm 'minutes' ss 'seconds'"
+# note that only a-z and A-Z need to be within ''.
+#
+# y: year
+# D: day (0-364/365)
+# H: hour (0-23)
+# m: minute (0-59)
+# s: second (0-59)
+#
+function format_timespan(timespan: timespan, format: string = {-default-timespan-format}) :: string:
+    return ({_timespan} after {-unix-zero-date}) formatted as {_format}

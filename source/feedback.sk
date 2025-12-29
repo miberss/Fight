@@ -1,0 +1,33 @@
+using for loops
+
+function load_feedback():
+    for {_type} in ("bug", "report", "suggestion"):
+        set {-feedback-type::%{_type}%} to {_type}
+        set {-feedback-storage::%{_type}%} to nbt of file "storage/feedback/%{_type}%"
+        set compound list tag "results" of {-feedback-storage::%{_type}%} to new nbt compound
+
+command /feedback <type: string> <message: string>:
+
+    trigger:
+        save_feedback(player, {_type}, {_message})
+
+function save_feedback(player: player, type: string, message: string):
+    if {-feedback-type::%{_type}%} is not set:
+        send actionbar component "That is not a valid feedback type" to {_player}
+        stop
+
+    else if is_on_cooldown("feedback", {_player}) = true:
+        set {_cooldown} to format_timespan(get_remaining_cooldown("feedback", {_player}), "m:ss")
+        send actionbar component "You are on a %{_cooldown}% cooldown for feedback" to {_player}
+        stop
+
+    set_cooldown("feedback", 5 minutes, {_player})
+    
+    add (new nbt compound) to (compound list tag "results" of {-feedback-storage::%{_type}%}):
+        set uuid tag "author" of nbt to uuid of {_player}
+        set string tag "message" of nbt to {_message}
+    
+    save nbt file of {-feedback-storage::%{_type}%}
+
+on tab complete of "feedback":
+	set tab completions for position 1 to {-feedback-type::*}

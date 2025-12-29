@@ -1,0 +1,42 @@
+using script reflection
+
+function load_play_state():
+    set {-states::play} to a_state_with("play", function "start", function "tick", function "end")
+
+local function start(e: text, machine: StateMachine struct):
+    set {_wrapper} to {_machine}->context
+    set {_player} to {_wrapper}->player
+    set {_player}'s gamemode to adventure
+    set_attributes({_player})
+    transition_to({_player}, location(0, 2, 0))
+    #clear_chat()
+    #resend_chat(last 100 elements of {-message::*})
+    log("global_player", merge components (format_player_header({_player}, green), px(4), format_timestamp(now), new line, px(3), a_lore("into the depths..."), new line))
+
+function set_attributes(player: player):
+    set camera distance attribute of {_player} to 6
+    set entity interaction range attribute of {_player} to 0
+    set fall damage multiplier attribute of {_player} to 2
+    set gravity attribute of {_player} to 0.1
+    set movement speed attribute of {_player} to 0.2
+    set jump strength attribute of {_player} to 0.7
+    set scale attribute of {_player} to 1.1
+    set sneaking speed attribute of {_player} to 2
+    set step height attribute of {_player} to 1
+
+local function tick(machine: StateMachine struct):
+    set {_wrapper} to {_machine}->context
+    set {_player} to {_wrapper}->player
+    send actionbar component (merge components colored_component("PLAY MODE", rgb(230, 120, 50)), {_wrapper}->actionbar with " ") to {_player}
+
+local function end(e: text, machine: StateMachine struct):
+    set {_wrapper} to {_machine}->context
+    set {_player} to {_wrapper}->player
+    set {_player}'s gamemode to spectator
+    #clear_chat()
+    #resend_chat(last 100 elements of {-message::*})
+    log("global_player", merge components (format_player_header({_player}, red), px(4), format_timestamp(now), new line, px(3), a_lore("out from which they came..."), new line))
+
+command /play:
+    trigger:
+        trigger_event(wrapper(player)->machine, "play")

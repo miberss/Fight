@@ -1,0 +1,7 @@
+using for loops
+
+# Mimics a set, taking in a list and returning a keyed list where each value is it's index.
+function set(in: objects) :: objects:
+    for {_object} in {_in::*}:
+        set {_out::%{_object}%} to {_object}
+    return keyed {_out::*}
