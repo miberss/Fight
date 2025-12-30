@@ -8,7 +8,8 @@ struct SpecialEffect:
     id: string
     config: struct
     create: function
-    line_depth: integer
+    components: textcomponents
+    depth: integer
 
 function load_special_effects():
     for {_script} in scripts in {@path}:
@@ -16,11 +17,12 @@ function load_special_effects():
             id: name of {_script}
             config: result of function "config" in script "%{_script}%"
             create: function "create" in script "%{_script}%"
-            line_depth: loop-counter
+            depth: loop-counter
 
 function special_effect(id: string) :: SpecialEffect struct:
     return {-special-effect::%{_id}%}
 
 function rendered_special_effect(id: string) :: struct:
-    set {_effect} to special_effect({_id})
-    return result of {_effect}->create with args {_effect}->config
+    set {_effect} to struct copy of special_effect({_id})
+    set {_effect}->components to result of {_effect}->create with args {_effect}->config
+    return {_effect}

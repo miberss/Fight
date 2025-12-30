@@ -24,7 +24,7 @@ on item held change:
     cancel event
     if is_on_cooldown("camera_length_change", player) = true:
         stop
-    set {_dir} to index of past hotbar slot - index of player's tool
+    set {_dir} to (index of (past hotbar slot)) - (index of (player's tool))
     set_cooldown("camera_length_change", 2 ticks, player)
     loop 10 times:
         add ({_dir} * ease_in_out_cubic(loop-counter / 10)) / 10 to camera distance attribute of player

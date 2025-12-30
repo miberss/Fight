@@ -6,6 +6,7 @@ import:
 struct Item:
     uuid: string
     base: item
+    template_nbt: nbt compound
     owner: player
     slot: integer
     rank: string
@@ -16,13 +17,14 @@ struct Item:
 
 function delete_item(item: Item struct):
     loop ...{_item}->stats.values():
-        run {-stat::%loop-value->id%}->remove with args loop-value
+        run stat_type(loop-value->id)->remove with args loop-value
+    set slot {_item}->slot of {_item}->owner to air 
     delete {_item}
 
 function item(item: item) :: Item struct:
     return {-item::%string tag "uuid" of custom nbt of {_item}%}
 
-function item_of(stat: StatData struct) :: Item struct:
+function item_of(stat: Stat struct) :: Item struct:
     return {-item::%{_stat}->item->uuid%}
 
 function a_blank_item(model: string, name: textcomponent, uuid: string) :: item:

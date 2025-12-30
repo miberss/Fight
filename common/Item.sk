@@ -4,7 +4,6 @@ import:
     io.papermc.paper.datacomponent.item.SwingAnimation
 
 function set_swing_animation(item: item struct, animation: string, duration: timespan):
-    broadcast {_animation}
     set {_i} to (slot {_item}->slot of {_item}->owner)
     {_i}.setData(DataComponentTypes.SWING_ANIMATION, SwingAnimation.swingAnimation().type(Animation.valueOf({_animation} in uppercase)).duration(ticks of {_duration}).build())
     set (slot {_item}->slot of {_item}->owner) to {_i}

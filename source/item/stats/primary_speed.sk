@@ -5,7 +5,7 @@ local function load():
         name: "Primary Speed"
         extra: 1
 
-local function update(bindable: bindable struct, stat: StatData struct) :: textcomponent:
+local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
     set {_item} to {_stat}->item
     set {_value} to {_stat}->bindable->value * 1 second
     set_swing_duration({_item}, {_value})

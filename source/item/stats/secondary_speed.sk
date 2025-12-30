@@ -5,7 +5,7 @@ local function load():
         name: "Secondary Speed"
         extra: 1
 
-local function update(bindable: bindable struct, stat: StatData struct) :: textcomponent:
+local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
     set {_item} to {_stat}->item
     set_consume_duration({_stat}->item, {_stat}->bindable->value * 1 second)
     apply use cooldown to (slot {_item}->slot of {_item}->owner):

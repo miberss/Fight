@@ -1,41 +1,45 @@
 using script reflection
 using for loops
 
-function render_lore(item: Item struct, description: string, special-effects: strings, stats: objects):
-    set {_order::1::1} to a_writing(a_lore({_description}))
+function render_lore(item: Item struct):
+    set {_template} to {_item}->template_nbt
 
-    for {_name}, {_value} in {_stats::*}:
-        set {_order::2::%loop-counter%} to rendered_stat({_name}, {_value})
+    set {_order::1::1} to a_writing(a_lore(string tag "description" of {_template}))
 
-    for {_special} in {_special-effects::*}:
-        set {_order::3::%loop-counter%} to rendered_special_effect({_special})
+    set {_stats-tag} to (compound tag "stats[0]" of {_template})
+    for {_i}, {_name} in nbt tags of {_stats-tag}:
+        set {_order::2::%{_i}%} to rendered_stat({_name}, double tag {_name} of {_stats-tag})
 
-    for index {_section} in (indexes of {_order::*}):
+    for {_i}, {_special} in (string list tag "special_effects" of {_template}):
+        set {_order::3::%{_i}%} to rendered_special_effect({_special})
+
+    for {_section} in (indexes of {_order::*}):
         sort {_order::%{_section}%::*} by [input->depth]
+        
         for {_object} in {_order::%{_section}%::*}:
-            set {_depth} to render_object({_object}, {_depth} + 1)
+            set {_depth} to render_object({_item}, {_object}, {_depth} + 1)
         add 1 to {_depth}
 
-function render_object(object: struct, depth: integer) :: integer:
+function render_object(item: Item struct, object: struct, depth: integer) :: integer:
     set {_object}->depth to {_depth}
 
     switch (struct template of {_object}):
-        case "statdata":
+        case "stat":
             attach_stat({_item}, {_object})
-        case "writing", "special_effect":
+        case "writing", "specialeffect":
             set {_depth} to set_lines({_item}, {_object}->components, {_depth})
 
     return {_depth}
 
-function set_lines(item: Item struct, components: textcomponents, line: integer) :: integer:
+function set_lines(item: Item struct, components: textcomponents, depth: integer) :: integer:
     for {_component} in {_components::*}:
-        set_line({_item}->owner, {_item}->slot, {_line} + loop-counter, {_component})
-        add 1 to {_line}
-    return {_line} - 1
+        set_line({_item}->owner, {_item}->slot, {_depth}, {_component})
+        add 1 to {_depth}
+    return {_depth} - 1
 
-function set_line(stat: StatData struct, component: textcomponent):
+function set_line(stat: Stat struct, component: textcomponent):
     set {_item} to {_stat}->item
-    set_line({_stat}->owner, {_item}->slot, {_item}->depth, {_component})
+    set_line({_item}->owner, {_item}->slot, {_stat}->depth, {_component})
 
 function set_line(player: player, slot: integer, line: integer, component: textcomponent):
     set italic format of {_component} to false

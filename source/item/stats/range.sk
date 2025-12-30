@@ -5,5 +5,5 @@ local function load():
         name: "Range"
         extra: 3
 
-local function update(bindable: bindable struct, stat: StatData struct) :: textcomponent:
+local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
     return a_filled_stat_field("range", a_real({_stat}->bindable->value))

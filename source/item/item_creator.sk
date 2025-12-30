@@ -14,6 +14,7 @@ function create_item(nbt: nbt compound) :: Item struct:
 
     set {-item::%{_uuid}%} to Item struct instance:
         uuid: {_uuid}
+        template_nbt: {_nbt}
         base: a_blank_item(string tag "itemtype" of {_nbt}, {_item_name}, {_uuid})
         rank: {_rank}
         primary_animation: string tag "primary_animation" of {_nbt}
@@ -24,7 +25,7 @@ function give_item_to(item: Item struct, player: player):
     set {_item}->owner to {_player} 
     set {_item}->slot to index of first empty slot in {_player}
     set slot {_item}->slot of {_player} to {_item}->base
-    #render_lore({_item}, {_o}->description, {_o}->special_effects, keyed {_stats::*})
+    render_lore({_item})
 
 function load_item():
     loop {-item::*}:
@@ -39,7 +40,6 @@ function load_item():
             set double tag "range" of nbt to 4
             set double tag "critical_chance" of nbt to 20
             set double tag "critical_damage" of nbt to 10
-            set double tag "burn_radius" of nbt to 3.5
             set double tag "blood_stone" of nbt to 5
         set string tag "itemtype" of nbt to "iron sword"
         set string tag "name" of nbt to "The Soulfire Blade"
@@ -50,7 +50,5 @@ function load_item():
         set string tag "primary_animation" of nbt to "stab"
         set string tag "secondary_animation" of nbt to "trident"
         set int tag "level" of nbt to 10
-
-    set {_item} to create_item({_nbt})
     
     give_item_to({_item}, player("miberss"))

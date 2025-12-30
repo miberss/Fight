@@ -7,9 +7,9 @@ on swap held items:
 on sneak toggle:
 	player is not sneaking
 
-on right click:
+#on right click:
 
-on left click:
+#on left click:
 
 on sprint toggle:
 	player is not sprinting

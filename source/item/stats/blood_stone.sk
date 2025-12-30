@@ -1,5 +1,5 @@
 struct BloodStone:
-    stat: StatData struct
+    stat: Stat struct
     dynamic player: player = this->stat->item->owner
     limit: integer
     orbs: BloodStoneOrb structs
@@ -111,7 +111,7 @@ local function break_orb(orb: BloodStoneOrb struct):
     kill {_orb}->interaction, {_orb}->display, ({_orb}->display's passengers)
     delete {_orb}
 
-local function update(bindable: Bindable struct, stat: StatData struct) :: textcomponent:
+local function update(bindable: Bindable struct, stat: Stat struct) :: textcomponent:
     set {_blood_stone} to {_stat}->type
     bind_set_silently({_bindable}, clamp({_bindable}->value, 0, {_blood_stone}->limit))
     set {_value} to {_bindable}->value
@@ -128,7 +128,7 @@ local function update(bindable: Bindable struct, stat: StatData struct) :: textc
 
     return a_notch_bar(component_from_id("blood_stone"), component_from_id("unfilled_blood_stone"), {_stat}->type->limit, {_bindable}->value)
 
-local function tick(stat: StatData struct):
+local function tick(stat: Stat struct):
     set {_blood_stone} to {_stat}->type
     set {_point_count} to max({_stat}->bindable->value, 5)
     set {_angle} to 360 / {_point_count}
@@ -142,11 +142,11 @@ local function tick(stat: StatData struct):
         tick_orb({_orb})
     add 1 to {_blood_stone}->rotation
 
-local function add(stat: StatData struct) :: BloodStone struct:
+local function add(stat: Stat struct) :: BloodStone struct:
     return BloodStone struct instance:
         limit: 8
         stat: {_stat}
 
-local function remove(stat: StatData struct):
+local function remove(stat: Stat struct):
     loop {_stat}->type->orbs:
         break_orb(loop-value)
