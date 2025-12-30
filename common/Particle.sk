@@ -1,2 +1,2 @@
-function a_particle(at: location, particles: customparticles):
-    draw {_particles::*} at {_location}
+function a_particle(at: location, particles: objects):
+    draw {_particles::*} at {_at}

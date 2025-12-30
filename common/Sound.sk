@@ -64,11 +64,12 @@ function sound(players: players, sound: Sound struct):
 function a_generator_at(generator: SoundGenerator struct, at: location, audience: players = all players) :: Sound struct:
 	set {_generator} to struct copy of {_generator}
 	set {_generator}->at to {_at}
-	set {_generator}->audience to {_to}
 	set {_sound} to sound_from({_generator})
+	set {_transformer} to {_generator}->transformer
 	for {_i} in ({_generator}->times) times:
-		set {_sound} to result of {_generator}->transformer with args {_sound}
-		sound({_generator}->audience, {_sound})
+		if {_transformer} is set:
+			set {_sound} to result of {_transformer} with args {_sound}, {_i}
+		sound({_audience::*}, {_sound})
 		wait {_generator}->time_between
 
 function sound_from(generator: SoundGenerator struct) :: Sound struct:

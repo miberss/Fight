@@ -1,6 +1,6 @@
 function on_knockback(ctx: CombatContext struct):
-    set {_velocity} to (normalized vector from {_attacker} to {_entity}) * 0.6
-    set velocity of {_entity} to (velocity of {_entity} * 0.05)
+    set {_velocity} to (normalized vector from {_ctx}->attacker to {_ctx}->victim) * 0.6
+    set velocity of {_ctx}->victim to (velocity of {_ctx}->victim * 0.05)
     wait 1 tick
-    set y of {_velocity} to 0.2
-    set velocity of {_entity} to {_velocity}
+    set y of {_velocity} to rnd(0.1, 0.3)
+    set velocity of {_ctx}->victim to {_velocity} + (random vector * 0.15)

@@ -21,13 +21,18 @@ local function create(thunderbolt: Thunderbolt struct) :: textcomponents:
     set {_text::3} to a_effect_description(merge components minimessage from "splash ", {_radius})
     return {_title}, {_text::*}
 
+on drop:
+    cancel event
+    stop if state(player) != {-states::play}
+    on_drop(player)
+
 local function on_drop(player: player):
     stop if is_on_cooldown("thunderbolt", {_player}) = true
     set_cooldown("thunderbolt", 1 second, {_player})
     set {_forward} to vector in direction of {_player}
     set {_right} to {_forward} rotated around y-axis by 30
     set {_left} to {_forward} rotated around y-axis by -30
-    shoot_thunderbolt({_player}, {_forward}, 2.5, 6)
+    shoot_thunderbolt({_player}, {_forward}, 2.5, 4.5)
     wait 2 ticks
     shoot_thunderbolt({_player}, {_right}, 1.5, 4.5)
     wait 2 ticks
@@ -58,8 +63,6 @@ function shoot_thunderbolt(player: player, direction: vector, size: number, rang
     
     set {_entities::*} to ...(world of {_interaction}).getNearbyEntities({_interaction}.getBoundingBox())
     for {_entity} in {_entities::*}:
-        on_hit(a_attack_context({_player}, {_entity}, {_item}, ("magic", "thunderbolt", "lightning")))
-    
-
-    
+        set {_ctx} to a_attack_context({_player}, {_entity}, {_item}, ("magic", "thunderbolt", "lightning"))
+        on_hit({_ctx})
     

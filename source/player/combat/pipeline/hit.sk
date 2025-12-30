@@ -1,4 +1,6 @@
 function on_hit(ctx: CombatContext struct):
+    stop if {_ctx}->attacker = {_ctx}->victim
+    stop if {_ctx}->victim is a display, an interaction
     stop if handle_hit_frames({_ctx}) = true
 
     fx_hit({_ctx})
@@ -9,6 +11,16 @@ function on_hit(ctx: CombatContext struct):
     fx_impact_frames({_ctx})
 
 function fx_hit(ctx: CombatContext struct):
-    set {_body} to body({_ctx}->victim)
-    a_particle({_body}, 10 crit particle)
-    a_particle({_body}, vfx_effect_spell(5, red))
+    set {_hit} to {_ctx}->hit
+    create custom crit:
+        count: 5
+        velocity: outwards
+        extra: 0.2
+    a_particle({_hit}, last created particle)
+    create custom electric_spark:
+        count: 3
+        velocity: outwards
+        extra: 0.2
+    a_particle({_hit}, last created particle)
+    a_particle({_hit}, vfx_effect_spell(5, red))
+    draw 5 effect using particleSpell(red, 1) at {_hit} with delta vec(1, 0, 1) with extra 1

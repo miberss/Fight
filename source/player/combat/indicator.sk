@@ -6,7 +6,7 @@ function a_damage_indicator(ctx: CombatContext struct):
     force {_indicator} to be visible through walls
     add drop shadow to {_indicator}'s text
     set {_mid} to "#fff000" if {_is_critical} = true else "#ff7f5e"
-    set {_damage_text} to with_zeros(round({_damage}, 1), 1)
+    set {_damage_text} to with_zeros(round({_ctx}->damage, 1), 1)
     set {_count} to 20
     loop {_count} times:
         set {_percent} to loop-value / {_count}

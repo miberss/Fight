@@ -1,11 +1,17 @@
 function on_damage(ctx: CombatContext struct):
     if {_ctx}->critical = true:
-        fx_critical(body({_ctx}->victim))
+        fx_critical({_ctx}->hit)
 
     a_damage_indicator({_ctx})
-    fx_blood({_ctx}->attacker, {_ctx}->damage)
+    fx_blood({_ctx})
 
-    play hurt animation on {_entity}
+    play hurt animation on {_ctx}->victim
+    if {_ctx}->victim doesn't have metadata "health":
+        set metadata "health" of {_ctx}->victim to 10
+    
 
-    if {_ctx}->victim's health - {_damage} < 0:
-        on_death({_ctx})
+    if metadata "health" of {_ctx}->victim - 2 < 0:
+        on_death({_ctx}->victim)
+        stop
+    
+    remove 2 from metadata "health" of {_ctx}->victim

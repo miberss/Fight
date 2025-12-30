@@ -1,4 +1,5 @@
-function on_death(player: player):
-    trigger_event(machine({_entity}), "spectate")
-    wait 5 seconds
-    trigger_event(machine({_entity}), "respawn")
+function on_death(victim: entity):
+    delete entity within {_victim}
+    #trigger_event(machine({_player}), "spectate")
+    #wait 5 seconds
+    #trigger_event(machine({_player}), "respawn")

@@ -46,7 +46,7 @@ function load_item():
         set string tag "rank" of nbt to "rare"
         set string tag "sprite" of nbt to "particles:soul_fire_flame"
         set string tag "description" of nbt to "Forged from pure hellfire."
-        set string list tag "special_effects" of nbt to "spin", "thunderbolt"
+        set string list tag "special_effects" of nbt to ("spin", "thunderbolt")
         set string tag "primary_animation" of nbt to "stab"
         set string tag "secondary_animation" of nbt to "trident"
         set int tag "level" of nbt to 10

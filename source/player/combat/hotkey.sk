@@ -7,9 +7,23 @@ on swap held items:
 on sneak toggle:
 	player is not sneaking
 
-#on right click:
+on consume:
+    cancel event
+    stop if state(player) != {-states::play}
+    complete {-cancel::%player%} with item
 
-#on left click:
+on right click:
+    if state(player) != {-states::play}:
+        cancel event
+        stop
+    set {-cancel::%player%} to a_promise()
+    wait for {-cancel::%player%} and store the result in {_item}
+    on_secondary_attack(player, item(item))
+
+on left click:
+    cancel event
+    stop if state(player) != {-states::play}
+    on_primary_attack(player, item(item))
 
 on sprint toggle:
 	player is not sprinting

@@ -20,6 +20,11 @@ local function create(spin: Spin struct) :: textcomponents:
     set {_text::3} to a_effect_description(merge components minimessage from "shortly ", {_time})
     return {_title}, {_text::*}
 
+on drop:
+    cancel event
+    stop if state(player) != {-states::play}
+    on_drop(player)
+
 local function on_drop(player: player):
     stop if is_on_cooldown("spin", {_player}) = true
     set_cooldown("spin", 1 second, {_player})

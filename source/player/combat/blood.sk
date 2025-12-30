@@ -1,41 +1,59 @@
 using for loops
 
 function load_blood():
-    set {-blood-blocks::*} to red glazed terracotta, netherrack, red wool, red concrete powder, nether wart block, fire coral block
-    set {-blood-passables::*} to red carpet, red candle
+    set {-blood-blocks::*} to red glazed terracotta, red concrete powder, red wool, fire coral block
+    set {-blood-blocks::size} to size of {-blood-blocks::*}
+    register block tag named "blood-short-foliage" using red carpet, red candle, crimson roots, nether wart
+    register block tag named "blood-large-foliage" using crimson roots
+    register block tag named "large-foliage" using tall grass, large fern 
     set {-blood-sound-generator} to SoundGenerator struct instance:
         id: "block.sweet_berry_bush.pick_berries"
         volume: 0.1
         pitch: 0.2
         random_pitch: range(0.1)
+    set {-blood-block-generator} to new voronoi generator
+    set frequency of {-blood-block-generator} to 0.17
+    set fractal type of {-blood-block-generator} to DomainWarpProgressive
+    set cellular distance of {-blood-block-generator} to EuclideanSq
 
-function fx_blood(entity: entity, damage: number):
-    set {_body} to body({_entity})
-    fx_blood_particle({_body}, {_damage})
-    fx_blood_blocks({_entity})
-    a_generator_at({-blood-sound-generator}, {_body})
+local function random_blood_block(at: location) :: itemtype:
+    set {_noise} to noise_at({-blood-block-generator}, {_at}) + 1.2
+    set {_size} to {-blood-blocks::size}
+    set {_scaled} to ({_size} * {_noise})
+    return {-blood-blocks::%clamp(floor({_scaled}), 1, {_size})%}
 
-function fx_blood_particle(body: location, damage: number):
-    draw 10 block using red glazed terracotta at {_body} with offset vec(0.6) with extra {_damage}
+function fx_blood(ctx: CombatContext struct):
+    fx_blood_particle({_ctx}->hit, {_ctx}->damage)
+    fx_blood_blocks({_ctx}->victim)
+    a_generator_at({-blood-sound-generator}, {_ctx}->hit)
+
+function fx_blood_particle(hit: location, damage: number):
+    draw 10 block using red glazed terracotta at {_hit} with offset vec(0.6) with extra {_damage}
 
 function fx_blood_blocks(entity: entity):
     
-    set {_blocks::*} to (first 10 elements of shuffled blocks in radius 3 around head of {_entity}) where [input != air]
-
+    set {_blocks::*} to (first 10 elements of shuffled blocks in radius 4 around body({_entity})) where [input != air]
     set {_viewers::*} to players
+    set {_large-foliage} to (tag "large-foliage")
 
-    # switch to functional?
     for {_block} in {_blocks::*}:
         if all:
             {_block} is passable
-            block below {_block} is solid
+            (block below {_block}) is not passable
+            (block above {_block}) is air
         then:
-            set {_type} to any of {-blood-passables::*}
-        else:
-            set {_type} to any of {-blood-blocks::*}
-        make {_viewers::*} see {_block} as {_type}
+            make {_viewers::*} see {_block} as (any of tag values of tag "blood-short-foliage")
+        else if ({_block} is tagged as {_large-foliage}):
+            set {_type} to (any of tag values of tag "blood-large-foliage")
+            make {_viewers::*} see {_block} as {_type}
+            set {_below} to block below {_block}
+            set {_above} to block above {_block}
+            if {_above} is tagged as {_large-foliage}:
+                make {_viewers::*} see {_above} as {_type}
+            else if {_below} is tagged as {_large-foliage}:
+                make {_viewers::*} see {_below} as {_type}
+        else if (type of {_block}) is solid:
+            make {_viewers::*} see {_block} as random_blood_block({_block})
         wait 1 tick
-
-    wait 120 seconds
-
+    wait 30 seconds
     make {_viewers::*} see {_blocks::*} as normal

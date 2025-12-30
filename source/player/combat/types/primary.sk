@@ -1,9 +1,6 @@
-on left click:
-    cancel event
-    stop if state(player) != {-states::play}
-    on_primary_attack(player, item(item))
-
 function on_primary_attack(attacker: player, item: Item struct):
-    set {_victim} to hit_scan_from({_attacker})
-    set {_ctx} to a_attack_context({_attacker}, {_victim}, {_item}, ("primary"))
+    set {_scan} to hit_scan_from({_attacker})
+    stop if {_scan}->victim is not set
+    set {_ctx} to a_attack_context({_attacker}, {_scan}->victim, {_item}, ("primary"))
+    set {_ctx}->hit to {_scan}->hit
     on_hit({_ctx})
