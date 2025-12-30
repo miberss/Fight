@@ -1,0 +1,85 @@
+struct Stat:
+    const id: string
+    const update: function
+    const add: function
+    const remove: function
+    const tick: function
+    const line_depth: integer
+
+struct StatData:
+    id: string
+    item: Item struct
+    bindable: object
+    depth: integer
+    indent: integer = 2
+    render: textcomponents
+    type: struct
+
+struct Ratio:
+    limit: object
+
+using for loops
+using script reflection
+
+function load_stats():
+    for {_script} in scripts in "source/stats":
+        set {-stat::%name of {_script}%} to Stat struct instance:
+            id: name of {_script}
+            update: fn("update", "%{_script}%")
+            add: fn("add", "%{_script}%")
+            remove: fn("remove", "%{_script}%")
+            tick: fn("tick", "%{_script}%")
+            line_depth: loop-counter
+        run fn("load", "%{_script}%")
+
+function stat(id: string) :: Stat struct:
+    return {-stat::%{_id}%}
+
+function stat_of(item: Item struct, stat: string) :: object:
+    if {_item}->stats.containsKey({_stat}) = false:
+        throw runtime error "Tried to get value of %{_stat}% on %{_item}->uuid%, but failed as there isn't that stat on the item"
+        stop
+    return {_item}->stats.get({_stat})
+
+function bindable_stat_of(item: Item struct, stat: string) :: Bindable struct:
+    return stat_of({_item}, {_stat})->bindable
+
+function set_stat(item: Item struct, stat: string, value: object):
+    set bindable_stat_of({_item}, {_id})'s value to {_value}
+
+function attach_stat(item: Item struct, stat: StatData struct):
+    set {_stat}->item to {_item}
+    {_item}->stats.put({_stat}->id, {_stat})
+    trigger_update({_stat}->bindable, {_stat}->bindable->value)
+
+function rendered_stat(id: string, value: object) :: StatData struct:
+    set {_stat} to StatData struct instance:
+        id: {_id}
+        type: result of {-stat::%{_id}%}->add with args {_stat}
+
+    set {_renderer} to a_stat_lore_renderer({_stat})
+    set {_stat}->bindable to bindable with {_value} using callback {_renderer}
+    return {_stat}
+
+function a_stat_lore_renderer(stat: StatData struct) :: section:
+
+    set {_item} to {_stat}->item
+    set {_stat-update} to stat({_stat}->id)->update
+    set {_indent} to px({_stat}->indent)
+
+    create section with {_bindable} stored in {_lore-renderer}:
+        set {_stat-component} to result of {_stat-update} with args {_bindable}, {_stat}
+        set {_render} to merge components ({_indent}, {_stat-component})
+        set_line({_stat}, {_render})
+        set {_stat}->render to {_render}
+
+    return {_lore-renderer}
+
+function execute_stat_ticker(stat: StatData struct):
+    set {_id} to {_stat}->id
+    if stat({_id})->tick is not set:
+        stop
+
+    run 0 tick later repeating every 1 tick:
+        exit loop if item_of({_stat}) is not set
+        run stat({_id})->tick with args {_stat}

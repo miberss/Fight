@@ -1,0 +1,7 @@
+struct Writing:
+    components: textcomponents
+    depth: integer
+
+function a_writing(components: textcomponents) :: Writing struct:
+    return Writing struct instance:
+        components: {_components::*}

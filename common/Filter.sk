@@ -31,7 +31,7 @@
 # NOTE: filtered phrases are NOT saved between server restarts, so you need to add them on load each time. 
 #       This can be worked around, but it was intentional to keep the script simple and focused on filtering logic.
 
-function load_chat_filter():
+on load:
     # clear existing data
     clear {-{@cf}::alternates::*}
     clear {-{@cf}::separators::*}

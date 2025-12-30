@@ -39,11 +39,13 @@ function all_in_circle_fast(radius: integer) :: vectors:
 function short(location: location) returns string:
     return "%floor(x-coord of {_location})% %floor(y-coord of {_location})% %floor(z-coord of {_location})%"
 
+function body(entity: entity) returns location:
+
+	return {_entity}'s location ~ y({_entity}.getBoundingBox().getHeight() / 2)
 function sleep_effect(player: player, back: boolean = true):
 	set {_location} to location of {_player}
-	make {_player} go to sleep at location(0, -50, 0) with force
-	if {_player} is sleeping:
-		make {_player} wake up
+	make {_player} go to sleep at location(y(-50)) with force
+	make {_player} wake up if {_player} is sleeping
 	send actionbar "" to {_player}
 	teleport({_player}, {_location}) if {_back} = true
 
@@ -56,6 +58,9 @@ function transition_to(player: player, location: location):
 
 function location(vector: vector) :: location:
 	return location((x of {_vector}), (y of {_vector}), (z of {_vector}))
+
+function location(x: number, y: number, z: number, ya: number, pi: number) :: location:
+	return location({_x}, {_y}, {_z}, world "world", {_ya}, {_pi})
 
 function with_yaw(location: location, yaw: number) :: location:
 	set yaw of {_location} to {_yaw}

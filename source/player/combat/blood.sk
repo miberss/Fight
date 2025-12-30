@@ -1,0 +1,41 @@
+using for loops
+
+function load_blood():
+    set {-blood-blocks::*} to red glazed terracotta, netherrack, red wool, red concrete powder, nether wart block, fire coral block
+    set {-blood-passables::*} to red carpet, red candle
+    set {-blood-sound-generator} to SoundGenerator struct instance:
+        id: "block.sweet_berry_bush.pick_berries"
+        volume: 0.1
+        pitch: 0.2
+        random_pitch: range(0.1)
+
+function fx_blood(entity: entity, damage: number):
+    set {_body} to body({_entity})
+    fx_blood_particle({_body}, {_damage})
+    fx_blood_blocks({_entity})
+    a_generator_at({-blood-sound-generator}, {_body})
+
+function fx_blood_particle(body: location, damage: number):
+    draw 10 block using red glazed terracotta at {_body} with offset vec(0.6) with extra {_damage}
+
+function fx_blood_blocks(entity: entity):
+    
+    set {_blocks::*} to (first 10 elements of shuffled blocks in radius 3 around head of {_entity}) where [input != air]
+
+    set {_viewers::*} to players
+
+    # switch to functional?
+    for {_block} in {_blocks::*}:
+        if all:
+            {_block} is passable
+            block below {_block} is solid
+        then:
+            set {_type} to any of {-blood-passables::*}
+        else:
+            set {_type} to any of {-blood-blocks::*}
+        make {_viewers::*} see {_block} as {_type}
+        wait 1 tick
+
+    wait 120 seconds
+
+    make {_viewers::*} see {_blocks::*} as normal

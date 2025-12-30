@@ -1,0 +1,35 @@
+using script reflection
+
+import:
+    java.util.HashMap
+
+struct Item:
+    uuid: string
+    base: item
+    owner: player
+    slot: integer
+    rank: string
+    const stats: javaobject = new HashMap()
+    const special_effects: javaobject = new HashMap()
+    primary_animation: string
+    secondary_animation: string
+
+function delete_item(item: Item struct):
+    loop ...{_item}->stats.values():
+        run {-stat::%loop-value->id%}->remove with args loop-value
+    delete {_item}
+
+function item(item: item) :: Item struct:
+    return {-item::%string tag "uuid" of custom nbt of {_item}%}
+
+function item_of(stat: StatData struct) :: Item struct:
+    return {-item::%{_stat}->item->uuid%}
+
+function a_blank_item(model: string, name: textcomponent, uuid: string) :: item:
+    set {_item} to gunpowder
+    set string tag "uuid" of custom nbt of {_item} to {_uuid}
+    set item model of {_item} to {_model}
+    set item flags of {_item} to all item flags
+    set component item name of {_item} to {_name}
+    set max stack size of {_item} to 1
+    return {_item}

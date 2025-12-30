@@ -7,7 +7,6 @@ function load_feedback():
         set compound list tag "results" of {-feedback-storage::%{_type}%} to new nbt compound
 
 command /feedback <type: string> <message: string>:
-
     trigger:
         save_feedback(player, {_type}, {_message})
 

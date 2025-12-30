@@ -1,0 +1,11 @@
+struct StatFieldBuilder:
+    const emoji: string
+    const name: string
+    const color: color
+    const extra: number = 0
+
+function a_stat_field(builder: StatFieldBuilder struct) :: textcomponent:
+    return colored_component(merge components ((minimessage from {_builder}->emoji, px({_builder}->extra + 3), minimessage from {_builder}->name, component(":"))), {_builder}->color)
+
+function a_filled_stat_field(stat_field: string, value: object) :: textcomponent:
+    return merge components ((component_from_id("stat:%{_stat_field}%"), px(2), colored_component({_value}, rgb(240, 240, 240))))

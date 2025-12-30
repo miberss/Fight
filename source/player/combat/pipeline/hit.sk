@@ -1,0 +1,14 @@
+function on_hit(ctx: CombatContext struct):
+    stop if handle_hit_frames({_ctx}) = true
+
+    fx_hit({_ctx})
+
+    on_knockback({_ctx})
+    on_damage({_ctx})
+
+    fx_impact_frames({_ctx})
+
+function fx_hit(ctx: CombatContext struct):
+    set {_body} to body({_ctx}->victim)
+    a_particle({_body}, 10 crit particle)
+    a_particle({_body}, vfx_effect_spell(5, red))

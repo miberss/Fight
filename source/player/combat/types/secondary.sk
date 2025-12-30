@@ -1,0 +1,17 @@
+on consume:
+    cancel event
+    stop if state(player) != {-states::play}
+    complete {-cancel::%player%} with item
+
+on right click with a gunpowder:
+    if state(player) != {-states::play}:
+        cancel event
+        stop
+    set {-cancel::%player%} to a_promise()
+    wait for {-cancel::%player%} and store the result in {_item}
+    on_secondary_attack(player, item(item))
+
+function on_secondary_attack(player: player, item: Item struct):
+    set {_victim} to hit_scan_from({_attacker}, 8.5)
+    set {_ctx} to a_attack_context({_attacker}, {_victim}, {_item}, ("primary"))
+    on_hit({_ctx})

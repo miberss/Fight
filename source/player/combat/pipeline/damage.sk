@@ -1,0 +1,11 @@
+function on_damage(ctx: CombatContext struct):
+    if {_ctx}->critical = true:
+        fx_critical(body({_ctx}->victim))
+
+    a_damage_indicator({_ctx})
+    fx_blood({_ctx}->attacker, {_ctx}->damage)
+
+    play hurt animation on {_entity}
+
+    if {_ctx}->victim's health - {_damage} < 0:
+        on_death({_ctx})

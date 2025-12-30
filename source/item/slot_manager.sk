@@ -1,0 +1,9 @@
+on inventory slot change:
+    event-item != 0 airs
+    if player's metadata "slot=%(index of event-slot)%" is not set:
+        set player's metadata "slot=%(index of event-slot)%" to (now - (1 tick))
+    if time since player's metadata "slot=%(index of event-slot)%" >= 1 tick:
+        set {-item::%string tag "uuid" of (custom nbt of event-item)%}->slot to (index of event-slot)
+
+function update_slot(player: player, slot: integer):
+    set ({_player}'s metadata "slot=%{_slot}%") to now

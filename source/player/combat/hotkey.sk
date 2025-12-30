@@ -1,0 +1,15 @@
+on drop:
+    cancel event
+
+on swap held items:
+    cancel event
+
+on sneak toggle:
+	player is not sneaking
+
+on right click:
+
+on left click:
+
+on sprint toggle:
+	player is not sprinting

@@ -1,0 +1,8 @@
+function load_hit_scan():
+    set {_entities::*} to all entitytypes
+    remove player (entitytype) from {_entities::*} 
+    set {-hit-scan-ignored-entities::*} to {_entities::*}
+
+function hit_scan_from(attacker: player, distance: number = 4.5, ray_size: number = 0.3) :: player:
+    set {_ray} to (ray trace from {_attacker} with max distance {_distance} with ray size {_ray_size} while ignoring passable blocks while ignoring ({-hit-scan-ignored-entities::*}, {_attacker}))
+    return raytrace hit entity of {_ray}

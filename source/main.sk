@@ -5,16 +5,16 @@ on skript load:
 
 function load_all():
     load_components()
-    load_chat_filter()
     load_chat()
     load_ranks()
     load_commands()
     load_stats()
     load_special_effects()
     load_item()
-    sword_handler_load()
+    load_combat()
     load_feedback()
     load_animation_components()
+    
     
     load_dev_state()
     load_play_state()
@@ -24,31 +24,18 @@ function load_all():
 
 on load:
     load_all()
-    loop players:
-        set_wrapper_for(loop-value)
+    #for {_player} in players:
+    #    set_wrapper_for({_player})
 
 on hunger bar change:
-    cancel event
-
-on damage:
     cancel event
 
 on join:
     set_wrapper_for(player)
 
-on leave:
-    
-    clear_chat()
-    resend_chat(last 100 elements of {-message::*})
-    log("global_player", merge components (format_player_header(player, red), px(4), format_timestamp(now), new line, px(3), a_lore("out from which they came..."), new line))
-
 every tick:
     for {_player} in players:
         machine_tick(wrapper({_player})->machine)
-
-on death:
-    cancel event
-    transition_to(victim, location(0, 2, 0))
 
 on fade:
     cancel event

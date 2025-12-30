@@ -5,9 +5,9 @@ local function load():
         name: "Damage"
         extra: 0
 
-local function update(bindable: bindable struct, stat_data: StatData struct) :: textcomponent:
-    return a_filled_stat_field("damage", a_real({_stat_data}->bindable->value))
+local function update(bindable: bindable struct, stat: StatData struct) :: textcomponent:
+    return a_filled_stat_field("damage", a_real({_stat}->bindable->value))
 
-local function add(stat_data: StatData struct) :: Ratio struct:
+local function add(stat: StatData struct) :: Ratio struct:
     return Ratio struct instance:
         limit: 10

@@ -12,3 +12,6 @@ function a_player_machine(player_wrapper: PlayerWrapper struct, state: string) :
 
 function state(player: player) :: State struct:
     return wrapper({_player})->machine->state
+
+function machine(player: player) :: StateMachine struct:
+    return wrapper({_player})->machine

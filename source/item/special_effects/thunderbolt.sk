@@ -1,27 +1,41 @@
-local function create() :: textcomponents:
-    set {_title} to a_effect_title("THUNDERBOLT", rgb(100,150,240))
-    set {_key} to a_key("drop")
-    set {_amount} to a_lore_unit(3, "x")
-    set {_radius} to a_lore_unit(3.5, "m")
+using for loops
+
+struct Thunderbolt:
+    name: string = "THUNDERBOLT"
+    color: color = rgb(100,150,240)
+    key: string = "drop"
+    cooldown: timespan = 3 seconds
+    radius: number = 3.5
+    amount: integer = 3
+
+local function add() :: struct:
+    return Thunderbolt struct instance
+
+local function create(thunderbolt: Thunderbolt struct) :: textcomponents:
+    set {_title} to a_effect_title({_thunderbolt}->name, {_thunderbolt}->color)
+    set {_key} to a_key({_thunderbolt}->key)
+    set {_amount} to a_lore_unit({_thunderbolt}->amount, "x")
+    set {_radius} to a_lore_unit({_thunderbolt}->radius, "m")
     set {_text::1} to a_effect_description(merge components {_key}, minimessage from " Casts thunderbolts ", {_amount})
     set {_text::2} to a_effect_description(merge components minimessage from "that drop down and create a")
     set {_text::3} to a_effect_description(merge components minimessage from "splash ", {_radius})
     return {_title}, {_text::*}
 
-on drop:
-    cancel event
-    stop if is_on_cooldown("thunderbolt", player) = true
-    set_cooldown("thunderbolt", 1 second, player)
-    set {_forward} to vector in direction of player
+local function on_drop(player: player):
+    stop if is_on_cooldown("thunderbolt", {_player}) = true
+    set_cooldown("thunderbolt", 1 second, {_player})
+    set {_forward} to vector in direction of {_player}
     set {_right} to {_forward} rotated around y-axis by 30
     set {_left} to {_forward} rotated around y-axis by -30
-    shoot_thunderbolt(player, {_forward}, 2.5, 6)
+    shoot_thunderbolt({_player}, {_forward}, 2.5, 6)
     wait 2 ticks
-    shoot_thunderbolt(player, {_right}, 1.5, 4.5)
+    shoot_thunderbolt({_player}, {_right}, 1.5, 4.5)
     wait 2 ticks
-    shoot_thunderbolt(player, {_left}, 1.5, 4.5)
+    shoot_thunderbolt({_player}, {_left}, 1.5, 4.5)
 
 function shoot_thunderbolt(player: player, direction: vector, size: number, range: number):
+    set {_item} to item(tool of {_player})
+
     set {_head} to {_player}'s head
     set {_ray} to (raytrace from {_head} along {_direction} with max distance {_range} while ignoring passable blocks)
     set {_location} to (raytrace hit block of {_ray}) ? block at ({_head} ~ {_direction} * {_range})
@@ -43,7 +57,9 @@ function shoot_thunderbolt(player: player, direction: vector, size: number, rang
     wait for future {_component}->end and store the result in {_interaction}
     
     set {_entities::*} to ...(world of {_interaction}).getNearbyEntities({_interaction}.getBoundingBox())
-    hit_entities({_player}, {_entities::*})
+    for {_entity} in {_entities::*}:
+        on_hit(a_attack_context({_player}, {_entity}, {_item}, ("magic", "thunderbolt", "lightning")))
+    
 
     
     

@@ -6,6 +6,7 @@ options:
     red: rgb(190, 50, 140)
     plus: rgb(151, 213, 140)
     negative: rgb(228, 164, 164)
+    lore_unit: rgb(171, 205, 239)
     arrow_right: ⏵
     angular_bracket:
         l: ‹
@@ -41,3 +42,42 @@ function a_percent(value: number) :: text component:
 
 function a_angular_brackets(component: textcomponent) :: textcomponent:
     return wrap_around({_component}, c("{@angular_bracket.l}"), c("{@angular_bracket.r}"), 0.9)
+
+function a_rank(rank: string, color: color) :: textcomponent:
+    return wrap_around(colored_component(uppercase {_rank}, {_color}), c("["), c("]"), 0.8)
+
+function a_level(level: integer) :: textcomponent:
+    return a_angular_brackets(colored_component("%{_level}%", yellow))
+
+function a_effect_title(title: string, color: color) :: textcomponent:
+    set {_width} to (50 - (width({_title}) / 3)) / 2
+    set {_bar} to a_notch_bar(component_from_id("bar"), component_from_id("bar"), {_width}, {_width})
+    return merge components {_bar}, px(4), a_angular_brackets(colored_component({_title}, {_color})), px(4), {_bar}
+
+function a_effect_description(line: textcomponent) :: textcomponent:
+    set {_component} to merge components px(6), {_line}
+    set color format of {_component} to {@white}
+    return {_component}
+
+function a_lore(lore: string) :: textcomponent:
+    set {_lore} to colored_component("“ %{_lore}% „ ", change_brightness({@gray}, 1.4))
+    set italic format of {_lore} to true
+    return merge components (px(2), {_lore})
+
+function a_lore_unit(value: number, unit: string) :: textcomponent:
+    return wrap_around(component_unit({_value}, {_unit}, {@lore_unit}, {@lore_unit}), c("("), c(")"), 1)
+
+function a_key(id: string) :: textcomponent:
+    set {_key} to keybind component of "key.%{_id}%"
+    set color format of {_key} to orange
+    return wrap_around({_key}, c("["), c("]"), 0.85)
+
+function a_notch_bar(component_a: textcomponent, component_b: textcomponent, max: integer, count: integer) :: textcomponent:
+    set {_count} to min({_max}, {_count})
+    return merge components (({_count} times) mapped with [{_component_a}], ({_max} - {_count} times) mapped with [{_component_b}])
+
+function a_fancy_notch_bar(component_a: textcomponent, component_b: textcomponent, max: integer, count: integer) :: textcomponent:
+    set {_count} to min({_max}, {_count})
+    set {_a::*} to ({_count} times) mapped with [shift_brightness({_component_a}, 0.8 + input / ({_count} * 2))]
+    set {_b::*} to ({_max} - {_count} times) mapped with [{_component_b}]
+    return merge components {_a::*}, {_b::*}
