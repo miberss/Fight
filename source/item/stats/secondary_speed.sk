@@ -1,3 +1,9 @@
+struct SecondarySpeed:
+    order: integer = 6
+
+local function add(stat: Stat struct) :: SecondarySpeed struct:
+    return SecondarySpeed struct instance
+
 local function load():
     save_component("stat:secondary_speed", a_stat_field(StatFieldBuilder struct instance)):
         emoji: "⌚"
@@ -7,8 +13,8 @@ local function load():
 
 local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
     set {_item} to {_stat}->item
-    set_consume_duration({_stat}->item, {_stat}->bindable->value * 1 second)
+    set_consume_duration({_stat}->item, {_stat}->current * 1 second)
     apply use cooldown to (slot {_item}->slot of {_item}->owner):
-        seconds: {_value}
+        seconds: {_stat}->current
         group: "item:%{_item}->uuid%"
-    return a_filled_stat_field("secondary_speed", a_unit({_stat}->bindable->value, "s"))
+    return a_filled_stat_field("secondary_speed", a_unit({_stat}->current, "s"))

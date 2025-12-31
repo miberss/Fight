@@ -4,25 +4,30 @@ options:
 using for loops
 using script reflection
 
+struct SpecialEffectType:
+    # add() :: extension?
+    const add: function
+
+    # update(extension) :: textcomponents
+    const update: function
+
 struct SpecialEffect:
-    id: string
-    config: struct
-    create: function
+    type: SpecialEffectType struct
     components: textcomponents
-    depth: integer
 
 function load_special_effects():
     for {_script} in scripts in {@path}:
-        set {-special-effect::%name of {_script}%} to SpecialEffect struct instance:
-            id: name of {_script}
-            config: result of function "config" in script "%{_script}%"
-            create: function "create" in script "%{_script}%"
-            depth: loop-counter
+        set {-special_effect_type::%name of {_script}%} to SpecialEffectType struct instance:
+            add: function "add" in script "%{_script}%"
+            update: function "update" in script "%{_script}%"
 
-function special_effect(id: string) :: SpecialEffect struct:
-    return {-special-effect::%{_id}%}
+function special_effect_type(id: string) :: SpecialEffectType struct:
+    return {-special_effect_type::%{_id}%}
 
-function rendered_special_effect(id: string) :: struct:
-    set {_effect} to struct copy of special_effect({_id})
-    set {_effect}->components to result of {_effect}->create with args {_effect}->config
-    return {_effect}
+function a_special_effect(type: SpecialEffectType struct) :: SpecialEffect struct:
+    return SpecialEffect struct instance:
+        type: {_type}
+        components: result of {_type}->update with args result of {_type}->add
+
+function render_special_effect(item: Item struct, effect: SpecialEffect struct) :: integer:
+    return append_lines({_item}, {_effect}->components)

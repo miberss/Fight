@@ -14,7 +14,7 @@ function create_item(nbt: nbt compound) :: Item struct:
 
     set {-item::%{_uuid}%} to Item struct instance:
         uuid: {_uuid}
-        template_nbt: {_nbt}
+        source: {_nbt}
         base: a_blank_item(string tag "itemtype" of {_nbt}, {_item_name}, {_uuid})
         rank: {_rank}
         primary_animation: string tag "primary_animation" of {_nbt}
@@ -26,6 +26,17 @@ function give_item_to(item: Item struct, player: player):
     set {_item}->slot to index of first empty slot in {_player}
     set slot {_item}->slot of {_player} to {_item}->base
     render_lore({_item})
+
+function deserialize_stats(source: nbtcompound) :: objects:
+    set {_compound::*} to keyed (compound_as_list(compound tag "stats[0]" of {_source}))
+    set {_stats::*} to {_compound::*} mapped with [a_stat(stat_type(input index), input)]
+    sort {_stats::*} by input->extension->order
+    broadcast {_stats::*} mapped with [input->extension->order]
+    return {_stats::*}
+
+function deserialize_special_effects(source: nbtcompound) :: objects:
+    set {_compound::*} to (string list tag "special_effects" of {_source})
+    return {_compound::*} mapped with [a_special_effect(special_effect_type(input))]
 
 function load_item():
     loop {-item::*}:

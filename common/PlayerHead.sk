@@ -22,5 +22,5 @@ function load_player_head(id: string, texture: string):
 #>
 #> @param id The ID of the head
 #> @return The head
-function get_head(id: string):: item:
+function head(id: string):: item:
     return {-mib_lib::head::%{_id}%::item}

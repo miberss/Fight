@@ -1,3 +1,9 @@
+struct PrimarySpeed:
+    order: integer = 5
+
+local function add(stat: Stat struct) :: PrimarySpeed struct:
+    return PrimarySpeed struct instance
+
 local function load():
     save_component("stat:primary_speed", a_stat_field(StatFieldBuilder struct instance)):
         emoji: "⌛"
@@ -7,11 +13,11 @@ local function load():
 
 local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
     set {_item} to {_stat}->item
-    set {_value} to {_stat}->bindable->value * 1 second
+    set {_value} to {_stat}->current * 1 second
     set_swing_duration({_item}, {_value})
     apply transient attribute modifier to (slot {_item}->slot of {_item}->owner):
         id: "fight:primary_speed"
         attribute: attack speed
-        amount: {_stat}->bindable->value
+        amount: {_stat}->current
         operation: multiply_scalar_1
-    return a_filled_stat_field("primary_speed", a_unit({_stat}->bindable->value, "s"))
+    return a_filled_stat_field("primary_speed", a_unit({_stat}->current, "s"))

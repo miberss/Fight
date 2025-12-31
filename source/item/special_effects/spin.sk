@@ -7,10 +7,10 @@ struct Spin:
     radius: integer = 3.5
     cooldown: timespan = 2 seconds
 
-local function config() :: struct:
+local function add() :: struct:
     return Spin struct instance
 
-local function create(spin: Spin struct) :: textcomponents:
+local function update(spin: Spin struct) :: textcomponents:
     set {_title} to a_effect_title({_spin}->name, {_spin}->color)
     set {_key} to a_key({_spin}->key)
     set {_time} to a_lore_unit(seconds of {_spin}->cooldown, "s")
@@ -18,7 +18,7 @@ local function create(spin: Spin struct) :: textcomponents:
     set {_text::1} to a_effect_description(merge components {_key}, minimessage from " Spins you around and hits")
     set {_text::2} to a_effect_description(merge components minimessage from "enemies in a radius ", {_radius})
     set {_text::3} to a_effect_description(merge components minimessage from "shortly ", {_time})
-    return {_title}, {_text::*}
+    return {_title}, {_text::*}, blank()
 
 on drop:
     cancel event
@@ -41,6 +41,9 @@ function do_a_spin(player: player, item: Item struct):
         draw 2 sweep_attack at {_player}'s head ~ {_forward} * 3
         set {_entities::*} to ...(world of {_player}).getNearbyEntities({_player}'s head, 3.5, 3.5, 3.5)
         for {_entity} in {_entities::*}:
-            on_hit(a_attack_context({_player}, {_entity}, {_item}, ("magic", "thunderbolt", "lightning")))
+            set {_ctx} to a_attack_context({_player}, {_item}, ("spin"))
+            process_stats({_ctx}, "pre_hit")
+            set {_ctx}->victim to {_entity}
+            on_hit({_ctx})
         wait 1 tick if mod(loop-counter, 10) = 0
     change_tickrate({_player}, 20, false)

@@ -1,6 +1,6 @@
 function on_primary_attack(attacker: player, item: Item struct):
-    set {_scan} to hit_scan_from({_attacker})
-    stop if {_scan}->victim is not set
-    set {_ctx} to a_attack_context({_attacker}, {_scan}->victim, {_item}, ("primary"))
-    set {_ctx}->hit to {_scan}->hit
+    set {_ctx} to a_attack_context({_attacker}, {_item}, ("primary"))
+    process_stats({_ctx}, "pre_hit")
+    shoot_ray({_ctx})
+    stop if {_ctx}->victim is not set
     on_hit({_ctx})

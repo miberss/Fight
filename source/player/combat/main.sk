@@ -1,9 +1,6 @@
 function load_combat():
     load_blood()
     load_criticals()
-    load_hit_scan()
-
-# doesn't work if you are in creative, since it gives you an extra two entity interaction range.
 
 on damage:
     cancel event

@@ -199,7 +199,7 @@ function filter_message(message: text, sender: sender, match all: boolean = fals
         sender: {_sender}
     
     loop {-{@cf}::filtered phrases::*}:
-        set {_start-time} to unix timestamp of now
+        set {_start_time} to unix timestamp of now
         set {_filtered phrase} to loop-value
         # check for existence before removing exceptions
         set {_matcher} to {_filtered phrase}->pattern.matcher({_message})
@@ -261,7 +261,7 @@ local function generate_pattern(phrase: text, boundary: boolean, strictness: num
     set {_characters::*} to {_phrase} split at "" without trailing string
     loop {_characters::*}:
         set {_char} to loop-value
-        set {_alt pattern} to get_alternates_pattern({_char}, {_strictness})
+        set {_alt pattern} to alternates_pattern({_char}, {_strictness})
         if {_strictness} is 0 or 1:
             # allow repeated letters
             set {_alt pattern} to "%{_alt pattern}%+"
@@ -270,7 +270,7 @@ local function generate_pattern(phrase: text, boundary: boolean, strictness: num
 
     if {_strictness} is 0:
         # allow separators between letters
-        set {_pattern} to join {_alt patterns::*} with get_separators_pattern()
+        set {_pattern} to join {_alt patterns::*} with separators_pattern()
     else:
         set {_pattern} to join {_alt patterns::*} with ""
 
@@ -296,13 +296,13 @@ local function use_separators(separators: texts):
         set {-{@cf}::separators::%loop-index%} to {_char}
 
 # returns a regex pattern string matching zero or more separator characters
-local function get_separators_pattern() :: text:
+local function separators_pattern() :: text:
     if {-{@cf}::separators::*} is set:
         return "[%join {-{@cf}::separators::*}%]*"
     return ""
 
 # returns a regex pattern string matching the character and its alternates based on strictness
-local function get_alternates_pattern(char: text, strictness: number) :: text:
+local function alternates_pattern(char: text, strictness: number) :: text:
     if any:
         {_strictness} is 3
         {-{@cf}::alternates::%{_char}%} is not set

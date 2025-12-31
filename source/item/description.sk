@@ -1,7 +1,2 @@
-struct Writing:
-    components: textcomponents
-    depth: integer
-
-function a_writing(components: textcomponents) :: Writing struct:
-    return Writing struct instance:
-        components: {_components::*}
+function render_description(item: Item struct, source: string) :: integer:
+    return append_lines({_item}, a_lore({_source}))

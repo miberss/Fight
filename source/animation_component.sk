@@ -15,10 +15,10 @@ struct AnimationComponent:
     dynamic count: integer = ticks of this->duration
 
 function save_animation_component(id: string, component: AnimationComponent struct):
-    set {-animation-component::%{_id}%} to {_component}
+    set {-animation_component::%{_id}%} to {_component}
 
 function a_animation_component(id: string, location: location, options: struct) :: AnimationComponent struct:
-    set {_component} to struct copy of {-animation-component::%{_id}%}
+    set {_component} to struct copy of {-animation_component::%{_id}%}
     set {_component}->end to a_promise()
     set {_component}->loc to {_location}
     set {_component}->options to {_options}

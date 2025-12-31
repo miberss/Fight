@@ -11,7 +11,7 @@ struct Thunderbolt:
 local function add() :: struct:
     return Thunderbolt struct instance
 
-local function create(thunderbolt: Thunderbolt struct) :: textcomponents:
+local function update(thunderbolt: Thunderbolt struct) :: textcomponents:
     set {_title} to a_effect_title({_thunderbolt}->name, {_thunderbolt}->color)
     set {_key} to a_key({_thunderbolt}->key)
     set {_amount} to a_lore_unit({_thunderbolt}->amount, "x")
@@ -19,7 +19,7 @@ local function create(thunderbolt: Thunderbolt struct) :: textcomponents:
     set {_text::1} to a_effect_description(merge components {_key}, minimessage from " Casts thunderbolts ", {_amount})
     set {_text::2} to a_effect_description(merge components minimessage from "that drop down and create a")
     set {_text::3} to a_effect_description(merge components minimessage from "splash ", {_radius})
-    return {_title}, {_text::*}
+    return {_title}, {_text::*}, blank()
 
 on drop:
     cancel event
@@ -63,6 +63,9 @@ function shoot_thunderbolt(player: player, direction: vector, size: number, rang
     
     set {_entities::*} to ...(world of {_interaction}).getNearbyEntities({_interaction}.getBoundingBox())
     for {_entity} in {_entities::*}:
-        set {_ctx} to a_attack_context({_player}, {_entity}, {_item}, ("magic", "thunderbolt", "lightning"))
+
+        set {_ctx} to a_attack_context({_player}, {_item}, ("magic", "thunderbolt", "lightning"))
+        process_stats({_ctx}, "pre_hit")
+        set {_ctx}->victim to {_entity}
         on_hit({_ctx})
     

@@ -1,4 +1,5 @@
 using script reflection
+using for loops
 
 import:
     java.util.HashMap
@@ -6,26 +7,24 @@ import:
 struct Item:
     uuid: string
     base: item
-    template_nbt: nbt compound
+    source: nbt compound
     owner: player
     slot: integer
     rank: string
-    const stats: javaobject = new HashMap()
-    const special_effects: javaobject = new HashMap()
+    stats: javaobject = new HashMap()
     primary_animation: string
     secondary_animation: string
 
+    render_depth: integer = 1
+
 function delete_item(item: Item struct):
-    loop ...{_item}->stats.values():
-        run stat_type(loop-value->id)->remove with args loop-value
+    for {_stat} in hash_map_as_list({_item}->stats):
+        run {_stat}->type->remove with args {_stat}
     set slot {_item}->slot of {_item}->owner to air 
     delete {_item}
 
 function item(item: item) :: Item struct:
     return {-item::%string tag "uuid" of custom nbt of {_item}%}
-
-function item_of(stat: Stat struct) :: Item struct:
-    return {-item::%{_stat}->item->uuid%}
 
 function a_blank_item(model: string, name: textcomponent, uuid: string) :: item:
     set {_item} to gunpowder

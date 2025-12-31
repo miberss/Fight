@@ -6,14 +6,14 @@ struct Bindable:
 	value: object
 	callbacks: objects
 
-function Bindable(value: object = {_}, callbacks: objects = {_}) :: Bindable struct:
+function a_bindable(value: object = {_}, callbacks: objects = {_}) :: Bindable struct:
 	return Bindable struct instance:
 		value: {_value}
 		callbacks: {_callbacks::*}
 
 expression [a] bindable [with %-object%] [using callback[s] %-objects%]:
 	get:
-		return Bindable(expr-1, exprs-2)
+		return a_bindable(expr-1, exprs-2)
 
 Bindable struct property (old|previous) [bindable] value:
 	return type: object

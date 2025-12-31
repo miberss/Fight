@@ -5,6 +5,12 @@ struct BloodStone:
     orbs: BloodStoneOrb structs
     orbs_to_be_broken: BloodStoneOrb structs
     rotation: number = 0
+    order: integer = 10
+
+local function add(stat: Stat struct) :: BloodStone struct:
+    return BloodStone struct instance:
+        limit: 8
+        stat: {_stat}
 
 struct BloodStoneOrb:
     display: display
@@ -27,7 +33,7 @@ local function a_blood_stone_orb(blood_stone: BloodStone struct) :: BloodStoneOr
     set item of {_glass} to red stained glass
 
     set {_circle} to a_text_display()
-    {_circle}.text(component_from_id("blood_stone").getComponent())
+    set component text of {_circle} to component_from_id("blood_stone")
     set billboard of {_circle} to vertical
     set color of {_circle} to rgb(0,0,0,0)
 
@@ -112,7 +118,7 @@ local function break_orb(orb: BloodStoneOrb struct):
     delete {_orb}
 
 local function update(bindable: Bindable struct, stat: Stat struct) :: textcomponent:
-    set {_blood_stone} to {_stat}->type
+    set {_blood_stone} to {_stat}->extension
     bind_set_silently({_bindable}, clamp({_bindable}->value, 0, {_blood_stone}->limit))
     set {_value} to {_bindable}->value
     if {_value} = ({_bindable}->old_value ? 0):
@@ -126,13 +132,13 @@ local function update(bindable: Bindable struct, stat: Stat struct) :: textcompo
             loop ({_bindable}->old_value - {_value}) times:
                 break_orb(random element of {_blood_stone}->orbs)
 
-    return a_notch_bar(component_from_id("blood_stone"), component_from_id("unfilled_blood_stone"), {_stat}->type->limit, {_bindable}->value)
+    return a_notch_bar(component_from_id("blood_stone"), component_from_id("unfilled_blood_stone"), {_stat}->extension->limit, {_bindable}->value)
 
 local function tick(stat: Stat struct):
-    set {_blood_stone} to {_stat}->type
-    set {_point_count} to max({_stat}->bindable->value, 5)
+    set {_blood_stone} to {_stat}->extension
+    set {_point_count} to max({_stat}->current, 5)
     set {_angle} to 360 / {_point_count}
-    set {_tip} to x(({_stat}->bindable->value / {_blood_stone}->limit) + 2) + y(1)
+    set {_tip} to x(({_stat}->current / {_blood_stone}->limit) + 2) + y(1)
     for {_orb} in {_blood_stone}->orbs:
         set {_rotated_tip} to {_tip}
         rotate {_rotated_tip} around y-axis by {_blood_stone}->rotation
@@ -142,11 +148,6 @@ local function tick(stat: Stat struct):
         tick_orb({_orb})
     add 1 to {_blood_stone}->rotation
 
-local function add(stat: Stat struct) :: BloodStone struct:
-    return BloodStone struct instance:
-        limit: 8
-        stat: {_stat}
-
 local function remove(stat: Stat struct):
-    loop {_stat}->type->orbs:
+    loop {_stat}->extension->orbs:
         break_orb(loop-value)

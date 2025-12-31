@@ -14,8 +14,6 @@ function load_all():
     load_combat()
     load_feedback()
     load_animation_components()
-    
-    
     load_dev_state()
     load_play_state()
     load_spectate_state()
@@ -24,13 +22,13 @@ function load_all():
 on load:
     load_all()
     for {_player} in players:
-        set_wrapper_for({_player})
+        set_wrapper({_player})
 
 on hunger bar change:
     cancel event
 
 on join:
-    set_wrapper_for(player)
+    set_wrapper(player)
 
 every tick:
     for {_player} in players:

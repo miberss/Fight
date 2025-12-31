@@ -1,0 +1,62 @@
+using for loops
+
+condition:
+    patterns:
+        %struct% (has|have) [the] field[s] %strings%
+        %struct% (doesn't|does not|do not|don't) have [the] field[s] %strings%
+    check:
+        for {_field} in exprs-2:
+            stop if ((expr-1).getTemplate()).hasField({_field}) = false
+        continue
+
+plural expression:
+    patterns:
+        template fields of %struct%
+        %struct%'s template fields 
+    return type: objects
+    get:
+        return ...(((expr-1).getTemplate()).getFields()) mapped with [template_field(input)]
+
+struct property java field %string%:
+    return type: object
+    get:
+        return ...(((expr-1).getTemplate()).getFields()) where [input.name() = expr-2]
+
+struct property template field %string%:
+    return type: TemplateField struct
+    get:
+        return template_field(java field expr-2 of expr-1)
+
+struct TemplateField:
+    const java_field: object
+    const name: string
+    const type: type
+    const constant: boolean
+    const singular: boolean
+    const dynamic: boolean
+    const default: string
+
+struct property field %string%:
+    return type: object
+    get:
+        return 1st element of ...((expr-1).getFieldValue(java field expr-2 of expr-1))
+    set:
+        expr-1.setFieldValue((java field expr-2 of expr-1), [change value])
+    add:
+        set {_field} to java field expr-2 of expr-1
+        expr-1.setFieldValue({_field}, [((expr-1).getFieldValue({_field})[0]) + change value])
+    remove:
+        set {_field} to java field expr-2 of expr-1
+        expr-1.setFieldValue({_field}, [((expr-1).getFieldValue({_field})[0]) - change value])
+    reset:
+        expr-1.resetFieldValue(java field expr-2 of expr-1, event)
+
+local function template_field(field: object) :: TemplateField struct:
+    return TemplateField struct instance:
+        java_field: {_field}
+        name: {_field}.name()
+        constant: {_field}.constant()
+        type: {_field}.type()
+        singular: {_field}.single()
+        dynamic: {_field}.dynamic()
+        default: {_field}.defaultExpressionString()

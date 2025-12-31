@@ -1,25 +1,25 @@
 struct CombatContext:
     const attacker: player
-    const victim: entity
     const weapon: Item struct
     const tags: strings
 
+    victim: entity
+
     dynamic players: entities = this->attacker, this->victim 
 
-    hit: location
+    hit: location = head of this->victim
 
     hit_frames: timespan = 5 ticks
-    damage: number = 2
+    damage: number = 0
     knockback: number = 0
     range: number = 0
+    attack_width: number = 0
     critical: boolean = false
     cancelled: boolean = false
 
-function a_attack_context(attacker: player, victim: entity, weapon: Item struct, tags: strings) :: CombatContext struct:
+function a_attack_context(attacker: player, weapon: Item struct, tags: strings) :: CombatContext struct:
 
     return CombatContext struct instance:
         attacker: {_attacker}
-        victim: {_victim}
         weapon: {_weapon}
-        hit: head of {_victim}
         tags: {_tags::*}

@@ -4,15 +4,15 @@ struct PlayerWrapper:
     actionbar: textcomponent
 
 function wrapper(player: player) :: PlayerWrapper struct:
-    return {-player-wrapper::%{_player}%}
+    return {-player_wrapper::%{_player}%}
 
-function set_wrapper_for(player: player):
+function set_wrapper(player: player):
     set {_wrapper} to PlayerWrapper struct instance:
         player: {_player}
     
     set {_wrapper}->machine to a_player_machine({_wrapper}, "play")
 
-    set {-player-wrapper::%{_player}%} to {_wrapper}
+    set {-player_wrapper::%{_player}%} to {_wrapper}
 
 function set_actionbar_for(player: player, component: textcomponent, time: timespan):
     set wrapper({_player})->actionbar to {_component}

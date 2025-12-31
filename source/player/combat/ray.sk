@@ -1,0 +1,9 @@
+function shoot_ray(ctx: CombatContext struct):
+    set {_attacker} to {_ctx}->attacker
+    set {_range} to {_ctx}->range
+    set {_attack_width} to {_ctx}->attack_width
+    set {_pos} to {_attacker}'s head
+    set {_dir} to vector in direction of {_attacker}
+    set {_ray} to (ray trace from {_pos} along {_dir} with max distance {_range} with ray size {_attack_width} while ignoring passable blocks while ignoring ({_ctx}->attacker, displays, interactions))
+    set {_ctx}->victim to raytrace hit entity of {_ray}
+    set {_ctx}->hit to raytrace hit location of {_ray}

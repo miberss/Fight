@@ -22,7 +22,7 @@ struct Message:
 
 function load_chat():
     set {-sound::ping} to a_sound("entity.experience_orb.pickup", 0.5)
-    set {-message-counter} to {-message-counter} ? new AtomicInteger(1)
+    set {-message_counter} to {-message_counter} ? new AtomicInteger(1)
 
 on chat:
     cancel event
@@ -123,20 +123,20 @@ local function reply_handle(sender: player, target: player, reply_history: textc
 
     chat_handle({_sender}, {_message}->message, {_reply_history::*})
 
-# Get the last message sent (for comparison)
-local function message_get_last() :: message struct:
+# get the last message sent (for comparison)
+local function message_last() :: message struct:
     return 2nd last element of {-message::*}
 
-# Retrieve a message by ID
+# retrieve a message by ID
 local function message_get(id: integer) :: message struct:
     return {-message::%{_id}%}
 
-local function message_get_current() :: message struct:
-    return {-message::%{-message-counter}.intValue()%}
+local function message_current() :: message struct:
+    return {-message::%{-message_counter}.intValue()%}
 
-# Store a message and return its ID
+# store a message and return its ID
 local function player_message_save(player: player, text: string) :: message struct:
-    set {_id} to {-message-counter}.incrementAndGet()
+    set {_id} to {-message_counter}.incrementAndGet()
     set {-message::%{_id}%} to Message struct instance:
         message: {_text}
         sender: uuid of {_player}
@@ -145,7 +145,7 @@ local function player_message_save(player: player, text: string) :: message stru
     return {-message::%{_id}%}
 
 function server_message_save(type: string):
-    set {_id} to {-message-counter}.incrementAndGet()
+    set {_id} to {-message_counter}.incrementAndGet()
     set {-message::%{_id}%} to Message struct instance:
         sender: {_type}
         id: {_id}
@@ -161,7 +161,7 @@ function resend_chat(messages: message structs):
 
 function send_and_log(component: textcomponent, players: audiences):
     send component {_component} to {_players::*}
-    set message_get_current()->component to {_component}
+    set message_current()->component to {_component}
 
 function clear_chat():
     send nl repeated 100 times to players

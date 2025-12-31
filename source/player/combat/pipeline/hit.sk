@@ -5,6 +5,8 @@ function on_hit(ctx: CombatContext struct):
 
     fx_hit({_ctx})
 
+    process_stats({_ctx}, "hit_modifiers")
+
     on_knockback({_ctx})
     on_damage({_ctx})
 

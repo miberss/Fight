@@ -2,40 +2,26 @@ using script reflection
 using for loops
 
 function render_lore(item: Item struct):
-    set {_template} to {_item}->template_nbt
+    set {_source} to {_item}->source
 
-    set {_order::1::1} to a_writing(a_lore(string tag "description" of {_template}))
+    set {_item}->render_depth to render_description({_item}, string tag "description" of {_source})
 
-    set {_stats-tag} to (compound tag "stats[0]" of {_template})
-    for {_i}, {_name} in nbt tags of {_stats-tag}:
-        set {_order::2::%{_i}%} to rendered_stat({_name}, double tag {_name} of {_stats-tag})
+    set {_item}->render_depth to append_lines({_item}, blank())
 
-    for {_i}, {_special} in (string list tag "special_effects" of {_template}):
-        set {_order::3::%{_i}%} to rendered_special_effect({_special})
+    for {_stat} in deserialize_stats({_source}):
+        attach_stat({_item}, {_stat})
+        set {_item}->render_depth to render_stat({_item}, {_stat})
 
-    for {_section} in (indexes of {_order::*}):
-        sort {_order::%{_section}%::*} by [input->depth]
-        
-        for {_object} in {_order::%{_section}%::*}:
-            set {_depth} to render_object({_item}, {_object}, {_depth} + 1)
-        add 1 to {_depth}
+    set {_item}->render_depth to append_lines({_item}, blank())
 
-function render_object(item: Item struct, object: struct, depth: integer) :: integer:
-    set {_object}->depth to {_depth}
+    for {_effect} in deserialize_special_effects({_source}):
+        set {_item}->render_depth to render_special_effect({_item}, {_effect})
 
-    switch (struct template of {_object}):
-        case "stat":
-            attach_stat({_item}, {_object})
-        case "writing", "specialeffect":
-            set {_depth} to set_lines({_item}, {_object}->components, {_depth})
-
-    return {_depth}
-
-function set_lines(item: Item struct, components: textcomponents, depth: integer) :: integer:
+function append_lines(item: Item struct, components: textcomponents) :: integer:
     for {_component} in {_components::*}:
-        set_line({_item}->owner, {_item}->slot, {_depth}, {_component})
-        add 1 to {_depth}
-    return {_depth} - 1
+        set_line({_item}->owner, {_item}->slot, {_item}->render_depth, {_component})
+        add 1 to {_item}->render_depth
+    return {_item}->render_depth
 
 function set_line(stat: Stat struct, component: textcomponent):
     set {_item} to {_stat}->item
