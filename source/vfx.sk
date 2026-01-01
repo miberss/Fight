@@ -1,0 +1,4 @@
+function vfx_effect_spell(amount: integer, color: color) :: customparticles:
+    #set {_particles::1} to {_amount} of effect particle using particleSpell({_color}, 1) with offset vec(0.3 + ({_amount} / 20)) with extra 0.2
+    set {_particles::2} to {_amount} of dust particle using dustOption({_color}, 1) with offset vec(0.3 + ({_amount} / 20)) with extra 0.2
+    return {_particles::*}

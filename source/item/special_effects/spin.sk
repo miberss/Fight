@@ -1,0 +1,50 @@
+using for loops
+
+struct Spin:
+    name: string = "SPIN"
+    color: color = light blue
+    key: string = "drop"
+    radius: integer = 3.5
+    cooldown: timespan = 2 seconds
+
+local function add() :: struct:
+    return Spin struct instance
+
+local function update(spin: Spin struct) :: textcomponents:
+    set {_title} to a_effect_title({_spin}->name, {_spin}->color)
+    set {_key} to a_key({_spin}->key)
+    set {_time} to a_lore_unit(seconds of {_spin}->cooldown, "s")
+    set {_radius} to a_lore_unit({_spin}->radius, "m")
+    set {_text::1} to a_effect_description(merge components {_key}, minimessage from " Spins you around and hits")
+    set {_text::2} to a_effect_description(merge components minimessage from "enemies in a radius ", {_radius})
+    set {_text::3} to a_effect_description(merge components minimessage from "shortly ", {_time})
+    return {_title}, {_text::*}, blank()
+
+on drop:
+    cancel event
+    stop if state(player) != {-states::play}
+    on_drop(player)
+
+local function on_drop(player: player):
+    stop if is_on_cooldown("spin", {_player}) = true
+    set_cooldown("spin", 1 second, {_player})
+    do_a_spin({_player})
+
+function do_a_spin(player: player):
+    wait 1 tick
+    set {_forward} to vector in direction of {_player}
+    set pitch of {_forward} to 0
+    change_tickrate({_player}, 0, true)
+    loop 30 times:
+        rotate {_forward} around y-axis by ease_out_circle(loop-counter / 30) * 44.6
+        set yaw of {_player} to yaw of {_forward}
+        draw 2 sweep_attack at {_player}'s head ~ {_forward} * 3
+        if mod(loop-counter, 10) = 0:
+            set {_entities::*} to ...(world of {_player}).getNearbyEntities({_player}'s head, 3.5, 3.5, 3.5)
+            for {_entity} in {_entities::*}:
+                set {_ctx} to a_attack_context({_player}, item(tool of {_player}), ("spin")) 
+                process_stats({_ctx}, "pre_hit")
+                set {_ctx}->victim to {_entity}
+                on_hit({_ctx})
+            wait 1 tick
+    change_tickrate({_player}, 20, false)

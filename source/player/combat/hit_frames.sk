@@ -1,0 +1,4 @@
+function handle_hit_frames(ctx: CombatContext struct) :: boolean:
+    return true if is_on_cooldown("hit_frames", {_ctx}->victim) = true
+    set_cooldown("hit_frames", {_ctx}->hit_frames, {_ctx}->victim)
+    return false

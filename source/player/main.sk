@@ -4,15 +4,15 @@ struct PlayerWrapper:
     actionbar: textcomponent
 
 function wrapper(player: player) :: PlayerWrapper struct:
-    return {-player-wrapper::%{_player}%}
+    return {-player_wrapper::%{_player}%}
 
-function set_wrapper_for(player: player):
+function set_wrapper(player: player):
     set {_wrapper} to PlayerWrapper struct instance:
         player: {_player}
     
     set {_wrapper}->machine to a_player_machine({_wrapper}, "play")
 
-    set {-player-wrapper::%{_player}%} to {_wrapper}
+    set {-player_wrapper::%{_player}%} to {_wrapper}
 
 function set_actionbar_for(player: player, component: textcomponent, time: timespan):
     set wrapper({_player})->actionbar to {_component}
@@ -24,7 +24,7 @@ on item held change:
     cancel event
     if is_on_cooldown("camera_length_change", player) = true:
         stop
-    set {_dir} to index of past hotbar slot - index of player's tool
+    set {_dir} to (index of (past hotbar slot)) - (index of (player's tool))
     set_cooldown("camera_length_change", 2 ticks, player)
     loop 10 times:
         add ({_dir} * ease_in_out_cubic(loop-counter / 10)) / 10 to camera distance attribute of player

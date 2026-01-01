@@ -7,3 +7,9 @@ function range(low: number, high: number) returns Range struct:
         low: {_low}
         high: {_high}
 
+function range(high: number) returns Range struct:
+    return Range struct instance:
+        high: {_high}
+
+function rnd(range: Range struct) returns number:
+    return random number between {_range}->low and {_range}->high

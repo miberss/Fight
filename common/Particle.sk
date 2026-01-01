@@ -1,0 +1,2 @@
+function a_particle(at: location, particles: objects):
+    draw {_particles::*} at {_at}

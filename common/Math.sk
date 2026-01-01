@@ -122,3 +122,6 @@ function z(n: number) :: vector:
 
 function noise(generator: object, vector: vector) :: number:
 	return sknoise value of {_generator} at (x of {_vector}), (y of {_vector}), (z of {_vector})
+
+function noise_at(generator: object, location: location) :: number:
+	return sknoise value of {_generator} at {_location}

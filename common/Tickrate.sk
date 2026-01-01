@@ -1,11 +1,15 @@
 import:
     net.minecraft.network.protocol.game.ClientboundTickingStatePacket
 
-function change_tickrate(player: player, tps: number, frozen: boolean=false):
+function change_tickrate(player: player, tps: number, frozen: boolean = false):
     set {_packet} to new ClientboundTickingStatePacket({_tps}.floatValue(), {_frozen})
     {_player}.getHandle().connection.send({_packet})
 
-function change_tickrate_for(player: player, tps: number, time: timespan, frozen: boolean=false):
-    change_tickrate({_p}, {_tps}, {_frozen})
+function change_tickrate_for(player: player, tps: number, time: timespan, frozen: boolean = false):
+    change_tickrate({_player}, {_tps}, {_frozen})
     wait {_time} 
-    change_tickrate({_p}, 20, {_frozen})
+    change_tickrate({_player}, 20, {_frozen})
+
+function change_tickrates(players: players, tps: number, frozen: boolean = false):
+    loop {_players::*}:
+        change_tickrate(loop-value, {_tps}, {_frozen})

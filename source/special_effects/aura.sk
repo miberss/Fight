@@ -1,5 +1,0 @@
-local function create() :: textcomponents:
-    set {_title} to a_effect_title("AURA", yellow)
-    set {_text::1} to a_effect_description(minimessage from "Occasionally <italic><color:#ABCDEF>(1.2s)<reset> pulls in")
-    set {_text::2} to a_effect_description(minimessage from "people within your radius <italic><color:#ABCDEF>(3.5m)<reset>")
-    return {_title}, {_text::*}

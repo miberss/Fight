@@ -1,0 +1,23 @@
+using script reflection
+
+struct CriticalChance:
+    limit: integer = 100
+    order: integer = 2
+    pre_hit: function = function "pre_hit"
+
+local function add(stat: Stat struct) :: CriticalChance struct:
+    return CriticalChance struct instance
+
+local function pre_hit(ctx: CombatContext struct, stat: Stat struct):
+    set {_ctx}->critical to whether chance of {_stat}->current%
+
+local function load():
+    save_component("stat:critical_chance", a_stat_field(StatFieldBuilder struct instance)):
+        emoji: "⚡"
+        color: rgb(255, 106, 100)
+        name: "Critical Chance"
+        extra: 3
+
+local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
+    return a_filled_stat_field("critical_chance", a_fraction({_stat}->current, {_stat}->extension->limit))
+

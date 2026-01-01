@@ -43,7 +43,7 @@ function number_format(number: number, format: string = "small") :: string:
 	# For non-mathers, treat log as like approximate count of how many digits there are
 	# We divide / 3 to find out the tier because we want to get the index, and that is every 3 digits.
 	set {_tier} to floor({_log_number} / 3)
-	set {_suffix} to get_suffix_at({_tier}, {_format})
+	set {_suffix} to suffix_at({_tier}, {_format})
 
 	# Scale number down to a value between 1 and 999.999...
 	set {_scaled} to round(({_number} / (10 ^ ({_tier} * 3))), 2)
@@ -55,10 +55,10 @@ function number_format(number: number, format: string = "small") :: string:
 
 #> Gets the suffix at a tier in ascending order
 #>
-#> Example: get_suffix_at(3) = "B" (for Billion)
+#> Example: suffix_at(3) = "B" (for Billion)
 #>
 #>
-function get_suffix_at(tier: integer, format: string = "small") :: string:
+function suffix_at(tier: integer, format: string = "small") :: string:
 	return {-mib_lib::suffixes::%{_format}%::%{_tier}%}
 
 #> Returns whether a string is a valid format
@@ -73,6 +73,12 @@ function is_format_valid(format: string) :: boolean:
 #> @return All the formats
 function all_formats() :: strings:
 	return ("small", "big", "scientific" and "full")
+
+#> Creates a number with assured amount of decimal places.
+function with_zeros(number: number, zeros: integer) :: string:
+    if {_number} = floor({_number}):
+        return join ("%{_number}%.", ("0" repeated {_zeros} times))
+    return "%{_number}%"
 
 on script load:
 	# Conway-Wechsler system of naming large numbers, used in Miner's Haven

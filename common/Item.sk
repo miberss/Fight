@@ -4,13 +4,12 @@ import:
     io.papermc.paper.datacomponent.item.SwingAnimation
 
 function set_swing_animation(item: item struct, animation: string, duration: timespan):
-    broadcast {_animation}
     set {_i} to (slot {_item}->slot of {_item}->owner)
     {_i}.setData(DataComponentTypes.SWING_ANIMATION, SwingAnimation.swingAnimation().type(Animation.valueOf({_animation} in uppercase)).duration(ticks of {_duration}).build())
     set (slot {_item}->slot of {_item}->owner) to {_i}
 
 function set_swing_duration(item: item struct, duration: timespan):
-    set_swing_animation({_item}, {_item}->swing_animation, {_duration})
+    set_swing_animation({_item}, {_item}->primary_animation, {_duration})
 
 function set_consume_animation(item: item struct, animation: string, duration: timespan):
     set {_i} to (slot {_item}->slot of {_item}->owner)
@@ -22,4 +21,4 @@ function set_consume_animation(item: item struct, animation: string, duration: t
     set (slot {_item}->slot of {_item}->owner) to {_i}
 
 function set_consume_duration(item: item struct, duration: timespan):
-    set_consume_animation({_item}, {_item}->consume_animation, {_duration})
+    set_consume_animation({_item}, {_item}->secondary_animation, {_duration})

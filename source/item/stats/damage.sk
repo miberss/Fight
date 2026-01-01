@@ -1,0 +1,22 @@
+using script reflection
+
+struct Damage:
+    order: integer = 1
+    hit_modifiers: function = function "hit_modifiers"
+
+local function add(stat: Stat struct) :: Damage struct:
+    return Damage struct instance
+
+local function hit_modifiers(ctx: CombatContext struct, stat: Stat struct):
+    add {_stat}->current to {_ctx}->damage
+
+local function load():
+    save_component("stat:damage", a_stat_field(StatFieldBuilder struct instance)):
+        emoji: "🗡"
+        color: rgb(245, 65, 95)
+        name: "Damage"
+        extra: 0
+
+local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
+    return a_filled_stat_field("damage", a_real({_stat}->current))
+

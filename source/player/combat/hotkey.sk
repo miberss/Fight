@@ -1,0 +1,36 @@
+on drop:
+    cancel event
+
+on swap held items:
+    cancel event
+
+on sneak toggle:
+	player is not sneaking
+
+on consume:
+    cancel event
+    stop if state(player) != {-states::play}
+    complete {-cancel::%player%} with item
+
+on right click:
+    switch state(player):
+        case {-states::play}:
+            set {-cancel::%player%} to a_promise()
+            wait for {-cancel::%player%} and store the result in {_item}
+            on_secondary_attack(player, item(item))
+        case {-states::build}:
+            # nothing
+        default:
+            cancel event
+
+on left click:
+    switch state(player):
+        case {-states::play}:
+            on_primary_attack(player, item(item))
+        case {-states::build}:
+            # nothing
+        default:
+            cancel event
+
+on sprint toggle:
+	player is not sprinting

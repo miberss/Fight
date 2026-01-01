@@ -1,8 +1,3 @@
-
-# must require that admin_state, build_state and player_state have both loaded prior.
-function load_player_machine():
-#    set {-player::states::*} to keyed ({-states::build}, {-states::dev}, {-states::play})
-
 function a_player_machine(player_wrapper: PlayerWrapper struct, state: string) :: StateMachine struct:
     set {_dev::*} to a_transition_with("dev", {-states::build}, {-states::dev}), a_transition_with("dev", {-states::play}, {-states::dev})
     set {_play::*} to a_transition_with("play", {-states::build}, {-states::play}), a_transition_with("play", {-states::dev}, {-states::play}), a_transition_with("respawn", {-states::spectate}, {-states::play})
@@ -12,3 +7,6 @@ function a_player_machine(player_wrapper: PlayerWrapper struct, state: string) :
 
 function state(player: player) :: State struct:
     return wrapper({_player})->machine->state
+
+function machine(player: player) :: StateMachine struct:
+    return wrapper({_player})->machine

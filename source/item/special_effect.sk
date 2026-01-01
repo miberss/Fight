@@ -1,0 +1,33 @@
+options:
+    path: "source/item/special_effects/"
+
+using for loops
+using script reflection
+
+struct SpecialEffectType:
+    # add() :: extension?
+    const add: function
+
+    # update(extension) :: textcomponents
+    const update: function
+
+struct SpecialEffect:
+    type: SpecialEffectType struct
+    components: textcomponents
+
+function load_special_effects():
+    for {_script} in scripts in {@path}:
+        set {-special_effect_type::%name of {_script}%} to SpecialEffectType struct instance:
+            add: function "add" in script "%{_script}%"
+            update: function "update" in script "%{_script}%"
+
+function special_effect_type(id: string) :: SpecialEffectType struct:
+    return {-special_effect_type::%{_id}%}
+
+function a_special_effect(type: SpecialEffectType struct) :: SpecialEffect struct:
+    return SpecialEffect struct instance:
+        type: {_type}
+        components: result of {_type}->update with args result of {_type}->add
+
+function render_special_effect(item: Item struct, effect: SpecialEffect struct) :: integer:
+    return append_lines({_item}, {_effect}->components)

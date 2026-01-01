@@ -1,0 +1,115 @@
+options:
+    path: "source/item/stats/"
+
+using for loops
+using script reflection
+
+# (behavior definition)
+# - stateless, registered globally
+struct StatType:
+    id: string
+
+    # add(stat) :: extension?
+    const add: function
+    
+    # remove(stat)
+    const remove: function
+
+    # update(stat, bindable)
+    const update: function
+
+    # tick(stat)
+    const tick: function
+
+# (runtime instance)
+# - bound to item
+# - optional extensions for specialized behaviour
+struct Stat:
+    # behaviour
+    type: StatType struct
+    
+    # reference to item it's bound to
+    item: Item struct
+
+    # contains actual stat value
+    bindable: Bindable struct
+    dynamic current: object = this->bindable->value 
+
+    depth: integer
+    indent: integer = 2
+
+    # cached render
+    render: textcomponents
+
+    # optional, stat specific
+    extension: struct
+
+function load_stat_types():
+    for {_script} in scripts in {@path}:
+        set {_id} to name of {_script}
+        set {-stat_type::%{_id}%} to StatType struct instance:
+            id: {_id}
+            add: function "add" in script "%{_script}%"
+            remove: function "remove" in script "%{_script}%"
+            update: function "update" in script "%{_script}%"
+            tick: function "tick" in script "%{_script}%"
+        run function "load" in script "%{_script}%"
+
+function stat_type(id: string) :: StatType struct:
+    return {-stat_type::%{_id}%}
+
+function stat(item: Item struct, type: StatType struct) :: Stat struct:
+    if {_item}->stats.containsKey({_type}) = false:
+        throw runtime error "Tried to get value of %{_id}% on %{_item}->uuid%, but failed as there isn't that stat on the item"
+        stop
+    return {_item}->stats.get({_type})
+
+function bindable_stat(item: Item struct, type: StatType struct) :: Bindable struct:
+    return stat({_item}, {_type})->bindable
+
+function set_stat(item: Item struct, type: StatType struct, value: object):
+    set bindable_stat({_item}, {_type})'s value to {_value}
+
+function a_stat(type: StatType struct, value: object) :: Stat struct:
+    set {_stat} to Stat struct instance:
+        type: {_type}
+
+    if {_type}->add is set:
+        set {_stat}->extension to result of {_type}->add with args {_stat}
+
+    set {_renderer} to a_stat_renderer({_stat})
+    set {_stat}->bindable to a_bindable({_value}, a_stat_renderer({_stat}))
+    return {_stat}
+
+function a_stat_renderer(stat: Stat struct) :: section:
+
+    set {_item} to {_stat}->item
+    set {_update} to {_stat}->type->update
+    set {_indent} to px({_stat}->indent)
+
+    create section with {_bindable}, {_value} stored in {_lore_renderer}:
+        set {_stat_component} to result of {_update} with args {_bindable}, {_stat}
+        set {_render} to merge components ({_indent}, {_stat_component})
+        set_line({_stat}, {_render})
+        set {_stat}->render to {_render}
+    
+    start_stat_tick({_stat})
+
+    return {_lore_renderer}
+
+function render_stat(item: Item struct, stat: Stat struct) :: integer:
+    set {_stat}->depth to {_item}->render_depth
+    trigger_update({_stat}->bindable, {_stat}->current)
+    return {_item}->render_depth + 1
+
+function attach_stat(item: Item struct, stat: Stat struct):
+    set {_stat}->item to {_item}
+    {_item}->stats.put({_stat}->type, {_stat})
+
+function start_stat_tick(stat: Stat struct):
+    if {_stat}->type->tick is not set:
+        stop
+
+    run 0 tick later repeating every 1 tick:
+        exit loop if {-item::%{_stat}->item->uuid%} is not set
+        run {_stat}->type->tick with args {_stat}

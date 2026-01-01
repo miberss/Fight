@@ -1,0 +1,70 @@
+using for loops
+
+struct Thunderbolt:
+    name: string = "THUNDERBOLT"
+    color: color = rgb(100,150,240)
+    key: string = "drop"
+    cooldown: timespan = 3 seconds
+    radius: number = 3.5
+    amount: integer = 3
+
+local function add() :: struct:
+    return Thunderbolt struct instance
+
+local function update(thunderbolt: Thunderbolt struct) :: textcomponents:
+    set {_title} to a_effect_title({_thunderbolt}->name, {_thunderbolt}->color)
+    set {_key} to a_key({_thunderbolt}->key)
+    set {_amount} to a_lore_unit({_thunderbolt}->amount, "x")
+    set {_radius} to a_lore_unit({_thunderbolt}->radius, "m")
+    set {_text::1} to a_effect_description(merge components {_key}, minimessage from " Casts thunderbolts ", {_amount})
+    set {_text::2} to a_effect_description(merge components minimessage from "that drop down and create a")
+    set {_text::3} to a_effect_description(merge components minimessage from "splash ", {_radius})
+    return {_title}, {_text::*}, blank()
+
+on drop:
+    cancel event
+    stop if state(player) != {-states::play}
+    on_drop(player)
+
+local function on_drop(player: player):
+    stop if is_on_cooldown("thunderbolt", {_player}) = true
+    set_cooldown("thunderbolt", 1 second, {_player})
+    set {_forward} to vector in direction of {_player}
+    set {_right} to {_forward} rotated around y-axis by 30
+    set {_left} to {_forward} rotated around y-axis by -30
+    shoot_thunderbolt({_player}, {_forward}, 2.5, 4.5)
+    wait 2 ticks
+    shoot_thunderbolt({_player}, {_right}, 1.5, 4.5)
+    wait 2 ticks
+    shoot_thunderbolt({_player}, {_left}, 1.5, 4.5)
+
+function shoot_thunderbolt(player: player, direction: vector, size: number, range: number):
+
+    set {_head} to {_player}'s head
+    set {_ray} to (raytrace from {_head} along {_direction} with max distance {_range} while ignoring passable blocks)
+    set {_location} to (raytrace hit block of {_ray}) ? block at ({_head} ~ {_direction} * {_range})
+    set {_line} to line in direction {_direction} and length {_range}
+    draw shape {_line} at {_head}:
+        set event-shape's particle to dust color transition particle using dustTransition(rgb(255,255,255), rgb(100,150,240), 1)
+    loop particle locations of {_line} centered at {_head}:
+        draw 5 of trail particle using trail(loop-value, white, 5 ticks) at loop-value with delta vec(0.1)
+    draw 30 dust using rgb(20, 60, 200) at {_location} with delta vec(0.2) with extra 0.3
+    a_star({_location}, 5, 10)
+    set {_ray} to (raytrace from {_location} along y(-1) while ignoring passable blocks while ignoring all entitytypes)
+    set {_line} to line from {_location} to (raytrace hit location of {_ray})
+    draw shape {_line}:
+        set event-shape's particle to dust color transition particle using dustTransition(rgb(255,255,255), rgb(100,150,240), 1)
+    loop particle locations of {_line} centered at {_location}:
+        draw 5 of trail particle using trail(loop-value, white, 5 ticks) at loop-value with delta vec(0.1)
+    set {_component} to a_animation_component("flash", (raytrace hit block of {_ray}) ~ y(0.5), FlashOptions struct instance):
+        size: {_size}
+    wait for future {_component}->end and store the result in {_interaction}
+    
+    set {_entities::*} to ...(world of {_interaction}).getNearbyEntities({_interaction}.getBoundingBox())
+    for {_entity} in {_entities::*}:
+
+        set {_ctx} to a_attack_context({_player}, item(tool of {_player}), ("magic", "thunderbolt", "lightning"))
+        process_stats({_ctx}, "pre_hit")
+        set {_ctx}->victim to {_entity}
+        on_hit({_ctx})
+    

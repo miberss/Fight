@@ -1,9 +1,0 @@
-local function load():
-    save_component("stat:critical_damage", a_stat_field(StatFieldBuilder struct instance)):
-        emoji: "⚔"
-        color: rgb(255, 200, 100)
-        name: "Critical Damage"
-        extra: 1
-
-local function update(bindable: bindable struct, stat_data: StatData struct) :: textcomponent:
-    return a_filled_stat_field("critical_damage", a_percent({_stat_data}->bindable->value))

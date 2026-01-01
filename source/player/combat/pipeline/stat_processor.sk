@@ -1,0 +1,8 @@
+using for loops
+using script reflection
+
+function process_stats(ctx: CombatContext struct, phase: string):
+    set {_stats::*} to hash_map_as_list(({_ctx}->weapon)->stats)
+    set {_phase::*} to {_stats::*} where [input->extension has field {_phase}]
+    for {_stat} in {_phase::*}:
+        run {_stat}->extension's field {_phase} with args {_ctx}, {_stat}

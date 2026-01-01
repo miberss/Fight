@@ -1,0 +1,14 @@
+function load_impact_frames():
+    set {-generator::impact} to SoundGenerator struct instance:
+        id: "entity.player.attack.strong", "block.note_block.bell", "block.note_block.bass"
+        volume: 0.3
+        random_volume: range(0.2)
+        pitch: 0.8
+        random_pitch: range(0.1)
+        times: 3
+
+function fx_impact_frames(ctx: CombatContext struct):
+    a_generator_at({-generator::impact}, {_ctx}->victim)
+    change_tickrates({_ctx}->players, 0, true)
+    wait 2 ticks
+    change_tickrates({_ctx}->players, 20, false)

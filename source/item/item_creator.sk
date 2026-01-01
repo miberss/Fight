@@ -1,0 +1,66 @@
+using reflection
+using for loops
+
+function create_item(nbt: nbt compound) :: Item struct:
+    set {_uuid} to random uuid
+    set {_level} to int tag "level" of {_nbt}
+    set {_rank} to string tag "rank" of {_nbt}
+    set {_name} to string tag "name" of {_nbt}
+    set {_sprite} to string tag "sprite" of {_nbt}
+
+    set {_level_component} to a_level({_level})
+    set {_name_component} to shadow(component(proper case {_name}), rgb(0,0,0,255))
+    set {_item_name} to merge(({-rank::%{_rank}%}, sprite({_sprite}), {_name_component}, {_level_component}), px(2))
+
+    set {-item::%{_uuid}%} to Item struct instance:
+        uuid: {_uuid}
+        source: {_nbt}
+        base: a_blank_item(string tag "itemtype" of {_nbt}, {_item_name}, {_uuid})
+        rank: {_rank}
+        primary_animation: string tag "primary_animation" of {_nbt}
+        secondary_animation: string tag "secondary_animation" of {_nbt}
+    return {-item::%{_uuid}%}
+
+function give_item_to(item: Item struct, player: player):
+    set {_item}->owner to {_player} 
+    set {_item}->slot to index of first empty slot in {_player}
+    set slot {_item}->slot of {_player} to {_item}->base
+    render_lore({_item})
+
+function deserialize_stats(source: nbtcompound) :: objects:
+    set {_compound::*} to keyed (compound_as_list(compound tag "stats[0]" of {_source}))
+    set {_stats::*} to {_compound::*} mapped with [a_stat(stat_type(input index), input)]
+    sort {_stats::*} by input->extension->order
+    return {_stats::*}
+
+function deserialize_special_effects(source: nbtcompound) :: objects:
+    set {_compound::*} to (string list tag "special_effects" of {_source})
+    return {_compound::*} mapped with [a_special_effect(special_effect_type(input))]
+
+function load_item():
+    loop {-item::*}:
+        delete_item(loop-value)
+        delete {-item::%loop-index%}
+
+    set {_item} to create_item(empty nbt compound):
+        set compound list tag "stats" of nbt to empty nbt compound:
+            set double tag "damage" of nbt to 10 
+            set double tag "secondary_speed" of nbt to 0.4
+            set double tag "primary_speed" of nbt to 0.8
+            set double tag "range" of nbt to 4
+            set double tag "attack_width" of nbt to 0.5
+            set double tag "critical_chance" of nbt to 20
+            set double tag "critical_damage" of nbt to 10
+            set double tag "accuracy" of nbt to 70
+            set double tag "blood_stone" of nbt to 5
+        set string tag "itemtype" of nbt to "iron sword"
+        set string tag "name" of nbt to "The Soulfire Blade"
+        set string tag "rank" of nbt to "rare"
+        set string tag "sprite" of nbt to "particles:soul_fire_flame"
+        set string tag "description" of nbt to "Forged from pure hellfire."
+        set string list tag "special_effects" of nbt to ("spin", "thunderbolt")
+        set string tag "primary_animation" of nbt to "stab"
+        set string tag "secondary_animation" of nbt to "trident"
+        set int tag "level" of nbt to 10
+    
+    give_item_to({_item}, player("miberss"))

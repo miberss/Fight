@@ -26,7 +26,7 @@ Special Effects are a way for weapons to have abilities that are binded to hotke
 ### Items
 Item struct is a Wrapper around ItemStack, which should be a reference to something within an inventory, like player's tool. You can modify the ItemStack with
 ```applescript
-slot {_item-struct}->slot of {_item-struct}->owner
+slot {_item_struct}->slot of {_item_struct}->owner
 ```
 Which should be enough to modify it.
 If it's not however, you can set it to a variable, modify the variable, then set that slot to the variable.

@@ -15,9 +15,25 @@ struct Sound:
 	volume: number                    # Volume to play at
 	pitch: number                     # Pitch to play at
 	seed: integer = {_}               # Optional seed
+	at: location
 	category: sound category = master category # Sound category for context
 	offset: timespan = 0 ticks        # Delay from the start of the pattern
 
+struct SoundGenerator:
+	id: strings                       # The Minecraft sound ID
+	volume: number                    # Volume to play at
+	pitch: number                     # Pitch to play at
+	seed: integer = {_}               # Optional seed
+	category: sound category = master category # Sound category for context
+	offset: timespan = 0 ticks        # Delay from the start of the pattern
+	audience: players = all players
+	times: integer = 1
+	time_between: timespan = 1 ticks 
+	at: location
+	transformer: function
+	random_volume: Range struct
+	random_pitch: Range struct
+	random_offset: Range struct
 
 #> Represents a sound pattern made up of multiple steps and its total duration
 struct SoundPattern:
@@ -40,7 +56,28 @@ struct PatternLayer:
 #> @param after (Optional) Delay before play
 function sound(players: players, sound: Sound struct):
 	wait {_sound}->offset
-	play sound ({_sound}->id) with seed ({_sound}->seed) in ({_sound}->category) at volume ({_sound}->volume) at pitch ({_sound}->pitch) to {_players::*}
+	if {_sound}->at is not set:
+		play sound ({_sound}->id) with seed ({_sound}->seed) in ({_sound}->category) at volume ({_sound}->volume) at pitch ({_sound}->pitch) to {_players::*}
+		stop
+	play sound ({_sound}->id) with seed ({_sound}->seed) in ({_sound}->category) at volume ({_sound}->volume) at pitch ({_sound}->pitch) to {_players::*} at {_sound}->at
+
+function a_generator_at(generator: SoundGenerator struct, at: location, audience: players = all players) :: Sound struct:
+	set {_generator} to struct copy of {_generator}
+	set {_generator}->at to {_at}
+	set {_sound} to sound_from({_generator})
+	set {_transformer} to {_generator}->transformer
+	for {_i} in ({_generator}->times) times:
+		if {_transformer} is set:
+			set {_sound} to result of {_transformer} with args {_sound}, {_i}
+		sound({_audience::*}, {_sound})
+		wait {_generator}->time_between
+
+function sound_from(generator: SoundGenerator struct) :: Sound struct:
+	return Sound struct instance:
+		id: random element of {_generator}->id
+		volume: {_generator}->volume + rnd({_generator}->random_volume)
+		pitch: {_generator}->pitch + rnd({_generator}->random_pitch)
+		offset: {_generator}->offset + timespan(rnd({_generator}->random_offset), ticks)
 
 #> Defines a new sound struct and registers it under an ID
 #>

@@ -1,0 +1,2 @@
+function render_description(item: Item struct, source: string) :: integer:
+    return append_lines({_item}, a_lore({_source}))

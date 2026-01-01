@@ -1,0 +1,6 @@
+using for loops
+
+function hash_map_as_list(hash_map: object) :: objects:
+    for {_key} in ...{_hash_map}.keySet():
+        set {_list::%{_key}%} to {_hash_map}.get({_key})
+    return keyed {_list::*}

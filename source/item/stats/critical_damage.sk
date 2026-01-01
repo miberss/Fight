@@ -1,0 +1,23 @@
+using script reflection
+
+struct CriticalDamage:
+    order: integer = 3
+    hit_modifiers: function = function "hit_modifiers"
+
+local function add(stat: Stat struct) :: CriticalDamage struct:
+    return CriticalDamage struct instance
+
+local function hit_modifiers(ctx: CombatContext struct, stat: Stat struct):
+    if {_ctx}->critical = true:
+        set {_ctx}->damage to {_ctx}->damage * (1 + ({_stat}->current / 100))
+
+local function load():
+    save_component("stat:critical_damage", a_stat_field(StatFieldBuilder struct instance)):
+        emoji: "⚔"
+        color: rgb(255, 200, 100)
+        name: "Critical Damage"
+        extra: 1
+
+local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
+    return a_filled_stat_field("critical_damage", a_percent({_stat}->current))
+

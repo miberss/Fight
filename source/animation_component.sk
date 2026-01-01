@@ -1,9 +1,6 @@
 using script reflection
 using for loop
 
-on script load:
-    load_animation_components()
-
 function load_animation_components():
     save_animation_component("flash", AnimationComponent struct instance):
         handler: function "flash_animation"
@@ -18,10 +15,10 @@ struct AnimationComponent:
     dynamic count: integer = ticks of this->duration
 
 function save_animation_component(id: string, component: AnimationComponent struct):
-    set {-animation-component::%{_id}%} to {_component}
+    set {-animation_component::%{_id}%} to {_component}
 
 function a_animation_component(id: string, location: location, options: struct) :: AnimationComponent struct:
-    set {_component} to struct copy of {-animation-component::%{_id}%}
+    set {_component} to struct copy of {-animation_component::%{_id}%}
     set {_component}->end to a_promise()
     set {_component}->loc to {_location}
     set {_component}->options to {_options}
@@ -78,8 +75,6 @@ function flash_animation(component: AnimationComponent struct):
         set opacity of {_e::transparent} to 10 + ({_easing} * 150)
         play sound "block.copper_bulb.turn_off" with volume {_easing} with pitch {_easing} at ({_component}->loc) 
         wait 1 tick
-    
-    
 
     play sound "entity.splash_potion.break" with seed 1 with volume 0.4 with pitch 2 at ({_component}->loc)
     play sound "minecraft:item.trident.return" with seed 1 with volume 0.4 with pitch 1 at ({_component}->loc)

@@ -1,0 +1,15 @@
+function load_miss():
+    set {-miss_sound_generator::1} to SoundGenerator struct instance:
+        id: "entity.breeze.wind_burst", "minecraft:entity.breeze.deflect"
+        volume: 0.3
+        pitch: 0.5
+        random_pitch: range(0.4)
+    set {-miss_sound_generator::2} to SoundGenerator struct instance:
+        id: "block.note_block.cow_bell"
+        volume: 0.5
+        pitch: 1
+        random_pitch: range(0.2)
+
+function fx_miss(ctx: CombatContext struct):
+    a_generator_at({-miss_sound_generator::1}, {_ctx}->hit)
+    a_generator_at({-miss_sound_generator::2}, {_ctx}->hit)
