@@ -4,6 +4,7 @@ on skript load:
     load_all()
 
 function load_all():
+    load_logger()
     load_components()
     load_chat()
     load_ranks()

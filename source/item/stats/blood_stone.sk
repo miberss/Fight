@@ -9,8 +9,8 @@ struct BloodStone:
 
 local function add(stat: Stat struct) :: BloodStone struct:
     return BloodStone struct instance:
-        limit: 8
         stat: {_stat}
+        limit: 8
 
 struct BloodStoneOrb:
     display: display
@@ -48,12 +48,6 @@ local function a_blood_stone_orb(blood_stone: BloodStone struct) :: BloodStoneOr
     set metadata "orb" of {_interaction} to {_orb}
 
     return {_orb}
-
-on damage of interaction by player:
-    set {_orb} to metadata "orb" of victim 
-    if {_orb} is not set:
-        stop
-    break_orb({_orb})
 
 local function pulse(orb: BloodStoneOrb struct):
     set {_displays::*} to {_orb}->display, ({_orb}->display's passengers)

@@ -15,7 +15,7 @@ struct CombatContext:
     range: number = 0
     attack_width: number = 0
     critical: boolean = false
-    cancelled: boolean = false
+    miss: boolean = false
 
 function a_attack_context(attacker: player, weapon: Item struct, tags: strings) :: CombatContext struct:
 

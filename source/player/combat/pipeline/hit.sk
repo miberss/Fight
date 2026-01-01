@@ -1,11 +1,20 @@
 function on_hit(ctx: CombatContext struct):
-    stop if {_ctx}->attacker = {_ctx}->victim
-    stop if {_ctx}->victim is a display, an interaction
-    stop if handle_hit_frames({_ctx}) = true
-
-    fx_hit({_ctx})
+    if any:
+        {_ctx}->attacker = {_ctx}->victim
+        {_ctx}->victim is a display, an interaction
+        handle_hit_frames({_ctx}) = true
+    then:
+        stop
 
     process_stats({_ctx}, "hit_modifiers")
+
+    a_damage_indicator({_ctx})
+
+    if {_ctx}->miss = true:
+        fx_miss({_ctx})
+        stop
+
+    fx_hit({_ctx})
 
     on_knockback({_ctx})
     on_damage({_ctx})

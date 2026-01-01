@@ -39,7 +39,6 @@ local function on_drop(player: player):
     shoot_thunderbolt({_player}, {_left}, 1.5, 4.5)
 
 function shoot_thunderbolt(player: player, direction: vector, size: number, range: number):
-    set {_item} to item(tool of {_player})
 
     set {_head} to {_player}'s head
     set {_ray} to (raytrace from {_head} along {_direction} with max distance {_range} while ignoring passable blocks)
@@ -64,7 +63,7 @@ function shoot_thunderbolt(player: player, direction: vector, size: number, rang
     set {_entities::*} to ...(world of {_interaction}).getNearbyEntities({_interaction}.getBoundingBox())
     for {_entity} in {_entities::*}:
 
-        set {_ctx} to a_attack_context({_player}, {_item}, ("magic", "thunderbolt", "lightning"))
+        set {_ctx} to a_attack_context({_player}, item(tool of {_player}), ("magic", "thunderbolt", "lightning"))
         process_stats({_ctx}, "pre_hit")
         set {_ctx}->victim to {_entity}
         on_hit({_ctx})

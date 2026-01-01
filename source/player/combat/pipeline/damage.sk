@@ -2,15 +2,14 @@ function on_damage(ctx: CombatContext struct):
     if {_ctx}->critical = true:
         fx_critical({_ctx}->hit)
 
-    a_damage_indicator({_ctx})
     fx_blood({_ctx})
 
     play hurt animation on {_ctx}->victim
     if {_ctx}->victim doesn't have metadata "health":
-        set metadata "health" of {_ctx}->victim to 10
+        set metadata "health" of {_ctx}->victim to 100
     
 
-    if metadata "health" of {_ctx}->victim - 2 < 0:
+    if metadata "health" of {_ctx}->victim - {_ctx}->damage < 0:
         on_death({_ctx}->victim)
         stop
     

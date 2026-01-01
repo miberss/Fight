@@ -1,10 +1,15 @@
+function load_logger():
+    save_component("log_type:info", wrap_around(colored_component("INFO", blue), c("["), c("]"), 0.8))
+    save_component("log_type:debug", wrap_around(colored_component("DEBUG", orange), c("["), c("]"), 0.8))
+    save_component("log_type:error", wrap_around(colored_component("ERROR", dark red), c("["), c("]"), 0.8))
+
 function log(type: string, component: textcomponent):
     server_message_save({_type})
     send_and_log({_component}, players where [{message_blacklist::%input%::%{_type}%} is not set])
 
 function console_log(type: string, string: string):
     server_message_save({_type})
-    send_and_log(minimessage from {_component}, console)
+    send_and_log(merge components (component_from_id("log_type:%{_type}%"), minimessage from {_string}) with px(2), (console, ops))
 
 function add_to_blacklist(player: player, type: string):
     set {message_blacklist::%{_player}%::%{_type}%} to {_type}

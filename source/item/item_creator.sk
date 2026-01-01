@@ -31,7 +31,6 @@ function deserialize_stats(source: nbtcompound) :: objects:
     set {_compound::*} to keyed (compound_as_list(compound tag "stats[0]" of {_source}))
     set {_stats::*} to {_compound::*} mapped with [a_stat(stat_type(input index), input)]
     sort {_stats::*} by input->extension->order
-    broadcast {_stats::*} mapped with [input->extension->order]
     return {_stats::*}
 
 function deserialize_special_effects(source: nbtcompound) :: objects:
@@ -49,8 +48,10 @@ function load_item():
             set double tag "secondary_speed" of nbt to 0.4
             set double tag "primary_speed" of nbt to 0.8
             set double tag "range" of nbt to 4
+            set double tag "attack_width" of nbt to 0.5
             set double tag "critical_chance" of nbt to 20
             set double tag "critical_damage" of nbt to 10
+            set double tag "accuracy" of nbt to 70
             set double tag "blood_stone" of nbt to 5
         set string tag "itemtype" of nbt to "iron sword"
         set string tag "name" of nbt to "The Soulfire Blade"

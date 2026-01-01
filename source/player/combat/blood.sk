@@ -8,8 +8,8 @@ function load_blood():
     register block tag named "large-foliage" using tall grass, large fern 
     set {-blood_sound_generator} to SoundGenerator struct instance:
         id: "block.sweet_berry_bush.pick_berries"
-        volume: 0.1
-        pitch: 0.2
+        volume: 0.4
+        pitch: 0.8
         random_pitch: range(0.1)
     set {-blood_block_generator} to new voronoi generator
     set frequency of {-blood_block_generator} to 0.17

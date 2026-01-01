@@ -1,0 +1,21 @@
+using script reflection
+
+struct AttackWidth:
+    order: integer = 4
+    pre_hit: function = function "pre_hit"
+
+local function add(stat: Stat struct) :: AttackWidth struct:
+    return AttackWidth struct instance
+
+local function pre_hit(ctx: CombatContext struct, stat: Stat struct):
+    set {_ctx}->attack_width to {_ctx}->attack_width + ({_stat}->bindable->value)
+
+local function load():
+    save_component("stat:attack_width", a_stat_field(StatFieldBuilder struct instance)):
+        emoji: "▼"
+        color: rgb(212, 137, 240)
+        name: "Attack Width"
+        extra: 3
+
+local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
+    return a_filled_stat_field("attack_width", a_unit({_stat}->current, "m"))

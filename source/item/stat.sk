@@ -58,17 +58,17 @@ function load_stat_types():
 function stat_type(id: string) :: StatType struct:
     return {-stat_type::%{_id}%}
 
-function stat(item: Item struct, id: string) :: object:
-    if {_item}->stats.containsKey({_id}) = false:
+function stat(item: Item struct, type: StatType struct) :: Stat struct:
+    if {_item}->stats.containsKey({_type}) = false:
         throw runtime error "Tried to get value of %{_id}% on %{_item}->uuid%, but failed as there isn't that stat on the item"
         stop
-    return {_item}->stats.get({_id})
+    return {_item}->stats.get({_type})
 
-function bindable_stat(item: Item struct, id: string) :: Bindable struct:
-    return stat({_item}, {_id})->bindable
+function bindable_stat(item: Item struct, type: StatType struct) :: Bindable struct:
+    return stat({_item}, {_type})->bindable
 
-function set_stat(item: Item struct, id: string, value: object):
-    set bindable_stat({_item}, {_id})->value to {_value}
+function set_stat(item: Item struct, type: StatType struct, value: object):
+    set bindable_stat({_item}, {_type})'s value to {_value}
 
 function a_stat(type: StatType struct, value: object) :: Stat struct:
     set {_stat} to Stat struct instance:
@@ -88,7 +88,6 @@ function a_stat_renderer(stat: Stat struct) :: section:
     set {_indent} to px({_stat}->indent)
 
     create section with {_bindable}, {_value} stored in {_lore_renderer}:
-
         set {_stat_component} to result of {_update} with args {_bindable}, {_stat}
         set {_render} to merge components ({_indent}, {_stat_component})
         set_line({_stat}, {_render})

@@ -28,9 +28,9 @@ on drop:
 local function on_drop(player: player):
     stop if is_on_cooldown("spin", {_player}) = true
     set_cooldown("spin", 1 second, {_player})
-    do_a_spin({_player}, item(tool of {_player}))
+    do_a_spin({_player})
 
-function do_a_spin(player: player, item: Item struct):
+function do_a_spin(player: player):
     wait 1 tick
     set {_forward} to vector in direction of {_player}
     set pitch of {_forward} to 0
@@ -39,11 +39,12 @@ function do_a_spin(player: player, item: Item struct):
         rotate {_forward} around y-axis by ease_out_circle(loop-counter / 30) * 44.6
         set yaw of {_player} to yaw of {_forward}
         draw 2 sweep_attack at {_player}'s head ~ {_forward} * 3
-        set {_entities::*} to ...(world of {_player}).getNearbyEntities({_player}'s head, 3.5, 3.5, 3.5)
-        for {_entity} in {_entities::*}:
-            set {_ctx} to a_attack_context({_player}, {_item}, ("spin"))
-            process_stats({_ctx}, "pre_hit")
-            set {_ctx}->victim to {_entity}
-            on_hit({_ctx})
-        wait 1 tick if mod(loop-counter, 10) = 0
+        if mod(loop-counter, 10) = 0:
+            set {_entities::*} to ...(world of {_player}).getNearbyEntities({_player}'s head, 3.5, 3.5, 3.5)
+            for {_entity} in {_entities::*}:
+                set {_ctx} to a_attack_context({_player}, item(tool of {_player}), ("spin")) 
+                process_stats({_ctx}, "pre_hit")
+                set {_ctx}->victim to {_entity}
+                on_hit({_ctx})
+            wait 1 tick
     change_tickrate({_player}, 20, false)
