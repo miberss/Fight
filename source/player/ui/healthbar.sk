@@ -1,4 +1,5 @@
 using reflection
+using for loops
 
 struct HealthBar:
     player: player
@@ -41,16 +42,30 @@ function detach_health_bar(wrapper: PlayerWrapper struct):
     kill {_wrapper}->health_bar->display
     delete {_wrapper}->health_bar
 
-function render_health_bar(health_bar: HealthBar struct) :: textcomponent:
-    set {_value} to {_health_bar}->bar->value's value
-    set {_limit} to {_health_bar}->bar->limit's value
-    set {_bar} to a_notch_bar(component_from_id("health_full"), component_from_id("health_empty"), {_limit}, {_value})
+function render_health_bar(health_bar: HealthBar struct, progress: number) :: textcomponent:
+
+    set {_value_bindable} to {_health_bar}->bar->value
+    set {_value} to lerp_bindable({_value_bindable}, {_progress})
+    set {_limit} to lerp_bindable({_health_bar}->bar->limit, {_progress})
+
+    set {_amount_taken} to (difference between {_value_bindable}->previous and {_value_bindable}->value) / {_health_bar}->bar->limit->value
+
+    set {_health} to component_from_id("health_full")
+    set {_color} to color format of {_health}
+    
+    set {_flash} to flash_color({_color}, white, {_amount_taken})
+    set color format of {_health} to flash_color({_color}, {_flash}, sin({_progress} * pi radians))
+
+    set {_bar} to a_notch_bar({_health}, component_from_id("health_empty"), {_limit}, {_value})
     set underline format of {_bar} to true
-    # set bold format of {_bar} to true
     return {_bar}
 
 local function display(health_bar: HealthBar struct):
-    set component text of {_health_bar}->display to render_health_bar({_health_bar})
+    for {_i} in 10 times:
+        set component text of {_health_bar}->display to render_health_bar({_health_bar}, ease_in_out_circle({_i} / 10))
+        wait 1 tick
 
 local function actionbar(health_bar: HealthBar struct):
-    set wrapper({_health_bar}->player)->actionbar to render_health_bar({_health_bar})
+    for {_i} in 10 times:
+        set wrapper({_health_bar}->player)->actionbar to render_health_bar({_health_bar}, ease_in_out_cubic({_i} / 10))
+        wait 1 tick

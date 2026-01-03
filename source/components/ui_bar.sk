@@ -12,8 +12,8 @@ function a_ui_bar(value: object, limit: object, extension: struct, callbacks: fu
         for {_callback} in {_callbacks::*}:
             run {_callback} with args {_extension}
 
-    set {_bar}->value to a_bindable({_value}, {_renderer})
-    set {_bar}->limit to a_bindable({_limit}, {_renderer})
+    set {_bar}->value to a_bindable({_value}, {_renderer}, 0)
+    set {_bar}->limit to a_bindable({_limit}, {_renderer}, 0)
     return {_bar}
 
 function render_ui_bar(bar: UIBar struct):
