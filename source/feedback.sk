@@ -15,18 +15,19 @@ function save_feedback(player: player, type: string, message: string):
         send actionbar component "That is not a valid feedback type" to {_player}
         stop
 
-    else if is_on_cooldown("feedback", {_player}) = true:
-        set {_cooldown} to format_timespan(remaining_cooldown("feedback", {_player}), "m:ss")
-        send actionbar component "You are on a %{_cooldown}% cooldown for feedback" to {_player}
+    else if is_on_cooldown("feedback:%{_type}%", {_player}) = true:
+        set {_cooldown} to format_timespan(remaining_cooldown("feedback:%{_type}%", {_player}), "m:ss")
+        send actionbar component "You are on a %{_cooldown}% cooldown for %{_type}%" to {_player}
         stop
 
-    set_cooldown("feedback", 5 minutes, {_player})
+    set_cooldown("feedback:%{_type}%", 1 minute, {_player})
     
     add (new nbt compound) to (compound list tag "results" of {-feedback::%{_type}%}):
         set uuid tag "author" of nbt to uuid of {_player}
         set string tag "message" of nbt to {_message}
     
     save nbt file of {-feedback::%{_type}%}
+    info("Feedback submit: %{_player}%")
 
 on tab complete of "feedback":
-	set tab completions for position 1 to {-feedback-type::*}
+	set tab completions for position 1 to {-feedback_types::*}

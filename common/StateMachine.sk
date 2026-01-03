@@ -32,13 +32,13 @@ function a_machine_with(transitions: Transition structs, state: State struct, co
 		set {_from} to {_transition}->from
 		set {_event} to {_transition}->event
 
-		if {_transition_map}.containsKey({_from}->name) is false:
+		if {_transition_map}.containsKey({_from}->name) = false:
 			{_transition_map}.put({_from}->name, new HashMap())
 
 		set {_by_event} to {_transition_map}.get({_from}->name)
 
-		if {_by_event}.containsKey({_event}):
-			throw runtime error "Duplicate transition %{_event}% from state %{_from}->name%"
+		if {_by_event}.containsKey({_event}) = true:
+			error("Duplicate transition %{_event}% from state %{_from}->name%")
 
 		{_by_event}.put({_event}, {_transition})
 	
