@@ -1,11 +1,17 @@
 on drop:
     cancel event
+    if state(player) = {-states::play}:
+        handle_hotkey_event(player, "on_drop", event-item)
 
 on swap held items:
     cancel event
+    if state(player) = {-states::play}:
+        handle_hotkey_event(player, "on_swap_hands")
 
 on sneak toggle:
-	player is not sneaking
+    player is not sneaking
+    if state(player) = {-states::play}:
+        handle_hotkey_event(player, "on_sneak")
 
 on consume:
     cancel event
@@ -17,6 +23,7 @@ on right click:
         case {-states::play}:
             set {-cancel::%player%} to a_promise()
             wait for {-cancel::%player%} and store the result in {_item}
+            handle_hotkey_event(player, "on_right_click")
             on_secondary_attack(player, item(item))
         case {-states::build}:
             # nothing
@@ -26,6 +33,7 @@ on right click:
 on left click:
     switch state(player):
         case {-states::play}:
+            handle_hotkey_event(player, "on_left_click")
             on_primary_attack(player, item(item))
         case {-states::build}:
             # nothing
@@ -33,4 +41,5 @@ on left click:
             cancel event
 
 on sprint toggle:
-	player is not sprinting
+    player is not sprinting
+    handle_hotkey_event(player, "on_sprint")

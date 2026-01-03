@@ -5,8 +5,9 @@ condition:
         %struct% (has|have) [the] field[s] %strings%
         %struct% (doesn't|does not|do not|don't) have [the] field[s] %strings%
     check:
+        set {_inverse} to true if pattern = 2 else false 
         for {_field} in exprs-2:
-            stop if ((expr-1).getTemplate()).hasField({_field}) = false
+            stop if ((expr-1).getTemplate()).hasField({_field}) = {_inverse}
         continue
 
 plural expression:

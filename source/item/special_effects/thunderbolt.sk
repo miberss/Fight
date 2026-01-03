@@ -1,4 +1,5 @@
 using for loops
+using script reflection
 
 struct Thunderbolt:
     name: string = "THUNDERBOLT"
@@ -7,6 +8,7 @@ struct Thunderbolt:
     cooldown: timespan = 3 seconds
     radius: number = 3.5
     amount: integer = 3
+    on_drop: function = function "on_drop"
 
 local function add() :: struct:
     return Thunderbolt struct instance
@@ -21,14 +23,7 @@ local function update(thunderbolt: Thunderbolt struct) :: textcomponents:
     set {_text::3} to a_effect_description(merge components minimessage from "splash ", {_radius})
     return {_title}, {_text::*}, blank()
 
-on drop:
-    cancel event
-    stop if state(player) != {-states::play}
-    on_drop(player)
-
-local function on_drop(player: player):
-    stop if is_on_cooldown("thunderbolt", {_player}) = true
-    set_cooldown("thunderbolt", 1 second, {_player})
+local function on_drop(player: player, thunderbolt: Thunderbolt struct):
     set {_forward} to vector in direction of {_player}
     set {_right} to {_forward} rotated around y-axis by 30
     set {_left} to {_forward} rotated around y-axis by -30
