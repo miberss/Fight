@@ -3,16 +3,22 @@ struct PlayerWrapper:
     machine: StateMachine struct
     actionbar: textcomponent
 
+    health_bar: HealthBar struct
+
 function wrapper(player: player) :: PlayerWrapper struct:
     return {-player_wrapper::%{_player}%}
 
-function set_wrapper(player: player):
+function attach_wrapper(player: player):
     set {_wrapper} to PlayerWrapper struct instance:
         player: {_player}
     
     set {_wrapper}->machine to a_player_machine({_wrapper}, "play")
 
     set {-player_wrapper::%{_player}%} to {_wrapper}
+
+function detach_wrapper(player: player):
+    trigger_event(wrapper({_player})->machine, "spectate")
+    delete {-player_wrapper::%{_player}%}
 
 function set_actionbar_for(player: player, component: textcomponent, time: timespan):
     set wrapper({_player})->actionbar to {_component}

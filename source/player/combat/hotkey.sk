@@ -25,20 +25,12 @@ on right click:
             wait for {-cancel::%player%} and store the result in {_item}
             handle_hotkey_event(player, "on_right_click")
             on_secondary_attack(player, item(item))
-        case {-states::build}:
-            # nothing
-        default:
-            cancel event
 
 on left click:
     switch state(player):
         case {-states::play}:
             handle_hotkey_event(player, "on_left_click")
             on_primary_attack(player, item(item))
-        case {-states::build}:
-            # nothing
-        default:
-            cancel event
 
 on sprint toggle:
     player is not sprinting

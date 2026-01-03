@@ -1,7 +1,7 @@
 using script reflection
 
 function load_spectate_state():
-    set {-states::spectate} to a_state_with("spectate", function "start", function "tick", function "end")
+    set {-states::spectate} to a_state("spectate", function "start", function "tick", function "end")
 
 local function start(event: string, machine: StateMachine struct):
     set {_wrapper} to {_machine}->context

@@ -90,7 +90,8 @@ local function fn_equal(a: function, b: function) :: boolean:
 	then:
 		return true
 
-function trigger_update(bindable: Bindable struct, value: object):
+function trigger_update(bindable: Bindable struct, value: object = {_}):
+	set {_value} to {_value} ? {_bindable}->value
 	for {_callback} in field callbacks of {_bindable}:
 		if {_callback} is a section:
 			run section {_callback} with arguments {_bindable}, {_value}

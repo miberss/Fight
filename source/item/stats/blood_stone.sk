@@ -1,6 +1,5 @@
 struct BloodStone:
     stat: Stat struct
-    dynamic player: player = this->stat->item->owner
     limit: integer
     orbs: BloodStoneOrb structs
     orbs_to_be_broken: BloodStoneOrb structs
@@ -17,7 +16,7 @@ struct BloodStoneOrb:
     interaction: entity
     blood_stone: BloodStone struct
     pos: vector
-    dynamic location: location = this->blood_stone->player ~ this->pos
+    dynamic location: location = (this->blood_stone->stat->item->owner) ~ this->pos
     size: number
     dynamic scale: vector = vec(this->size)
 

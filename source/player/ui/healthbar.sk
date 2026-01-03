@@ -1,0 +1,56 @@
+using reflection
+
+struct HealthBar:
+    player: player
+    bar: UIBar struct
+
+    display: display
+
+function load_health_bar():
+    save_component("health_full", colored_component("♮", rgb(236, 71, 93)))
+    save_component("health_empty", colored_component("♮", rgb(47, 47, 68)))
+
+function a_health_bar() :: HealthBar struct:
+    set {_health_bar} to HealthBar struct instance
+
+    set {_display} to a_text_display()
+    set {_translation} to y(0.3)
+
+    # point display hitbox pointer down
+    set pitch of {_display} to 90
+    rotate ({_display}, {_translation}) around x-axis by -90
+
+    set transformation translation of {_display} to {_translation}
+
+    set billboard of {_display} to vertical
+
+    set color of {_display} to rgb(0, 0, 0, 0)
+    apply drop shadow to {_display}
+    set {_health_bar}->display to {_display}
+
+    set {_health_bar}->bar to a_ui_bar(5, 10, {_health_bar}, (function "display", function "actionbar"))
+    return {_health_bar}
+
+function attach_health_bar(player: player, health_bar: HealthBar struct):
+    set wrapper({_player})->health_bar to {_health_bar}
+    set {_health_bar}->player to {_player}
+    make {_health_bar}->display ride {_health_bar}->player
+    render_ui_bar({_health_bar}->bar)
+
+function detach_health_bar(wrapper: PlayerWrapper struct):
+    kill {_wrapper}->health_bar->display
+    delete {_wrapper}->health_bar
+
+function render_health_bar(health_bar: HealthBar struct) :: textcomponent:
+    set {_value} to {_health_bar}->bar->value's value
+    set {_limit} to {_health_bar}->bar->limit's value
+    set {_bar} to a_notch_bar(component_from_id("health_full"), component_from_id("health_empty"), {_limit}, {_value})
+    set underline format of {_bar} to true
+    # set bold format of {_bar} to true
+    return {_bar}
+
+local function display(health_bar: HealthBar struct):
+    set component text of {_health_bar}->display to render_health_bar({_health_bar})
+
+local function actionbar(health_bar: HealthBar struct):
+    set wrapper({_health_bar}->player)->actionbar to render_health_bar({_health_bar})

@@ -1,3 +1,6 @@
+import:
+    com.shanebeestudios.skbee.api.wrapper.ComponentWrapper
+
 function a_display(type: entity type) :: display:
     spawn {_type} at location(0, -50, 0):
         set {_entity} to display
@@ -23,13 +26,11 @@ function interpolate(displays: displays):
 display property component text:
     return type: textcomponent
     get:
-        return expr-1.text()
+        return ComponentWrapper.fromComponent(expr-1.text())
     set:
         expr-1.text((change value).getComponent())
     add:
         expr-1.text((merge components (expr-1.text(), change value)).getComponent())
-    remove:
-        expr-1.text(blank().getComponent())
     delete:
         expr-1.text(blank().getComponent())
     reset:
