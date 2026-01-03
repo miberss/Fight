@@ -15,6 +15,7 @@ function render_lore(item: Item struct):
     set {_item}->render_depth to append_lines({_item}, blank())
 
     for {_effect} in deserialize_special_effects({_source}):
+        attach_special_effect({_item}, {_effect})
         set {_item}->render_depth to render_special_effect({_item}, {_effect})
 
 function append_lines(item: Item struct, components: textcomponents) :: integer:

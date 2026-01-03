@@ -12,6 +12,7 @@ struct Item:
     slot: integer
     rank: string
     stats: javaobject = new HashMap()
+    special_effects: SpecialEffect structs
     primary_animation: string
     secondary_animation: string
 
