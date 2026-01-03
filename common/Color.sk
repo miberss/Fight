@@ -1,0 +1,11 @@
+function lerp_color(from: color, to: color, progress: number) :: color:
+    set {_r} to ({_from}'s red value   + (({_to}'s red value   - {_from}'s red value)   * {_progress}))
+    set {_g} to ({_from}'s green value + (({_to}'s green value - {_from}'s green value) * {_progress}))
+    set {_b} to ({_from}'s blue value  + (({_to}'s blue value  - {_from}'s blue value)  * {_progress}))
+    return rgb(clamp({_r}, 0, 255), clamp({_g}, 0, 255), clamp({_b}, 0, 255))
+
+function flash_color(color: color, flash: color, progress: number) :: color:
+    set {_r} to round(({_color}'s red value   * (1 - {_progress})) + ({_flash}'s red value   * {_progress}))
+    set {_g} to round(({_color}'s green value * (1 - {_progress})) + ({_flash}'s green value * {_progress}))
+    set {_b} to round(({_color}'s blue value  * (1 - {_progress})) + ({_flash}'s blue value  * {_progress}))
+    return rgb(clamp({_r}, 0, 255), clamp({_g}, 0, 255), clamp({_b}, 0, 255))

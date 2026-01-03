@@ -1,7 +1,7 @@
 using script reflection
 
 function load_play_state():
-    set {-states::play} to a_state_with("play", function "start", function "tick", function "end")
+    set {-states::play} to a_state("play", function "start", function "tick", function "end")
 
 local function start(e: text, machine: StateMachine struct):
     set {_wrapper} to {_machine}->context
@@ -9,11 +9,12 @@ local function start(e: text, machine: StateMachine struct):
     set {_player}'s gamemode to adventure
     set_attributes({_player})
     transition_to({_player}, location(0, 2, 0))
-    #clear_chat()
-    #resend_chat(last 100 elements of {-message::*})
+    clear_chat()
+    resend_chat(last 100 elements of {-message::*})
     log("global_player", merge components (format_player_header({_player}, green), px(4), format_timestamp(now), new line, px(3), a_lore("into the depths..."), new line))
     wait 1 tick
     heal {_player}
+    attach_health_bar({_player}, a_health_bar())
 
 local function set_attributes(player: player):
     set camera distance attribute of {_player} to 6
@@ -35,9 +36,8 @@ local function end(e: text, machine: StateMachine struct):
     set {_wrapper} to {_machine}->context
     set {_player} to {_wrapper}->player
     set {_player}'s gamemode to spectator
-    #clear_chat()
-    #resend_chat(last 100 elements of {-message::*})
     log("global_player", merge components (format_player_header({_player}, red), px(4), format_timestamp(now), new line, px(3), a_lore("out from which they came..."), new line))
+    detach_health_bar({_wrapper})
 
 command /play:
     trigger:

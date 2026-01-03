@@ -1,7 +1,7 @@
 using script reflection
 
 function load_dev_state():
-    set {-states::dev} to a_state_with("dev", function "start", function "tick", function "end")
+    set {-states::dev} to a_state("dev", function "start", function "tick", function "end")
 
 local function start(event: string, machine: StateMachine struct):
     set {_wrapper} to {_machine}->context

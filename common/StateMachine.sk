@@ -24,7 +24,7 @@ struct StateMachine:
 
 	dynamic state_name: string = this->state->name
 
-function a_machine_with(transitions: Transition structs, state: State struct, context: object, debug: boolean = false) :: StateMachine struct:
+function a_machine(transitions: Transition structs, state: State struct, context: object, debug: boolean = false) :: StateMachine struct:
 
 	set {_transition_map} to new HashMap()
 
@@ -47,16 +47,18 @@ function a_machine_with(transitions: Transition structs, state: State struct, co
 		state: {_state}
 		context: {_context}
 		debug: {_debug}
-	run ({_state}->start) with args {_event}, {_machine}
+	if {_machine}->debug = true:
+		console_log("info", "initialize : (none -> %{_machine}->state_name%)")
+	run ({_state}->start) with args "initialize", {_machine}
 	return {_machine}
 
-function a_transition_with(event: string, from: State struct, to: State struct) :: Transition struct:
+function a_transition(event: string, from: State struct, to: State struct) :: Transition struct:
 	return Transition struct instance:
 		event: {_event}
 		from: {_from}
 		to: {_to}
 
-function a_state_with(name: string, start: function, tick: function, end: function) :: State struct:
+function a_state(name: string, start: function, tick: function, end: function) :: State struct:
 	return State struct instance:
 		name: {_name}
 		start: {_start}
@@ -79,6 +81,9 @@ function trigger_event(machine: StateMachine struct, event: string) :: boolean:
 		return false
 	set {_from} to {_machine}->state
 	set {_to} to {_transition}->to
+
+	if {_machine}->debug = true:
+		console_log("info", "%{_event}% : (%{_machine}->state_name% -> %{_to}->name%)")
 
 	run ({_from}->end) with args {_event}, {_machine}
 	set {_machine}->state to {_to}

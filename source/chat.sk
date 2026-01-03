@@ -12,7 +12,6 @@ using for loops
 
 struct Message:
     const sender: string
-    const player: player
     const message: string
     const id: integer
     const creation: date = now
@@ -140,7 +139,6 @@ local function player_message_save(player: player, text: string) :: message stru
     set {-message::%{_id}%} to Message struct instance:
         message: {_text}
         sender: uuid of {_player}
-        player: {_player}
         id: {_id}
     return {-message::%{_id}%}
 

@@ -1,6 +1,5 @@
 struct BloodStone:
     stat: Stat struct
-    dynamic player: player = this->stat->item->owner
     limit: integer
     orbs: BloodStoneOrb structs
     orbs_to_be_broken: BloodStoneOrb structs
@@ -17,7 +16,7 @@ struct BloodStoneOrb:
     interaction: entity
     blood_stone: BloodStone struct
     pos: vector
-    dynamic location: location = this->blood_stone->player ~ this->pos
+    dynamic location: location = (this->blood_stone->stat->item->owner) ~ this->pos
     size: number
     dynamic scale: vector = vec(this->size)
 
@@ -115,15 +114,15 @@ local function update(bindable: Bindable struct, stat: Stat struct) :: textcompo
     set {_blood_stone} to {_stat}->extension
     bind_set_silently({_bindable}, clamp({_bindable}->value, 0, {_blood_stone}->limit))
     set {_value} to {_bindable}->value
-    if {_value} = ({_bindable}->old_value ? 0):
+    if {_value} = ({_bindable}->previous ? 0):
         stop
     run 0 tick later:
-        if {_value} > {_bindable}->old_value:
-            loop ({_value} - {_bindable}->old_value) times:
+        if {_value} > {_bindable}->previous:
+            loop ({_value} - {_bindable}->previous) times:
                 add_orb(a_blood_stone_orb({_blood_stone}))
                 wait 3 ticks
         else:
-            loop ({_bindable}->old_value - {_value}) times:
+            loop ({_bindable}->previous - {_value}) times:
                 break_orb(random element of {_blood_stone}->orbs)
 
     return a_notch_bar(component_from_id("blood_stone"), component_from_id("unfilled_blood_stone"), {_stat}->extension->limit, {_bindable}->value)
