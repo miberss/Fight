@@ -12,10 +12,11 @@ function load_all():
     load_commands()
     load_stat_types()
     load_special_effects()
+    load_attack_types()
     load_health_bar()
-    load_item()
     load_combat()
     load_feedback()
+    
     load_animation_components()
     load_dev_state()
     load_play_state()
@@ -24,6 +25,9 @@ function load_all():
     info("Loaded * in %time since {_start} / 0.02 ticks%ms")
 
 on unload:
+    loop {-item::*}:
+        delete_item(loop-value)
+        delete {-item::%loop-index%}
     for {_player} in players:
         detach_wrapper({_player})
 

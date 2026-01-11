@@ -2,7 +2,7 @@ using script reflection
 
 struct CriticalChance:
     limit: integer = 100
-    order: integer = 2
+    order: integer = 5
     pre_hit: function = function "pre_hit"
 
 local function add(stat: Stat struct) :: CriticalChance struct:

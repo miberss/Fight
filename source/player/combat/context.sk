@@ -14,10 +14,11 @@ struct CombatContext:
     knockback: number = 0
     range: number = 0
     attack_width: number = 0
+    cooldown: timespan = 0 seconds
     critical: boolean = false
     miss: boolean = false
 
-function a_attack_context(attacker: player, weapon: Item struct, tags: strings) :: CombatContext struct:
+function a_attack_context(attacker: player, weapon: Item struct, tags: strings = {_}) :: CombatContext struct:
 
     return CombatContext struct instance:
         attacker: {_attacker}

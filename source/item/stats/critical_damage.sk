@@ -1,7 +1,7 @@
 using script reflection
 
 struct CriticalDamage:
-    order: integer = 3
+    order: integer = 6
     hit_modifiers: function = function "hit_modifiers"
 
 local function add(stat: Stat struct) :: CriticalDamage struct:

@@ -1,0 +1,55 @@
+using for loops
+
+function load_shot_attack_type():
+    set {-generator::shot_1} to SoundGenerator struct instance:
+        id: "item.axe.scrape"
+        volume: 5
+        pitch: 1.5
+        random_volume: range(0.7)
+        random_pitch: range(0.5)
+    set {-generator::shot_2} to SoundGenerator struct instance:
+        id: "block.dispenser.launch"
+        volume: 5
+        pitch: 1.5
+        random_volume: range(0.7)
+        random_pitch: range(0.5)
+    
+    set {-bullet_splash::*} to colored_component("※", yellow), colored_component("░", white), colored_component("⓪", orange)
+
+
+local function attack_handler(ctx: CombatContext struct) :: boolean:
+    shoot_ray({_ctx})
+    set {_head} to {_ctx}->attacker's head
+    set {_right} to vector in {_ctx}->attacker's direction
+    rotate {_right} around y-axis by -45
+    set {_gun} to {_head} ~ {_right} * 0.4 + y(-0.2)
+    draw shape (line from {_gun} to {_ctx}->hit):
+        set event-shape's particle to dust_color_transition particle using dustTransition(black, gray, 1)
+    a_generator_at({-generator::shot_1}, {_gun})
+    a_generator_at({-generator::shot_2}, {_gun})
+    bullet_splash({_gun})
+    return whether {_ctx}->victim is set
+
+function bullet_splash(at: location):
+    draw 10 dust_color_transition particle using dustTransition(black, gray, 1) at {_at}
+    draw 5 dust_color_transition particle using dustTransition(yellow, black, 0.6) with offset vec(0.2) at {_at}
+    draw 50 dust_color_transition particle using dustTransition(orange, red, 0.5) with extra 1 at {_at}
+    for {_i}, {_component} in {-bullet_splash::*}:
+        set {_splash} to a_text_display()
+        set teleport duration of {_splash} to 0 ticks
+        set component text of {_splash} to {_component}
+        set color of {_splash} to rgb(0, 0, 0, 0)
+        set display scale of {_splash} to vec(5)
+        force {_splash} to be visible through walls
+        set billboard of {_splash} to center
+        teleport({_splash}, {_at})
+        set {_splash::%{_i}%} to {_splash}
+
+    for {_i} in 10 times:
+        set {_easing} to ease_out_quad({_i} / 10)
+        for {_splash} in {_splash::*}:
+            interpolate({_splash})
+            set display scale of {_splash} to vec(5 - (5 * {_easing}))
+            set opacity of {_splash} to wrap(255 - ({_easing} * 255), 128, -128)
+        wait 1 tick
+    kill {_splash::*}

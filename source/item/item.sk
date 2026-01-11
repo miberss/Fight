@@ -7,14 +7,12 @@ import:
 struct Item:
     uuid: string
     base: item
-    source: nbt compound
+    source: nbt
     owner: player
     slot: integer
     rank: string
     stats: javaobject = new HashMap()
     special_effects: SpecialEffect structs
-    primary_animation: string
-    secondary_animation: string
 
     render_depth: integer = 1
 

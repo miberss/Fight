@@ -1,7 +1,7 @@
 using script reflection
 
 struct AttackWidth:
-    order: integer = 4
+    order: integer = 9
     pre_hit: function = function "pre_hit"
 
 local function add(stat: Stat struct) :: AttackWidth struct:

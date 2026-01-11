@@ -1,0 +1,18 @@
+{
+    name: "Verdant Aegis",
+    description: "A shield pulsing with vitality.",
+    itemtype: "shield",
+    level: 2,
+    rank: "basic",
+    special_effects: ["regrowth", "entangle"],
+    sprite: "blocks:block/blue_orchid",
+    stats: [{
+        primary_attack: "whack",
+        secondary_attack: "charge",
+        damage: 7.5d,
+        range: 4.2d,
+        attack_width: 0.4d,
+        critical_chance: 30.0d,
+        critical_damage: 40.0d
+    }]
+}

@@ -8,12 +8,12 @@ local function start(e: text, machine: StateMachine struct):
     set {_player} to {_wrapper}->player
     set {_player}'s gamemode to adventure
     set_attributes({_player})
-    transition_to({_player}, location(0, 2, 0))
     clear_chat()
     resend_chat(last 100 elements of {-message::*})
     log("global_player", merge components (format_player_header({_player}, green), px(4), format_timestamp(now), new line, px(3), a_lore("into the depths..."), new line))
     wait 1 tick
     heal {_player}
+    transition_to({_player}, location(0, 2, 0))
     attach_health_bar({_player}, a_health_bar())
 
 local function set_attributes(player: player):
@@ -21,8 +21,9 @@ local function set_attributes(player: player):
     set entity interaction range attribute of {_player} to 0
     set fall damage multiplier attribute of {_player} to 2
     set gravity attribute of {_player} to 0.1
+    set attack speed attribute of {_player} to 3.4
     set movement speed attribute of {_player} to 0.2
-    set jump strength attribute of {_player} to 0.7
+    set jump strength attribute of {_player} to 0.6
     set scale attribute of {_player} to 1.1
     set sneaking speed attribute of {_player} to 2
     set step height attribute of {_player} to 1
@@ -31,6 +32,7 @@ local function tick(machine: StateMachine struct):
     set {_wrapper} to {_machine}->context
     set {_player} to {_wrapper}->player
     send actionbar component (merge components colored_component("PLAY MODE", rgb(230, 120, 50)), {_wrapper}->actionbar with " ") to {_player}
+    process_target({_player})
 
 local function end(e: text, machine: StateMachine struct):
     set {_wrapper} to {_machine}->context
@@ -40,5 +42,6 @@ local function end(e: text, machine: StateMachine struct):
     detach_health_bar({_wrapper})
 
 command /play:
+    permission: op
     trigger:
         trigger_event(wrapper(player)->machine, "play")

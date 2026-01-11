@@ -23,17 +23,17 @@ local function update(thunderbolt: Thunderbolt struct) :: textcomponents:
     set {_text::3} to a_effect_description(merge components minimessage from "splash ", {_radius})
     return {_title}, {_text::*}, blank()
 
-local function on_drop(player: player, thunderbolt: Thunderbolt struct):
+local function on_drop(player: player, thunderbolt: Thunderbolt struct, weapon: Item struct):
     set {_forward} to vector in direction of {_player}
     set {_right} to {_forward} rotated around y-axis by 30
     set {_left} to {_forward} rotated around y-axis by -30
-    shoot_thunderbolt({_player}, {_forward}, 2.5, 4.5)
+    shoot_thunderbolt({_player}, {_weapon}, {_forward}, 2.5, 4.5)
     wait 2 ticks
-    shoot_thunderbolt({_player}, {_right}, 1.5, 4.5)
+    shoot_thunderbolt({_player}, {_weapon}, {_right}, 1.5, 4.5)
     wait 2 ticks
-    shoot_thunderbolt({_player}, {_left}, 1.5, 4.5)
+    shoot_thunderbolt({_player}, {_weapon}, {_left}, 1.5, 4.5)
 
-function shoot_thunderbolt(player: player, direction: vector, size: number, range: number):
+function shoot_thunderbolt(player: player, weapon: Item struct, direction: vector, size: number, range: number):
 
     set {_head} to {_player}'s head
     set {_ray} to (raytrace from {_head} along {_direction} with max distance {_range} while ignoring passable blocks)
@@ -58,7 +58,7 @@ function shoot_thunderbolt(player: player, direction: vector, size: number, rang
     set {_entities::*} to ...(world of {_interaction}).getNearbyEntities({_interaction}.getBoundingBox())
     for {_entity} in {_entities::*}:
 
-        set {_ctx} to a_attack_context({_player}, item(tool of {_player}), ("magic", "thunderbolt", "lightning"))
+        set {_ctx} to a_attack_context({_player}, {_weapon}, ("magic", "thunderbolt", "lightning"))
         process_stats({_ctx}, "pre_hit")
         set {_ctx}->victim to {_entity}
         on_hit({_ctx})

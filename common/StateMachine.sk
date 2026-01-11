@@ -48,7 +48,7 @@ function a_machine(transitions: Transition structs, state: State struct, context
 		context: {_context}
 		debug: {_debug}
 	if {_machine}->debug = true:
-		console_log("info", "initialize : (none -> %{_machine}->state_name%)")
+		info("Initialize: (none -> %{_machine}->state_name%)")
 	run ({_state}->start) with args "initialize", {_machine}
 	return {_machine}
 
@@ -83,7 +83,7 @@ function trigger_event(machine: StateMachine struct, event: string) :: boolean:
 	set {_to} to {_transition}->to
 
 	if {_machine}->debug = true:
-		console_log("info", "%{_event}% : (%{_machine}->state_name% -> %{_to}->name%)")
+		info("%{_event}%: (%{_machine}->state_name% -> %{_to}->name%)")
 
 	run ({_from}->end) with args {_event}, {_machine}
 	set {_machine}->state to {_to}

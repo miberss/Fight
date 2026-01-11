@@ -1,0 +1,30 @@
+using for loops
+using script reflection
+
+struct Regrowth:
+    name: string = "REGROWTH"
+    color: color = rgba(56, 230, 105, 1)
+    event: string = "Hit"
+    heal: number = 0.05
+    duration: timespan = 5 seconds
+    cooldown: timespan = 1 seconds
+    on_hit: function = function "on_hit"
+
+local function add() :: struct:
+    return Regrowth struct instance
+
+local function update(regrowth: Regrowth struct) :: textcomponents:
+    set {_title} to a_effect_title({_regrowth}->name, {_regrowth}->color)
+    set {_key} to a_event({_regrowth}->event)
+    set {_heal} to a_lore_unit({_regrowth}->heal, "hp/s")
+    set {_time} to a_lore_unit(seconds of {_regrowth}->duration, "s")
+
+    set {_text::1} to a_effect_description(merge components {_key}, minimessage from " Restores ", {_heal})
+    set {_text::2} to a_effect_description(merge components minimessage from "for ", {_time})
+
+    return {_title}, {_text::*}, blank()
+
+local function on_hit(player: player, regrowth: Regrowth struct, weapon: Item struct):
+    for {_i} in (ticks of {_regrowth}->duration) times:
+        add {_regrowth}->heal / 20 to wrapper({_player})->health_bar->bar->value's value
+        wait 1 tick

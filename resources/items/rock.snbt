@@ -1,0 +1,16 @@
+{   
+    name: "Rock",
+    description: "A simple rock...",
+    itemtype: "cobblestone",
+    level: 1,
+    rank: "basic",
+    sprite: "blocks:block/cobblestone",
+    stats: [{
+        primary_attack: "lob",
+        attack_width: 0.2d,
+        damage: 1.1,
+        critical_chance: 30.0d,
+        critical_damage: 1000.0d,
+        range: 2.0d,
+    }]
+}

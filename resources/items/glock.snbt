@@ -1,0 +1,16 @@
+{   
+    name: "Glock",
+    description: "What?",
+    itemtype: "spyglass",
+    level: 20,
+    rank: "rare",
+    sprite: "items:item/gold_nugget",
+    stats: [{
+        secondary_attack: "shot",
+        attack_width: 1.0d,
+        critical_chance: 50.0d,
+        critical_damage: 120.0d,
+        damage: 20.0d,
+        range: 25.0d
+    }]
+}

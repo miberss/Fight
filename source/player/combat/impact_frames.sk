@@ -10,5 +10,10 @@ function load_impact_frames():
 function fx_impact_frames(ctx: CombatContext struct):
     a_generator_at({-generator::impact}, {_ctx}->victim)
     change_tickrates({_ctx}->players, 0, true)
-    wait 2 ticks
+    wait 1 ticks
     change_tickrates({_ctx}->players, 20, false)
+    #a_generator_at({-cooldown_off_sound_generator}, {_ctx}->attacker)
+    #loop 6 times:
+    #    set {_i} to {_i} + 1
+    #    set {_color} to flash_color(orange, white, sin(({_i} / 6) * pi radians))
+    #    send title component "" with subtitle shadow(colored_component("※", {_color})) to {_ctx}->attacker for 2 tick with fadein 0 ticks with fadeout 4 ticks

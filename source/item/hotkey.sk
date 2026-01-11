@@ -2,15 +2,13 @@ using for loops
 using script reflection
 
 function handle_hotkey_event(player: player, event: string, item: item = {_}):
-    # removes the chance for double hotkeys, e.g drop & left click
-    stop if is_on_cooldown("last_hotkey", {_player}) = true
-    set_cooldown("last_hotkey", 1 tick, {_player})
 
     # incase the tool is null when called (drop)
     set {_weapon} to ({_item} ? tool of {_player})
+    set {_weapon_struct} to item({_weapon})
 
     # all SpecialEffect's that have an extension with this hook 
-    set {_hotkeys::*} to (item({_weapon})->special_effects) where [input->extension has field {_event}]
+    set {_hotkeys::*} to ({_weapon_struct}->special_effects) where [input->extension has field {_event}]
 
     for {_hotkey} in {_hotkeys::*}:
         set {_cooldown_key} to "special_effect:%{_hotkey}->extension%"
@@ -18,7 +16,7 @@ function handle_hotkey_event(player: player, event: string, item: item = {_}):
             continue
 
         # run hook
-        run {_hotkey}->extension's field {_event} with args {_player}, {_hotkey}->extension
+        run {_hotkey}->extension's field {_event} with args {_player}, {_hotkey}->extension, {_weapon_struct}
 
         # account for cooldown behind scenes
         if {_hotkey}->extension doesn't have field "cooldown":

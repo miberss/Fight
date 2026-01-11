@@ -65,12 +65,15 @@ function a_lore(lore: string) :: textcomponent:
     return merge components (px(2), {_lore})
 
 function a_lore_unit(value: number, unit: string) :: textcomponent:
-    return wrap_around(component_unit({_value}, {_unit}, {@lore_unit}, {@lore_unit}), c("("), c(")"), 1)
+    return component_unit({_value}, {_unit}, {@lore_unit}, {@lore_unit})
 
 function a_key(id: string) :: textcomponent:
     set {_key} to keybind component of "key.%{_id}%"
     set color format of {_key} to orange
     return wrap_around({_key}, c("["), c("]"), 0.85)
+
+function a_event(event: string) :: textcomponent:
+    return wrap_around(colored_component("On %{_event}%", orange), c("["), c("]"), 0.85)
 
 function a_notch_bar(component_a: textcomponent, component_b: textcomponent, max: integer, count: integer) :: textcomponent:
     set {_count} to min({_max}, {_count})

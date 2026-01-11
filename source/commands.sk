@@ -9,7 +9,6 @@ on command:
 		sender is not console
 		{-commands::%command label%} is not set
 	then:
-		broadcast command label
 		cancel event
 
 on unknown command:

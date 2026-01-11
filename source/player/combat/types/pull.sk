@@ -1,0 +1,5 @@
+local function attack_handler(ctx: CombatContext struct) :: boolean:
+    shoot_ray({_ctx})
+    return false if {_ctx}->victim is not set
+    set {_ctx}->victim's velocity to vector in {_ctx}->attacker's direction * -1
+    return true

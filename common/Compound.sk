@@ -1,9 +1,9 @@
 using for loops
 
-function compound_as_list(compound: nbtcompound) :: objects:
+function compound_as_list(compound: nbt) :: objects:
     for {_tag} in nbt tags of {_compound}:
         set {_list::%{_tag}%} to tag({_compound}, {_tag})
     return keyed {_list::*}
 
-function tag(compound: nbtcompound, tag: string) :: object:
+function tag(compound: nbt, tag: string) :: object:
     return (tagtype of tag {_tag} of {_compound}) {_tag} of {_compound}

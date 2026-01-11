@@ -21,16 +21,20 @@ on consume:
 on right click:
     switch state(player):
         case {-states::play}:
+            stop if item is air
             set {-cancel::%player%} to a_promise()
             wait for {-cancel::%player%} and store the result in {_item}
             handle_hotkey_event(player, "on_right_click")
-            on_secondary_attack(player, item(item))
+            set {_ctx} to a_attack_context(player, item(item))
+            attack_handler({_ctx}, "secondary_attack")
 
 on left click:
     switch state(player):
         case {-states::play}:
+            stop if item is air
             handle_hotkey_event(player, "on_left_click")
-            on_primary_attack(player, item(item))
+            set {_ctx} to a_attack_context(player, item(item))
+            attack_handler({_ctx}, "primary_attack")
 
 on sprint toggle:
     player is not sprinting

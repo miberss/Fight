@@ -1,0 +1,20 @@
+{   
+    name: "The Soulfire Blade",
+    description: "Forged from pure hellfire.",
+    itemtype: "iron sword",
+    level: 10,
+    rank: "rare",
+    special_effects: ["spin", "thunderbolt"],
+    sprite: "particles:soul_fire_flame",
+    stats: [{
+        primary_attack: "jab",
+        secondary_attack: "throw",
+        accuracy: 70.0d,
+        attack_width: 0.5d,
+        blood_stone: 5.0d,
+        critical_chance: 20.0d,
+        critical_damage: 10.0d,
+        damage: 10.0d,
+        range: 4.0d
+    }]
+}

@@ -1,4 +1,6 @@
 function on_hit(ctx: CombatContext struct):
+    set {_weapon} to {_ctx}->weapon
+    set {_item} to (slot {_weapon}->slot of {_weapon}->owner)
     if any:
         {_ctx}->attacker = {_ctx}->victim
         {_ctx}->victim is a display, an interaction
@@ -13,6 +15,12 @@ function on_hit(ctx: CombatContext struct):
     if {_ctx}->miss = true:
         fx_miss({_ctx})
         stop
+
+    if {_ctx}->tags contains "secondary":
+        handle_hotkey_event({_ctx}->attacker, "on_secondary")
+    else if {_ctx}->tags contains "primary":
+        handle_hotkey_event({_ctx}->attacker, "on_primary")
+    handle_hotkey_event({_ctx}->attacker, "on_hit")
 
     fx_hit({_ctx})
 

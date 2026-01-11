@@ -1,7 +1,7 @@
 using script reflection
 
 struct RangeExtension:
-    order: integer = 4
+    order: integer = 8
     pre_hit: function = function "pre_hit"
 
 local function add(stat: Stat struct) :: RangeExtension struct:

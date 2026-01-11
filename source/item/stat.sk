@@ -60,7 +60,6 @@ function stat_type(id: string) :: StatType struct:
 
 function stat(item: Item struct, type: StatType struct) :: Stat struct:
     if {_item}->stats.containsKey({_type}) = false:
-        error("Tried to get value of %{_id}% on %{_item}->uuid%, but failed as there isn't that stat on the item")
         stop
     return {_item}->stats.get({_type})
 

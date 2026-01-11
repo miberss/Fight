@@ -1,8 +1,8 @@
 command /repl <code: string>:
     permission: op
     trigger:
-        set {_result} to parse effect {_code} from player
+        set {_result} to parse effect {_code} from sender
         if {_result} = false:
             error("<color:#b02d26>'%{_code}%'</color>")
             stop
-        info("<color:#ABCDEF>%player%</color> executed <color:#ABCDEF>'%{_code}%'</color>")
+        info("<color:#ABCDEF>%sender%</color> executed <color:#ABCDEF>'%{_code}%'</color>")

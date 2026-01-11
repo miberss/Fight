@@ -1,0 +1,14 @@
+function process_target(player: player):
+    set {_target} to target of {_player} ignoring blocks
+    set {_last_target} to metadata "target" of {_player}
+    set metadata "target" of {_player} to {_target}
+
+    if any:
+        {_target} is not set
+        {_last_target} != {_target}
+    then:
+        on_new_target({_player}, {_target}, {_last_target})
+
+function on_new_target(player: player, target: entity, last_target: entity):
+    set glowing of {_target} to true
+    set glowing of {_last_target} to false

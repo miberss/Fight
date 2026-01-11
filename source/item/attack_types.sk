@@ -1,0 +1,37 @@
+using script reflection
+
+struct AttackType:
+    id: string
+    animation: string
+    duration: timespan
+    handler: function
+
+function load_attack_types():
+    set {-attack_type::lob} to a_attack_type("lob", "whack", 1 second, "ray")
+    set {-attack_type::jab} to a_attack_type("jab", "stab", 0.8 second, "ray")
+    set {-attack_type::whack} to a_attack_type("whack", "whack", 0.5 second, "ray")
+
+    set {-attack_type::throw} to a_attack_type("throw", "trident", 0.4 second, "ray")
+    set {-attack_type::charge} to a_attack_type("charge", "crossbow", 0.6 second, "charge")
+    set {-attack_type::shot} to a_attack_type("shot", "spyglass", 0.4 second, "shot")
+
+function a_attack_type(id: string, animation: string, duration: timespan, type_handler_id: string) :: AttackType struct:
+    return AttackType struct instance:
+        id: {_id}
+        animation: {_animation}
+        duration: {_duration}
+        handler: function "attack_handler" from script "source/player/combat/types/%{_type_handler_id}%.sk"
+
+function attack_type(id: string) :: AttackType struct:
+    return {-attack_type::%{_id}%}
+
+function attack_handler(ctx: CombatContext struct, attack: string):
+    process_stats({_ctx}, "pre_hit")
+    set {_type} to stat({_ctx}->weapon, stat_type({_attack}))
+    if {_type} is not set:
+        stop
+    set {_attack_type} to attack_type({_type}->current)
+    if (result of {_attack_type}->handler with args {_ctx}) = false:
+        stop
+    
+    on_hit({_ctx})

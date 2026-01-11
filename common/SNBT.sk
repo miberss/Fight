@@ -1,0 +1,29 @@
+function read_snbt_file(path: string) :: nbt:
+    set {_file_contents} to join file_read_lines({_path}) with ""
+    return nbt from {_file_contents}
+
+import:
+    java.io.File
+    java.io.BufferedReader
+    java.io.FileReader
+
+#> Returns the contents of a file, in a list of strings
+#> If the file is not found, it will log an error.
+#>
+#> @param path The path to the file being read
+#> @return A list of lines as strings, or <none> if the file was not found.
+function file_read_lines(path: string) :: strings:
+    set {_file} to new File({_path})
+    if ({_file}.exists() = false):
+        error("File %{_path}% was not found.")
+        return {_}
+
+    set {_reader} to new BufferedReader(new FileReader({_file}))
+
+    set {_line} to {_reader}.readLine()
+    while ({_line} is set):
+        set {_lines::%loop-counter%} to {_line}
+        set {_line} to {_reader}.readLine()
+
+    {_reader}.close()
+    return {_lines::*}
