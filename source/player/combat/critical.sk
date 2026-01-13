@@ -1,3 +1,4 @@
+
 function load_criticals():
     set {-generators::critical} to SoundGenerator struct instance:
         id: "entity.player.attack.crit"
@@ -6,4 +7,4 @@ function load_criticals():
 
 function fx_critical(at: location):
     a_generator_at({-generators::critical}, {_at})
-    a_particle({_at}, 50 of electric spark particle)
+    draw 50 electric spark particle at {_at}

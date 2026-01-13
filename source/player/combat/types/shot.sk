@@ -1,4 +1,3 @@
-using for loops
 
 function load_shot_attack_type():
     set {-generator::shot_1} to SoundGenerator struct instance:
@@ -17,23 +16,23 @@ function load_shot_attack_type():
     set {-bullet_splash::*} to colored_component("※", yellow), colored_component("░", white), colored_component("⓪", orange)
 
 
-local function attack_handler(ctx: CombatContext struct) :: boolean:
+local function attack_handler(ctx: CombatContext struct) -> boolean:
     shoot_ray({_ctx})
     set {_head} to {_ctx}->attacker's head
     set {_right} to vector in {_ctx}->attacker's direction
     rotate {_right} around y-axis by -45
     set {_gun} to {_head} ~ {_right} * 0.4 + y(-0.2)
     draw shape (line from {_gun} to {_ctx}->hit):
-        set event-shape's particle to dust_color_transition particle using dustTransition(black, gray, 1)
+        # set event-shape's particle to dust_color_transition particle using dustTransition(black, gray, 1)
     a_generator_at({-generator::shot_1}, {_gun})
     a_generator_at({-generator::shot_2}, {_gun})
     bullet_splash({_gun})
     return whether {_ctx}->victim is set
 
 function bullet_splash(at: location):
-    draw 10 dust_color_transition particle using dustTransition(black, gray, 1) at {_at}
-    draw 5 dust_color_transition particle using dustTransition(yellow, black, 0.6) with offset vec(0.2) at {_at}
-    draw 50 dust_color_transition particle using dustTransition(orange, red, 0.5) with extra 1 at {_at}
+    # draw 10 dust_color_transition particle using dustTransition(black, gray, 1) at {_at}
+    # draw 5 dust_color_transition particle using dustTransition(yellow, black, 0.6) with offset vec(0.2) at {_at}
+    # draw 50 dust_color_transition particle using dustTransition(orange, red, 0.5) with extra 1 at {_at}
     for {_i}, {_component} in {-bullet_splash::*}:
         set {_splash} to a_text_display()
         set teleport duration of {_splash} to 0 ticks

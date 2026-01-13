@@ -1,4 +1,4 @@
-using for loops
+
 using script reflection
 
 struct Spin:
@@ -9,17 +9,17 @@ struct Spin:
     cooldown: timespan = 2 seconds
     on_drop: function = function "on_drop"
 
-local function add() :: struct:
+local function add() -> struct:
     return Spin struct instance
 
-local function update(spin: Spin struct) :: textcomponents:
+local function update(spin: Spin struct) -> textcomponents:
     set {_title} to a_effect_title({_spin}->name, {_spin}->color)
     set {_key} to a_key({_spin}->key)
     set {_time} to a_lore_unit(seconds of {_spin}->cooldown, "s")
     set {_radius} to a_lore_unit({_spin}->radius, "m")
-    set {_text::1} to a_effect_description(merge components {_key}, minimessage from " Spins you around and hits")
-    set {_text::2} to a_effect_description(merge components minimessage from "enemies in a radius ", {_radius})
-    set {_text::3} to a_effect_description(merge components minimessage from "shortly ", {_time})
+    set {_text::1} to a_effect_description(merge components ({_key}, minimessage from " Spins you around and hits"))
+    set {_text::2} to a_effect_description(merge components (minimessage from "enemies in a radius ", {_radius}))
+    set {_text::3} to a_effect_description(merge components (minimessage from "shortly ", {_time}))
     return {_title}, {_text::*}, blank()
 
 local function on_drop(player: player, spin: Spin struct, weapon: Item struct):
@@ -30,7 +30,7 @@ local function on_drop(player: player, spin: Spin struct, weapon: Item struct):
     loop 30 times:
         rotate {_forward} around y-axis by ease_out_circle(loop-counter / 30) * 44.6
         set yaw of {_player} to yaw of {_forward}
-        draw 2 sweep_attack at {_player}'s head ~ {_forward} * 3
+        # draw 2 sweep_attack at {_player}'s head ~ {_forward} * 3
         if mod(loop-counter, 10) = 0:
             set {_entities::*} to ...(world of {_player}).getNearbyEntities({_player}'s head, {_radius}, {_radius}, {_radius})
             for {_entity} in {_entities::*}:

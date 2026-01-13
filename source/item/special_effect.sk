@@ -1,14 +1,14 @@
+
 options:
     path: "source/item/special_effects/"
 
-using for loops
 using script reflection
 
 struct SpecialEffectType:
-    # add() :: extension?
+    # add() -> extension?
     const add: function
 
-    # update(extension) :: textcomponents
+    # update(extension) -> textcomponents
     const update: function
 
 struct SpecialEffect:
@@ -22,10 +22,10 @@ function load_special_effects():
             add: function "add" in script "%{_script}%"
             update: function "update" in script "%{_script}%"
 
-function special_effect_type(id: string) :: SpecialEffectType struct:
+function special_effect_type(id: string) -> SpecialEffectType struct:
     return {-special_effect_type::%{_id}%}
 
-function a_special_effect(type: SpecialEffectType struct) :: SpecialEffect struct:
+function a_special_effect(type: SpecialEffectType struct) -> SpecialEffect struct:
     set {_extension} to result of {_type}->add
     return SpecialEffect struct instance:
         type: {_type}
@@ -35,5 +35,5 @@ function a_special_effect(type: SpecialEffectType struct) :: SpecialEffect struc
 function attach_special_effect(item: Item struct, effect: SpecialEffect struct):
     add {_effect} to {_item}->special_effects
 
-function render_special_effect(item: Item struct, effect: SpecialEffect struct) :: integer:
+function render_special_effect(item: Item struct, effect: SpecialEffect struct) -> integer:
     return append_lines({_item}, {_effect}->components)

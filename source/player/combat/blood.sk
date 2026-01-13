@@ -1,4 +1,3 @@
-using for loops
 
 function load_blood():
     set {-blood_blocks::*} to red glazed terracotta, red concrete powder, red wool, fire coral block
@@ -16,7 +15,7 @@ function load_blood():
     set fractal type of {-blood_block_generator} to DomainWarpProgressive
     set cellular distance of {-blood_block_generator} to EuclideanSq
 
-local function random_blood_block(at: location) :: itemtype:
+local function random_blood_block(at: location) -> itemtype:
     set {_noise} to noise_at({-blood_block_generator}, {_at}) + 1.2
     set {_size} to {-blood_blocks::size}
     set {_scaled} to ({_size} * {_noise})
@@ -28,7 +27,7 @@ function fx_blood(ctx: CombatContext struct):
     a_generator_at({-blood_sound_generator}, {_ctx}->hit)
 
 function fx_blood_particle(hit: location, damage: number):
-    draw 10 block using red glazed terracotta at {_hit} with offset vec(0.6) with extra {_damage}
+    # draw 10 block using red glazed terracotta at {_hit} with offset vec(0.6) with extra {_damage}
 
 function fx_blood_blocks(entity: entity):
     

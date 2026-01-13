@@ -1,3 +1,4 @@
+
 on tab complete of "skript" and "sk":
 	set {_t::*} to tab completions where [input does not contain "\.git"]
 	set tab completions for position 2 to {_t::*}

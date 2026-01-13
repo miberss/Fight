@@ -1,3 +1,4 @@
+
 using script reflection
 
 struct AttackType:
@@ -15,14 +16,14 @@ function load_attack_types():
     set {-attack_type::charge} to a_attack_type("charge", "crossbow", 0.6 second, "charge")
     set {-attack_type::shot} to a_attack_type("shot", "spyglass", 0.4 second, "shot")
 
-function a_attack_type(id: string, animation: string, duration: timespan, type_handler_id: string) :: AttackType struct:
+function a_attack_type(id: string, animation: string, duration: timespan, type_handler_id: string) -> AttackType struct:
     return AttackType struct instance:
         id: {_id}
         animation: {_animation}
         duration: {_duration}
         handler: function "attack_handler" from script "source/player/combat/types/%{_type_handler_id}%.sk"
 
-function attack_type(id: string) :: AttackType struct:
+function attack_type(id: string) -> AttackType struct:
     return {-attack_type::%{_id}%}
 
 function attack_handler(ctx: CombatContext struct, attack: string):

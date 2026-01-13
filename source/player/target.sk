@@ -1,3 +1,4 @@
+
 function process_target(player: player):
     set {_target} to target of {_player} ignoring blocks
     set {_last_target} to metadata "target" of {_player}

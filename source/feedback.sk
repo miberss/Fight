@@ -1,4 +1,3 @@
-using for loops
 
 function load_feedback():
     for {_type} in ("bug", "report", "suggestion"):

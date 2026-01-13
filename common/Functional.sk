@@ -4,7 +4,6 @@
 #
 # This module requires the following other modules: NONE
 
-using for loops
 using script reflection
 
 #> A shorthand for getting a function by its name
@@ -13,7 +12,7 @@ using script reflection
 #> @param name The name of the function to retrieve
 #> @param script (Optional) The script where the function is defined
 #> @return The function if found, none if not registered
-function fn(name: string, script: string = {_}) :: function:
+function fn(name: string, script: string = {_}) -> function:
 	return function named {_name} in (script {_script})
 
 #> The id function returns the object given to it without any changes
@@ -22,7 +21,7 @@ function fn(name: string, script: string = {_}) :: function:
 #>
 #> @param value Any object
 #> @return The object passed in
-function id(value: object) :: object:
+function id(value: object) -> object:
 	return {_value}
 
 #> The ids function returns the objects given to it without any changes
@@ -31,7 +30,7 @@ function id(value: object) :: object:
 #>
 #> @param value Any objects
 #> @return The objects passed in
-function ids(value: objects) :: objects:
+function ids(value: objects) -> objects:
 	return {_value::*}
 
 #> Applies a function to each item in a collection
@@ -50,7 +49,7 @@ function foreach(collection: objects, transformer: function):
 #> @param initial_value The starting value for the reduction
 #> @param combiner A function that takes two arguments: the current result and the next item, returning a new result
 #> @return The final reduced value
-function reduce(collection: objects, initial_value: object, combiner: function) :: object:
+function reduce(collection: objects, initial_value: object, combiner: function) -> object:
 	set {_result} to {_initial_value}
 	for {_item} in {_collection::*}:
 		set {_result} to result of {_combiner} with args {_result}, {_item}

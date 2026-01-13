@@ -1,3 +1,4 @@
+
 function load_miss():
     set {-miss_sound_generator::1} to SoundGenerator struct instance:
         id: "entity.breeze.wind_burst", "minecraft:entity.breeze.deflect"

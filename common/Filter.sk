@@ -191,7 +191,7 @@ struct FilterResult:
 #
 # This is moderately safe to run asynchronously, as long as only one call to filter_message() is made at a time.
 # Using it in the async chat event should be relatively safe, though not guaranteed if you have a lot of players chatting at once.
-function filter_message(message: text, sender: sender, match all: boolean = false) :: struct:
+function filter_message(message: text, sender: sender, match all: boolean = false) -> struct:
     set {_result} to a FilterResult struct instance:
         matched: false
         severity: 0
@@ -255,7 +255,7 @@ function regenerate_patterns():
     sort {-{@cf}::filtered phrases::*} in descending order by (input->strictness)    
 
 # generates a regex Pattern object for a phrase, based on boundary and strictness
-local function generate_pattern(phrase: text, boundary: boolean, strictness: number) :: javaobject:
+local function generate_pattern(phrase: text, boundary: boolean, strictness: number) -> javaobject:
     set {_pattern} to ""
     # generate alternate characters map
     set {_characters::*} to {_phrase} split at "" without trailing string
@@ -296,13 +296,13 @@ local function use_separators(separators: texts):
         set {-{@cf}::separators::%loop-index%} to {_char}
 
 # returns a regex pattern string matching zero or more separator characters
-local function separators_pattern() :: text:
+local function separators_pattern() -> text:
     if {-{@cf}::separators::*} is set:
         return "[%join {-{@cf}::separators::*}%]*"
     return ""
 
 # returns a regex pattern string matching the character and its alternates based on strictness
-local function alternates_pattern(char: text, strictness: number) :: text:
+local function alternates_pattern(char: text, strictness: number) -> text:
     if any:
         {_strictness} is 3
         {-{@cf}::alternates::%{_char}%} is not set

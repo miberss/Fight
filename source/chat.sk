@@ -1,3 +1,4 @@
+
 import:
     java.util.concurrent.atomic.AtomicInteger
 
@@ -7,8 +8,6 @@ options:
     chat_white: rgb(210, 215, 220)
     spacing: px(2)
     date_format: "HH:mm"
-
-using for loops
 
 struct Message:
     const sender: string
@@ -27,21 +26,21 @@ on chat:
     cancel event
     chat_handle(player, message)
 
-function format_player_header(player: player, color: color = {@white}) :: textcomponent:
+function format_player_header(player: player, color: color = {@white}) -> textcomponent:
     set {_head} to object text component with player head of {_player}
     set {_name} to colored_component(name of {_player}, {_color})
     return merge components px(1), {_head}, px(3), {_name}
 
-function format_timestamp(date: date) :: textcomponent:
+function format_timestamp(date: date) -> textcomponent:
     return colored_component({_date} formatted as {@date_format}, {@gray})
 
-function format_header(player: player, date: date) :: textcomponent:
+function format_header(player: player, date: date) -> textcomponent:
     return merge components format_timestamp(now), px(4), format_player_header({_player})
 
-function message_assemble_components(header: textcomponent, message: textcomponent, button: textcomponent = {_}, delete_button: textcomponent = {_}) :: textcomponent:
+function message_assemble_components(header: textcomponent, message: textcomponent, button: textcomponent = {_}, delete_button: textcomponent = {_}) -> textcomponent:
     return merge components {_header}, px(3), {_button}, px(2), component_from_id("arrow_right"), px(3), {_message}, px(2), {_delete_button}
 
-function underlined_naughty_words(result: FilterResult struct) :: textcomponent:
+function underlined_naughty_words(result: FilterResult struct) -> textcomponent:
     for {_text} in ({_result}->matched text):
         set {_c} to colored_component({_text}, rgb(255, 0, 0))
         set underline format of {_c} to true
@@ -100,7 +99,7 @@ function reply_state_start(player: player, target: player):
     set {-reply_state::%{_player}%} to a_promise(1 minute)
     feedback_reply_started({_player}, {_target})
 
-function reply_state(player: player) :: future:
+function reply_state(player: player) -> future:
     return {-reply_state::%{_player}%} 
 
 function reply_state_complete(player: player, message: message struct):
@@ -123,18 +122,18 @@ local function reply_handle(sender: player, target: player, reply_history: textc
     chat_handle({_sender}, {_message}->message, {_reply_history::*})
 
 # get the last message sent (for comparison)
-local function message_last() :: message struct:
+local function message_last() -> message struct:
     return 2nd last element of {-message::*}
 
 # retrieve a message by ID
-local function message_get(id: integer) :: message struct:
+local function message_get(id: integer) -> message struct:
     return {-message::%{_id}%}
 
-local function message_current() :: message struct:
+local function message_current() -> message struct:
     return {-message::%{-message_counter}.intValue()%}
 
 # store a message and return its ID
-local function player_message_save(player: player, text: string) :: message struct:
+local function player_message_save(player: player, text: string) -> message struct:
     set {_id} to {-message_counter}.incrementAndGet()
     set {-message::%{_id}%} to Message struct instance:
         message: {_text}

@@ -1,3 +1,4 @@
+
 on inventory slot change:
     event-item != 0 airs
     if player's metadata "slot=%(index of event-slot)%" is not set:

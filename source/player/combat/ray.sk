@@ -1,3 +1,4 @@
+
 function load_ray_handler():
     set {-ray_ignore_entities::*} to display (entitytype), interaction (entitytype)
     set {-ray_ignore_blocks::*} to (all blocks)

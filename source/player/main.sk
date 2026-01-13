@@ -1,3 +1,4 @@
+
 struct PlayerWrapper:
     player: player
     machine: StateMachine struct
@@ -5,7 +6,7 @@ struct PlayerWrapper:
 
     health_bar: HealthBar struct
 
-function wrapper(player: player) :: PlayerWrapper struct:
+function wrapper(player: player) -> PlayerWrapper struct:
     return {-player_wrapper::%{_player}%}
 
 function attach_wrapper(player: player):
@@ -36,4 +37,3 @@ on item held change:
         add ({_dir} * ease_in_out_cubic(loop-counter / 10)) / 10 to camera distance attribute of player
         set camera distance attribute of player to clamp(camera distance attribute of player, 1, 10)
         wait 1 tick
-    

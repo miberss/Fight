@@ -1,4 +1,12 @@
-function vfx_effect_spell(amount: integer, color: color) :: customparticles:
-    #set {_particles::1} to {_amount} of effect particle using particleSpell({_color}, 1) with offset vec(0.3 + ({_amount} / 20)) with extra 0.2
-    set {_particles::2} to {_amount} of dust particle using dustOption({_color}, 1) with offset vec(0.3 + ({_amount} / 20)) with extra 0.2
-    return {_particles::*}
+
+function vfx_effect_spell(amount: integer, color: color) -> particles:
+    set {_offset} to vec(0.3 + ({_amount} / 20))
+    set {_particles::1} to {_color} effect particle of power 1
+    set {_particles::2} to {_color} dust particle
+    set particle count of {_particles::*} to {_amount}
+    return ({_particles::*} with offset {_offset} with extra value 0.2)
+
+function vfx_hit(distribution: number) -> particles:
+    set {_particles::1} to 3 crit particle 
+    set {_particles::2} to 5 electric spark particle
+    return {_particles::*} with offset vec({_distribution}) with extra value 0.2

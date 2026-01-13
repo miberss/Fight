@@ -1,3 +1,4 @@
+
 function load_ranks():
     set {-rank::basic} to a_rank("basic", rgba(154, 146, 187))
     set {-rank::rare} to a_rank("rare", rgba(114, 120, 230))

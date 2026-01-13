@@ -1,3 +1,4 @@
+
 function on_damage(ctx: CombatContext struct):
     if {_ctx}->critical = true:
         fx_critical({_ctx}->hit)

@@ -1,3 +1,4 @@
+
 struct CombatContext:
     const attacker: player
     const weapon: Item struct
@@ -18,7 +19,7 @@ struct CombatContext:
     critical: boolean = false
     miss: boolean = false
 
-function a_attack_context(attacker: player, weapon: Item struct, tags: strings = {_}) :: CombatContext struct:
+function a_attack_context(attacker: player, weapon: Item struct, tags: strings = {_}) -> CombatContext struct:
 
     return CombatContext struct instance:
         attacker: {_attacker}
