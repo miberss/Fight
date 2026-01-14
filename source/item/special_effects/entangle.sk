@@ -15,8 +15,8 @@ local function update(entangle: Entangle struct) -> textcomponents:
     set {_title} to a_effect_title({_entangle}->name, {_entangle}->color)
     set {_key} to a_event({_entangle}->event)
 
-    set {_text::1} to a_effect_description(merge components ({_key}, minimessage from " Shoot"))
-    set {_text::2} to a_effect_description(merge components (minimessage from "root projectiles into enemies"))
+    set {_text::1} to a_effect_description(({_key}, " Shoot"))
+    set {_text::2} to a_effect_description(("root projectiles into enemies"))
 
     return {_title}, {_text::*}, blank()
 

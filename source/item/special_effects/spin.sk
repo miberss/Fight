@@ -17,9 +17,9 @@ local function update(spin: Spin struct) -> textcomponents:
     set {_key} to a_key({_spin}->key)
     set {_time} to a_lore_unit(seconds of {_spin}->cooldown, "s")
     set {_radius} to a_lore_unit({_spin}->radius, "m")
-    set {_text::1} to a_effect_description(merge components ({_key}, minimessage from " Spins you around and hits"))
-    set {_text::2} to a_effect_description(merge components (minimessage from "enemies in a radius ", {_radius}))
-    set {_text::3} to a_effect_description(merge components (minimessage from "shortly ", {_time}))
+    set {_text::1} to a_effect_description(({_key}, " Spins you around and hits"))
+    set {_text::2} to a_effect_description(("enemies in a radius ", {_radius}))
+    set {_text::3} to a_effect_description(("shortly ", {_time}))
     return {_title}, {_text::*}, blank()
 
 local function on_drop(player: player, spin: Spin struct, weapon: Item struct):
