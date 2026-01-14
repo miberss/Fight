@@ -20,9 +20,9 @@ local function update(thunderbolt: Thunderbolt struct) -> textcomponents:
     set {_key} to a_key({_thunderbolt}->key)
     set {_amount} to a_lore_unit({_thunderbolt}->amount, "x")
     set {_radius} to a_lore_unit({_thunderbolt}->radius, "m")
-    set {_text::1} to a_effect_description(merge components ({_key}, minimessage from " Casts thunderbolts ", {_amount}))
-    set {_text::2} to a_effect_description(merge components (minimessage from "that drop down and create a"))
-    set {_text::3} to a_effect_description(merge components (minimessage from "splash ", {_radius}))
+    set {_text::1} to a_effect_description(({_key}, " Casts thunderbolts ", {_amount}))
+    set {_text::2} to a_effect_description(("that drop down and create a"))
+    set {_text::3} to a_effect_description(("splash ", {_radius}))
     return {_title}, {_text::*}, blank()
 
 local function on_drop(player: player, thunderbolt: Thunderbolt struct, weapon: Item struct):

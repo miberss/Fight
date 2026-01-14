@@ -55,10 +55,12 @@ function a_effect_title(title: string, color: color) -> textcomponent:
     set {_bar} to a_notch_bar(component_from_id("bar"), component_from_id("bar"), {_width}, {_width})
     return merge components {_bar}, px(4), a_angular_brackets(colored_component({_title}, {_color})), px(4), {_bar}
 
-function a_effect_description(line: textcomponent) -> textcomponent:
-    set {_component} to merge components px(6), {_line}
-    set color format of {_component} to {@white}
-    return {_component}
+function a_effect_description(line: objects) -> textcomponent:
+    for {_object} in {_line::*}:
+        set {_component::%loop-counter%} to (minimessage from {_object}) if ({_line} is a text) else ({_object})
+    set {_description} to merge components px(6), {_component::*}
+    set color format of {_description} to {@white}
+    return {_description}
 
 function a_lore(lore: string) -> textcomponent:
     set {_lore} to colored_component("“ %{_lore}% „ ", change_brightness({@gray}, 1.4))

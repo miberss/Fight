@@ -19,8 +19,8 @@ local function update(regrowth: Regrowth struct) -> textcomponents:
     set {_heal} to a_lore_unit({_regrowth}->heal, "hp/s")
     set {_time} to a_lore_unit(seconds of {_regrowth}->duration, "s")
 
-    set {_text::1} to a_effect_description(merge components ({_key}, minimessage from " Restores ", {_heal}))
-    set {_text::2} to a_effect_description(merge components (minimessage from "for ", {_time}))
+    set {_text::1} to a_effect_description(({_key}, " Restores ", {_heal}))
+    set {_text::2} to a_effect_description(("for ", {_time}))
 
     return {_title}, {_text::*}, blank()
 
