@@ -27,10 +27,11 @@ local function on_drop(player: player, spin: Spin struct, weapon: Item struct):
     set {_radius} to {_spin}->radius
     set pitch of {_forward} to 0
     change_tickrate({_player}, 0, true)
+    wait 1 tick
     loop 30 times:
         rotate {_forward} around y-axis by ease_out_circle(loop-counter / 30) * 44.6
         set yaw of {_player} to yaw of {_forward}
-        # draw 2 sweep_attack at {_player}'s head ~ {_forward} * 3
+        draw 2 sweep attack particle at {_player}'s head ~ {_forward} * 3
         if mod(loop-counter, 10) = 0:
             set {_entities::*} to ...(world of {_player}).getNearbyEntities({_player}'s head, {_radius}, {_radius}, {_radius})
             for {_entity} in {_entities::*}:

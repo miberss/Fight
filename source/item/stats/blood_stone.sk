@@ -61,12 +61,6 @@ local function pulse(orb: BloodStoneOrb struct):
         set interaction scale of {_orb}->interaction to {_orb}->scale
         wait 1 tick
 
-local function dust(orb: BloodStoneOrb struct, n: integer = 10):
-    # draw {_n} dust using dustOption(rgb(160, 48, 48), 1.4) at ({_orb}->location ~ random vector / 5) with offset (random vector) with extra 0.05
-
-local function dust_t(orb: BloodStoneOrb struct, n: integer = 10):
-    # draw {_n} dust_color_transition using dustTransition(rgb(160, 48, 48), rgb(250, 250, 50), 1.1) at ({_orb}->location ~ random vector / 5) with offset (random vector) with extra 0.05
-
 local function tick_orb(orb: BloodStoneOrb struct):
     set {_location} to {_orb}->location
     set yaw of {_location} to 0
@@ -76,9 +70,9 @@ local function tick_orb(orb: BloodStoneOrb struct):
     if chance of 1%:
         pulse({_orb})
     else if chance of 5%:
-        dust({_orb})
-    else if chance of 2%:
-        dust_t({_orb})
+        draw vfx_blood_stone_dust(2) at {_orb}->location
+    else if chance of 1%:
+        draw vfx_blood_stone_dust(10) at {_orb}->location
     block at {_location} ~ y(1) is air
     make players see {_location} ~ y(1) as light[level=5]
     wait 10 ticks
@@ -87,7 +81,7 @@ local function tick_orb(orb: BloodStoneOrb struct):
 local function add_orb(orb: BloodStoneOrb struct):
     add {_orb} to {_orb}->blood_stone->orbs
     pulse({_orb})
-    dust_t({_orb}, 20)
+    draw vfx_blood_stone_dust(20) at {_orb}->location
 
 local function break_orb(orb: BloodStoneOrb struct):
     remove {_orb} from {_orb}->blood_stone->orbs
@@ -104,8 +98,7 @@ local function break_orb(orb: BloodStoneOrb struct):
         rotate {_displays::1}, {_displays::2} around y-axis by 10 * {_easing}
         set interaction scale of {_orb}->interaction to {_orb}->scale
         wait 1 tick
-    dust({_orb}, 50)
-    dust_t({_orb}, 20)
+    draw vfx_blood_stone_dust(30) at {_orb}->location
     kill {_orb}->interaction, {_orb}->display, ({_orb}->display's passengers)
     delete {_orb}
 

@@ -29,10 +29,13 @@ struct FlashOptions:
     size: number
 
 function break_sounds_in_radius(location: location, radius: number):
-    loop shuffled (all_in_circle_fast(({_radius})) mapped with [block at ({_location} ~ input)]):
-        play sound (break sound of type of loop-value) with volume 0.02 at loop-value
-        # draw 10 (block) using (type of loop-value) at loop-value ~ y(1) with delta y(1) with extra 1
-        make (players) see damage of (loop-value) as rnd(0.3, 0.7) from random integer between 1 and 10000
+    for {_block} in shuffled (all_in_circle_fast(({_radius})) mapped with [block at ({_location} ~ input)]):
+        set {_type} to type of {_block}
+
+        play sound (break sound of {_type}) with volume 0.02 at {_block}
+        draw vfx_block_break({_type}) at ({_block} ~ y(1)) 
+        make (players) see damage of {_block} as rnd(0.3, 0.7) from rndi(10000)
+
         wait 1 tick if mod(loop-counter, 10) = 0
 
 function flash_animation(component: AnimationComponent struct):
@@ -78,10 +81,10 @@ function flash_animation(component: AnimationComponent struct):
 
     play sound "entity.splash_potion.break" with seed 1 with volume 0.4 with pitch 2 at ({_component}->loc)
     play sound "minecraft:item.trident.return" with seed 1 with volume 0.4 with pitch 1 at ({_component}->loc)
-    # draw 50 effect using particleSpell(rgb(255,255,255), 0.4) at ({_component}->loc) with delta vec(1, 0, 1) with extra 1
+    draw 50 rgb(255,255,255) effect particle of power 0.4 with offset vec(1, 0, 1) with extra value 1 at ({_component}->loc)
     break_sounds_in_radius({_component}->loc ~ y(-1), {_o}->size / 10)
 
-    # draw 10 firework at {_component}->loc with delta vec(1) with extra 0.3
+    draw 10 firework particle with offset vec(1) with extra value 0.3 at {_component}->loc 
     complete {_component}->end with {_e::interaction}
     wait 1 tick
     kill {_e::*}

@@ -27,7 +27,7 @@ function fx_blood(ctx: CombatContext struct):
     a_generator_at({-blood_sound_generator}, {_ctx}->hit)
 
 function fx_blood_particle(hit: location, damage: number):
-    # draw 10 block using red glazed terracotta at {_hit} with offset vec(0.6) with extra {_damage}
+    draw vfx_blood() at {_hit}
 
 function fx_blood_blocks(entity: entity):
     

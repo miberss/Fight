@@ -9,6 +9,8 @@ struct Thunderbolt:
     radius: number = 3.5
     amount: integer = 3
     on_drop: function = function "on_drop"
+    dark_particle: particle = (30 rgb(20, 60, 200) dust particle with offset vec(0.2) with extra value 0.3)
+    light_particle: particle = (white dust particle that transitions to rgb(100,150,240))
 
 local function add() -> struct:
     return Thunderbolt struct instance
@@ -36,25 +38,33 @@ local function on_drop(player: player, thunderbolt: Thunderbolt struct, weapon: 
 function shoot_thunderbolt(player: player, weapon: Item struct, direction: vector, size: number, range: number):
 
     set {_head} to {_player}'s head
+
     set {_ray} to (raytrace from {_head} along {_direction} with max distance {_range} while ignoring passable blocks)
+
     set {_location} to (raytrace hit block of {_ray}) ? block at ({_head} ~ {_direction} * {_range})
 
     set {_line} to line in direction {_direction} and length {_range}
 
-    set particle of {_line} to white dust particle that transitions to rgb(100,150,240)
-    draw shape {_line} at {_head}
-
-    draw 30 of rgb(20, 60, 200) dust particle with offset of vec(0.2) with extra value of 0.3 at {_location}
+    for {_particle} in vfx_thunder_bolt():
+        set particle of {_line} to {_particle}
+        draw shape {_line} at {_head}
+        draw {_particle} at {_location}
 
     a_star({_location}, 5, 10)
+    wait 1 tick
 
     set {_ray} to (raytrace from {_location} along y(-1) while ignoring passable blocks while ignoring all entitytypes)
     set {_line} to line from {_location} to (raytrace hit location of {_ray})
-    draw shape {_line}:
-        set event-shape's particle to white dust particle that transitions to rgb(100,150,240)
+
+    for {_particle} in vfx_thunder_bolt():
+        
+        set particle of {_line} to {_particle}
+        draw {_particle} at {_location}
+        draw shape {_line}
 
     set {_component} to a_animation_component("flash", (raytrace hit block of {_ray}) ~ y(0.5), FlashOptions struct instance):
         size: {_size}
+
     wait for future {_component}->end and store the result in {_interaction}
     
     set {_entities::*} to ...(world of {_interaction}).getNearbyEntities({_interaction}.getBoundingBox())

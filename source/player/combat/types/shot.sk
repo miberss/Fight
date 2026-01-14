@@ -14,7 +14,7 @@ function load_shot_attack_type():
         random_pitch: range(0.5)
     
     set {-bullet_splash::*} to colored_component("※", yellow), colored_component("░", white), colored_component("⓪", orange)
-
+    set {-bullet_line_particle} to (black dust particle that transitions to gray)
 
 local function attack_handler(ctx: CombatContext struct) -> boolean:
     shoot_ray({_ctx})
@@ -22,17 +22,19 @@ local function attack_handler(ctx: CombatContext struct) -> boolean:
     set {_right} to vector in {_ctx}->attacker's direction
     rotate {_right} around y-axis by -45
     set {_gun} to {_head} ~ {_right} * 0.4 + y(-0.2)
-    draw shape (line from {_gun} to {_ctx}->hit):
-        # set event-shape's particle to dust_color_transition particle using dustTransition(black, gray, 1)
+
+    set {_line} to (line from {_gun} to {_ctx}->hit)
+    set particle of {_line} to {-bullet_line_particle}
+    draw shape {_line}
+
     a_generator_at({-generator::shot_1}, {_gun})
     a_generator_at({-generator::shot_2}, {_gun})
     bullet_splash({_gun})
     return whether {_ctx}->victim is set
 
 function bullet_splash(at: location):
-    # draw 10 dust_color_transition particle using dustTransition(black, gray, 1) at {_at}
-    # draw 5 dust_color_transition particle using dustTransition(yellow, black, 0.6) with offset vec(0.2) at {_at}
-    # draw 50 dust_color_transition particle using dustTransition(orange, red, 0.5) with extra 1 at {_at}
+    draw vfx_bullet_splash() at {_at}
+
     for {_i}, {_component} in {-bullet_splash::*}:
         set {_splash} to a_text_display()
         set teleport duration of {_splash} to 0 ticks

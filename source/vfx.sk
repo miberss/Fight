@@ -10,3 +10,26 @@ function vfx_hit(distribution: number) -> particles:
     set {_particles::1} to 3 crit particle 
     set {_particles::2} to 5 electric spark particle
     return {_particles::*} with offset vec({_distribution}) with extra value 0.2
+
+function vfx_bullet_splash() -> particles:
+    set {_particles::1} to 5 yellow dust particle of size 0.6 that transitions to black with offset vec(0.2)
+    set {_particles::2} to 50 orange dust particle of size 0.5 that transitions to red with extra value 1
+    set {_particles::3} to 10 black dust particle that transitions to gray
+    return {_particles::*}
+
+function vfx_thunder_bolt() -> particles:
+    set {_particles::1} to 3 white dust particle that transitions to rgb(100,150,240)
+    set {_particles::2} to ice item particle
+    return {_particles::*}
+
+function vfx_blood() -> particle:
+    return 10 (red glazed terracotta) block particle with offset vec(0.6) with extra value {_damage}
+
+function vfx_blood_stone_dust(amount: integer = 10) -> particles:
+    set {_particles::1} to rgb(160, 48, 48) dust particle of size 1.4
+    set {_particles::2} to rgb(160, 48, 48) dust particle of size 1.1 that transitions to rgb(250, 250, 50)
+    set particle count of {_particles::*} to {_amount}
+    return {_particles::*} with offset (random vector) with extra value (0.05)
+
+function vfx_block_break(type: itemtype) -> particle:
+    return (10 {_type} block particle with offset y(1) with extra value 1)
