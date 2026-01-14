@@ -1,10 +1,11 @@
+
 using script reflection
 
 struct CriticalDamage:
     order: integer = 6
     hit_modifiers: function = function "hit_modifiers"
 
-local function add(stat: Stat struct) :: CriticalDamage struct:
+local function add(stat: Stat struct) -> CriticalDamage struct:
     return CriticalDamage struct instance
 
 local function hit_modifiers(ctx: CombatContext struct, stat: Stat struct):
@@ -18,6 +19,5 @@ local function load():
         name: "Critical Damage"
         extra: 1
 
-local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
+local function update(bindable: bindable struct, stat: Stat struct) -> textcomponent:
     return a_filled_stat_field("critical_damage", a_percent({_stat}->current))
-

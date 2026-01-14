@@ -1,3 +1,4 @@
+
 function on_knockback(ctx: CombatContext struct):
     set {_velocity} to (normalized vector from {_ctx}->attacker to {_ctx}->victim) * 0.6
     set velocity of {_ctx}->victim to (velocity of {_ctx}->victim * 0.05)

@@ -28,7 +28,7 @@ function delete_cooldown(id: string, holder: metadataholder = {_}):
 #> @param id The id of the cooldown
 #> @param holder (Optional) The holder of the cooldown
 #> @return The remaining time of the cooldown
-function remaining_cooldown(id: string, holder: metadataholder = {_}) :: timespan:
+function remaining_cooldown(id: string, holder: metadataholder = {_}) -> timespan:
     set {_remaining} to cooldown_duration({_id}, {_holder}) - (time since cooldown_start({_id}, {_holder}))
     return {_remaining} if {_remaining} > 0 seconds
     delete_cooldown({_id}, {_holder})
@@ -39,7 +39,7 @@ function remaining_cooldown(id: string, holder: metadataholder = {_}) :: timespa
 #> @param id The id of the cooldown
 #> @param holder (Optional) The holder of the cooldown
 #> @return The start date of the cooldown
-function cooldown_start(id: string, holder: metadataholder = {_}) :: date:
+function cooldown_start(id: string, holder: metadataholder = {_}) -> date:
     return {-mib_lib::cooldown::%{_id}%::%{_holder}%::start}
 
 #> Returns the duration of a cooldown with an id and holder
@@ -47,7 +47,7 @@ function cooldown_start(id: string, holder: metadataholder = {_}) :: date:
 #> @param id The id of the cooldown
 #> @param holder (Optional) The holder of the cooldown
 #> @return The duration of the cooldown
-function cooldown_duration(id: string, holder: metadataholder = {_}) :: timespan:
+function cooldown_duration(id: string, holder: metadataholder = {_}) -> timespan:
     return {-mib_lib::cooldown::%{_id}%::%{_holder}%::duration}
 
 #> Returns whether the cooldown with an id and holder is active
@@ -55,7 +55,7 @@ function cooldown_duration(id: string, holder: metadataholder = {_}) :: timespan
 #> @param id The id of the cooldown
 #> @param holder (Optional) The holder of the cooldown
 #> @return Whether the cooldown is active
-function is_on_cooldown(id: string, holder: metadataholder = {_}) :: boolean:
+function is_on_cooldown(id: string, holder: metadataholder = {_}) -> boolean:
     return whether remaining_cooldown({_id}, {_holder}) > 0 seconds
 
 # ------------------------
@@ -81,5 +81,5 @@ on load:
 # m: minute (0-59)
 # s: second (0-59)
 #
-function format_timespan(timespan: timespan, format: string = {-default_timespan_format}) :: string:
+function format_timespan(timespan: timespan, format: string = {-default_timespan_format}) -> string:
     return ({_timespan} after {-unix_zero_date}) formatted as {_format}

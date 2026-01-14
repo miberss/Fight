@@ -1,4 +1,4 @@
-using for loops
+
 using script reflection
 
 function process_stats(ctx: CombatContext struct, phase: string):

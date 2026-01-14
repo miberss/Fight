@@ -1,3 +1,4 @@
+
 function a_damage_indicator(ctx: CombatContext struct):
     set {_position} to flatten(head of {_ctx}->victim) ~ random vector
     set {_indicator} to a_text_display()

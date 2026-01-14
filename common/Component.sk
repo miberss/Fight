@@ -1,91 +1,90 @@
-using for loops
 
 import:
     org.bukkit.map.MinecraftFont
     net.kyori.adventure.text.format.ShadowColor
 
-function width(string: string) :: integer:
+function width(string: string) -> integer:
     return MinecraftFont.Font.getWidth({_string})
 
-function shadow(component: textcomponent) :: textcomponent:
+function shadow(component: textcomponent) -> textcomponent:
     {_component}.setComponent({_component}.getComponent().shadowColor(ShadowColor.none()))
     return {_component}
 
-function shadow(component: textcomponent, color: color) :: textcomponent:
+function shadow(component: textcomponent, color: color) -> textcomponent:
     {_component}.setComponent({_component}.getComponent().shadowColor(ShadowColor.shadowColor((red value of {_color}), (green value of {_color}), (blue value of {_color}), (alpha value of {_color}))))
     return {_component}
 
-function sprite(path: string, frame: integer = {_}) :: textcomponent:
+function sprite(path: string, frame: integer = {_}) -> textcomponent:
     if {_frame} is set:
         add "_%{_frame}%" to {_path}
     set {_parts::*} to {_path} split at ":"
     return object text component with atlas {_parts::1} with sprite {_parts::2}
 
-function merge(components: textcomponents, joiner: textcomponent = empty text component) :: textcomponent:
+function merge(components: textcomponents, joiner: textcomponent = empty text component) -> textcomponent:
     return merge components {_components::*} with {_joiner}
 
-function c(text: text) :: textcomponent:
+function c(text: text) -> textcomponent:
     return text component of {_text}
 
-function cs(texts: texts) :: textcomponents:
+function cs(texts: texts) -> textcomponents:
     return text component of {_texts::*}
 
-function component() :: textcomponent:
+function component() -> textcomponent:
     return empty text component
 
-function component(text: text) :: textcomponent:
+function component(text: text) -> textcomponent:
     return text component of {_text}
 
-function components(texts: texts) :: textcomponents:
+function components(texts: texts) -> textcomponents:
     return text component of {_texts::*}
 
-function new_line_component() :: textcomponent:
+function new_line_component() -> textcomponent:
     return (minimessage from "<br>")
 
-function blank() :: textcomponent:
+function blank() -> textcomponent:
     return c("")
 
-function px(px: integer) :: textcomponent:
+function px(px: integer) -> textcomponent:
     set {_component} to c(((character at codepoint 8204) repeated {_px} times) ? "")
     set bold format of {_component} to true
     return {_component}
 
-function colored_component(text: text, color: color) :: textcomponent:
+function colored_component(text: text, color: color) -> textcomponent:
     set {_component} to c({_text})
     set color format of {_component} to {_color}
     return {_component}
 
-function wrap_around(component: textcomponent, left: textcomponent, right: textcomponent, brightness: number) :: textcomponent:
+function wrap_around(component: textcomponent, left: textcomponent, right: textcomponent, brightness: number) -> textcomponent:
     set {_children::*} to (component children of {_component}) ? ({_component}, {_component})
     set color format of {_left} to change_brightness(color format of (first element of {_children::*}), {_brightness})
     set color format of {_right} to change_brightness(color format of (last element of {_children::*}), {_brightness})
     return merge components ({_left}, {_component}, {_right})
 
-function change_brightness(color: color, amount: number) :: color:
+function change_brightness(color: color, amount: number) -> color:
     set {_r} to clamp(red value of {_color} * {_amount}, 0, 255)
     set {_g} to clamp(green value of {_color} * {_amount}, 0, 255)
     set {_b} to clamp(blue value of {_color} * {_amount}, 0, 255)
     return rgb({_r}, {_g}, {_b})
 
-function shift_brightness(component: textcomponent, amount: number) :: textcomponent:
+function shift_brightness(component: textcomponent, amount: number) -> textcomponent:
     set color format of {_component} to change_brightness(color format of {_component}, {_amount})
     return {_component}
 
-function rgba(r: number, g: number, b: number, a: number) :: color:
+function rgba(r: number, g: number, b: number, a: number) -> color:
     return rgb({_r}, {_g}, {_b}, {_a} * 255)
 
-function rgba(r: number, g: number, b: number) :: color:
+function rgba(r: number, g: number, b: number) -> color:
     return rgb({_r}, {_g}, {_b}, 255)
 
-function component_real(value: number, color: color, positive: color, negative: color, spacing: integer = 1) :: textcomponent:
+function component_real(value: number, color: color, positive: color, negative: color, spacing: integer = 1) -> textcomponent:
     set {_symbol} to colored_component("+", {_positive}) if ({_value} > 0) else colored_component("-", {_negative})
     return merge components {_symbol}, px({_spacing}), colored_component("%{_value}%", {_color})
 
-function component_unit(value: number, unit: string, color: color, secondary_color: color, spacing: integer = 1) :: textcomponent:
+function component_unit(value: number, unit: string, color: color, secondary_color: color, spacing: integer = 1) -> textcomponent:
     return merge components colored_component("%{_value}%", {_color}), px({_spacing}), colored_component({_unit}, {_secondary_color})
 
-function component_fraction(numerator: number, denominator: number, numerator_color: color, denominator_color: color, spacing: integer = 2) :: textcomponent:
+function component_fraction(numerator: number, denominator: number, numerator_color: color, denominator_color: color, spacing: integer = 2) -> textcomponent:
     return merge components colored_component("%{_numerator}%", {_numerator_color}), px({_spacing} / 2), colored_component("/", {_denominator_color}), px({_spacing} / 2), colored_component("%{_denominator}%", {_denominator_color})
 
-function component_percent(value: number, color: color, secondary_color: color, spacing: integer = 1) :: text component:
+function component_percent(value: number, color: color, secondary_color: color, spacing: integer = 1) -> text component:
     return merge components colored_component("%{_value}%", {_color}), px({_spacing}), colored_component("%%", {_secondary_color})

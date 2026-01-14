@@ -1,9 +1,10 @@
+
 using script reflection
 
 struct SecondaryAttack:
     order: integer = 2
 
-local function add(stat: Stat struct) :: SecondaryAttack struct:
+local function add(stat: Stat struct) -> SecondaryAttack struct:
     return SecondaryAttack struct instance
 
 local function load():
@@ -13,7 +14,7 @@ local function load():
         name: "Secondary Attack"
         extra: 5
 
-local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
+local function update(bindable: bindable struct, stat: Stat struct) -> textcomponent:
     set {_type} to attack_type({_stat}->current)
     set_consume_animation({_stat}->item, {_type}->animation, {_type}->duration)
     return a_filled_stat_field("secondary_attack", a_rank({_type}->id, white))

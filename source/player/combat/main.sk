@@ -1,3 +1,4 @@
+
 function load_combat():
     load_ray_handler()
     load_blood()

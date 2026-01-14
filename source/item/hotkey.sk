@@ -1,4 +1,4 @@
-using for loops
+
 using script reflection
 
 function handle_hotkey_event(player: player, event: string, item: item = {_}):

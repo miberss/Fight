@@ -1,4 +1,4 @@
-using for loops
+
 using reflection
 
 struct UIBar:
@@ -6,7 +6,7 @@ struct UIBar:
     limit: Bindable struct
     debounce: date = now
 
-function a_ui_bar(value: object, limit: object, extension: struct, callbacks: functions) :: UIBar struct:
+function a_ui_bar(value: object, limit: object, extension: struct, callbacks: functions) -> UIBar struct:
     set {_bar} to UIBar struct instance
 
     create section with {_bindable}, {_change_value} stored in {_renderer}:

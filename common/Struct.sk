@@ -1,4 +1,3 @@
-using for loops
 
 condition:
     patterns:
@@ -52,7 +51,7 @@ struct property field %string%:
     reset:
         expr-1.resetFieldValue(java field expr-2 of expr-1, event)
 
-local function template_field(field: object) :: TemplateField struct:
+local function template_field(field: object) -> TemplateField struct:
     return TemplateField struct instance:
         java_field: {_field}
         name: {_field}.name()

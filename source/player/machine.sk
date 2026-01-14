@@ -1,12 +1,13 @@
-function a_player_machine(player_wrapper: PlayerWrapper struct, state: string) :: StateMachine struct:
+
+function a_player_machine(player_wrapper: PlayerWrapper struct, state: string) -> StateMachine struct:
     set {_dev::*} to a_transition("dev", {-states::build}, {-states::dev}), a_transition("dev", {-states::play}, {-states::dev})
     set {_play::*} to a_transition("play", {-states::build}, {-states::play}), a_transition("play", {-states::dev}, {-states::play}), a_transition("respawn", {-states::spectate}, {-states::play})
     set {_build::*} to a_transition("build", {-states::play}, {-states::build}), a_transition("build", {-states::dev}, {-states::build})
     set {_spectator} to a_transition("spectate", {-states::play}, {-states::spectate})
     return a_machine(({_dev::*}, {_play::*}, {_build::*}, {_spectator}), {-states::%{_state}%}, {_player_wrapper}, true)
 
-function state(player: player) :: State struct:
+function state(player: player) -> State struct:
     return wrapper({_player})->machine->state
 
-function machine(player: player) :: StateMachine struct:
+function machine(player: player) -> StateMachine struct:
     return wrapper({_player})->machine

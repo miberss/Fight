@@ -1,7 +1,7 @@
+
 options:
     path: "source/item/stats/"
 
-using for loops
 using script reflection
 
 # (behavior definition)
@@ -9,7 +9,7 @@ using script reflection
 struct StatType:
     id: string
 
-    # add(stat) :: extension?
+    # add(stat) -> extension?
     const add: function
     
     # remove(stat)
@@ -55,21 +55,21 @@ function load_stat_types():
             tick: function "tick" in script "%{_script}%"
         run function "load" in script "%{_script}%"
 
-function stat_type(id: string) :: StatType struct:
+function stat_type(id: string) -> StatType struct:
     return {-stat_type::%{_id}%}
 
-function stat(item: Item struct, type: StatType struct) :: Stat struct:
+function stat(item: Item struct, type: StatType struct) -> Stat struct:
     if {_item}->stats.containsKey({_type}) = false:
         stop
     return {_item}->stats.get({_type})
 
-function bindable_stat(item: Item struct, type: StatType struct) :: Bindable struct:
+function bindable_stat(item: Item struct, type: StatType struct) -> Bindable struct:
     return stat({_item}, {_type})->bindable
 
 function set_stat(item: Item struct, type: StatType struct, value: object):
     set bindable_stat({_item}, {_type})'s value to {_value}
 
-function a_stat(type: StatType struct, value: object) :: Stat struct:
+function a_stat(type: StatType struct, value: object) -> Stat struct:
     set {_stat} to Stat struct instance:
         type: {_type}
 
@@ -80,7 +80,7 @@ function a_stat(type: StatType struct, value: object) :: Stat struct:
     set {_stat}->bindable to a_bindable({_value}, a_stat_renderer({_stat}))
     return {_stat}
 
-function a_stat_renderer(stat: Stat struct) :: section:
+function a_stat_renderer(stat: Stat struct) -> section:
 
     set {_item} to {_stat}->item
     set {_update} to {_stat}->type->update
@@ -96,7 +96,7 @@ function a_stat_renderer(stat: Stat struct) :: section:
 
     return {_lore_renderer}
 
-function render_stat(item: Item struct, stat: Stat struct) :: integer:
+function render_stat(item: Item struct, stat: Stat struct) -> integer:
     set {_stat}->depth to {_item}->render_depth
     trigger_update({_stat}->bindable, {_stat}->current)
     return {_item}->render_depth + 1

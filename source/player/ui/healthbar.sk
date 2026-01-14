@@ -1,5 +1,5 @@
+
 using reflection
-using for loops
 
 struct HealthBar:
     player: player
@@ -11,7 +11,7 @@ function load_health_bar():
     save_component("health_full", colored_component("♮", rgb(236, 71, 93)))
     save_component("health_empty", colored_component("♮", rgb(47, 47, 68)))
 
-function a_health_bar() :: HealthBar struct:
+function a_health_bar() -> HealthBar struct:
     set {_health_bar} to HealthBar struct instance
 
     set {_display} to a_text_display()
@@ -42,7 +42,7 @@ function detach_health_bar(wrapper: PlayerWrapper struct):
     kill {_wrapper}->health_bar->display
     delete {_wrapper}->health_bar
 
-function render_health_bar(health_bar: HealthBar struct, progress: number) :: textcomponent:
+function render_health_bar(health_bar: HealthBar struct, progress: number) -> textcomponent:
 
     set {_value_bindable} to {_health_bar}->bar->value
     set {_value} to lerp_bindable({_value_bindable}, {_progress})

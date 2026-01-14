@@ -1,5 +1,4 @@
 
-using for loops
 using script reflection
 
 import:
@@ -24,7 +23,7 @@ struct StateMachine:
 
 	dynamic state_name: string = this->state->name
 
-function a_machine(transitions: Transition structs, state: State struct, context: object, debug: boolean = false) :: StateMachine struct:
+function a_machine(transitions: Transition structs, state: State struct, context: object, debug: boolean = false) -> StateMachine struct:
 
 	set {_transition_map} to new HashMap()
 
@@ -52,20 +51,20 @@ function a_machine(transitions: Transition structs, state: State struct, context
 	run ({_state}->start) with args "initialize", {_machine}
 	return {_machine}
 
-function a_transition(event: string, from: State struct, to: State struct) :: Transition struct:
+function a_transition(event: string, from: State struct, to: State struct) -> Transition struct:
 	return Transition struct instance:
 		event: {_event}
 		from: {_from}
 		to: {_to}
 
-function a_state(name: string, start: function, tick: function, end: function) :: State struct:
+function a_state(name: string, start: function, tick: function, end: function) -> State struct:
 	return State struct instance:
 		name: {_name}
 		start: {_start}
 		tick: {_tick}
 		end: {_end}
 
-function transition_of(machine: StateMachine struct, event: string) :: Transition struct:
+function transition_of(machine: StateMachine struct, event: string) -> Transition struct:
     set {_state} to {_machine}->state
 
     if {_machine}->transitions.containsKey({_state}->name) is false:
@@ -75,7 +74,7 @@ function transition_of(machine: StateMachine struct, event: string) :: Transitio
 
     return {_by_event}.get({_event})
 
-function trigger_event(machine: StateMachine struct, event: string) :: boolean:
+function trigger_event(machine: StateMachine struct, event: string) -> boolean:
 	set {_transition} to transition_of({_machine}, {_event})
 	if {_transition} is not set:
 		return false

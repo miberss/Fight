@@ -1,10 +1,11 @@
+
 using script reflection
 
 struct RangeExtension:
     order: integer = 8
     pre_hit: function = function "pre_hit"
 
-local function add(stat: Stat struct) :: RangeExtension struct:
+local function add(stat: Stat struct) -> RangeExtension struct:
     return RangeExtension struct instance
 
 local function pre_hit(ctx: CombatContext struct, stat: Stat struct):
@@ -17,5 +18,5 @@ local function load():
         name: "Range"
         extra: 3
 
-local function update(bindable: bindable struct, stat: Stat struct) :: textcomponent:
+local function update(bindable: bindable struct, stat: Stat struct) -> textcomponent:
     return a_filled_stat_field("range", a_real({_stat}->current))

@@ -25,7 +25,7 @@ using script reflection
 #>**scientific**:
 #>- 1234 → "1.23E3"
 #>- 1234567 → "1.23E6"
-function number_format(number: number, format: string = "small") :: string:
+function number_format(number: number, format: string = "small") -> string:
 	if ({_number} < 1000):
 		return "%{_number}%"
 
@@ -58,24 +58,24 @@ function number_format(number: number, format: string = "small") :: string:
 #> Example: suffix_at(3) = "B" (for Billion)
 #>
 #>
-function suffix_at(tier: integer, format: string = "small") :: string:
+function suffix_at(tier: integer, format: string = "small") -> string:
 	return {-mib_lib::suffixes::%{_format}%::%{_tier}%}
 
 #> Returns whether a string is a valid format
 #>
 #> @param format The format to compare
 #> @return Returns true if it is a valid format.
-function is_format_valid(format: string) :: boolean:
+function is_format_valid(format: string) -> boolean:
 	return whether {_format} is any of all_formats()
 
 #> Returns all valid formats of the number_format function
 #>
 #> @return All the formats
-function all_formats() :: strings:
+function all_formats() -> strings:
 	return ("small", "big", "scientific" and "full")
 
 #> Creates a number with assured amount of decimal places.
-function with_zeros(number: number, zeros: integer) :: string:
+function with_zeros(number: number, zeros: integer) -> string:
     if {_number} = floor({_number}):
         return join ("%{_number}%.", ("0" repeated {_zeros} times))
     return "%{_number}%"

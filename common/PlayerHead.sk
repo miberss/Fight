@@ -7,7 +7,7 @@
 #>
 #> @param texture The texture of the head
 #> @return The head
-function new_player_head(texture: string) :: item:
+function new_player_head(texture: string)->item:
     return player head with nbt (nbt from "{""minecraft:profile"":{id:[I;0,0,0,0],properties:[{name:""textures"",value:""%{_texture}%""}]}}")
 
 #> Loads a head under an ID, and names the head to the ID

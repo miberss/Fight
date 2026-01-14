@@ -12,7 +12,7 @@ on script load:
 #> @param to The maximum integer value.
 #> @param from The minimum integer value. Defaults to **0**.
 #> @return A random integer from **from** to **to**.
-function rndi(to: integer, from: integer = 0) :: integer:
+function rndi(to: integer, from: integer = 0) -> integer:
 	return random integer from {_from} to {_to}
 
 #> Returns a random floating-point number between **from** and **to**.
@@ -21,7 +21,7 @@ function rndi(to: integer, from: integer = 0) :: integer:
 #> @param to The maximum number value.
 #> @param from The minimum number value. Defaults to **0**.
 #> @return A random number from **from** to **to**.
-function rnd(to: number, from: number = 0) :: number:
+function rnd(to: number, from: number = 0) -> number:
 	return random number from {_from} to {_to}
 
 #> Linearly interpolates between **a** and **b** at **time**
@@ -32,14 +32,14 @@ function rnd(to: number, from: number = 0) :: number:
 #> @param b The end number.
 #> @param time A value indicating the interpolation factor.
 #> @return The interpolated number between **a** and **b**.
-function lerp(a: number, b: number, time: number = 0.5) :: number:
+function lerp(a: number, b: number, time: number = 0.5) -> number:
 	return {_a} * (1 - {_time}) + {_b} * {_time}
 
 #> Returns the sign of a number.
 #>
 #> @param value The number to check.
 #> @return -1 if negative, 1 if positive, 0 if zero.
-function sign(value: number) :: integer:
+function sign(value: number) -> integer:
 	return -1 if {_value} < 0
 	return 1 if {_value} > 0
 	return 0
@@ -49,7 +49,7 @@ function sign(value: number) :: integer:
 #>
 #> @param value A number between 0 and 1.
 #> @return The smoothed value.
-function smooth_step(value: number) :: number:
+function smooth_step(value: number) -> number:
 	return {_value} * {_value} * (3 - 2 * {_value})
 
 #> Oscillates a value back and forth between 0 and n.
@@ -60,7 +60,7 @@ function smooth_step(value: number) :: number:
 #> @param value The input number.
 #> @param n Where the value turns
 #> @return A number oscillating between 0 and n.
-function ping_pong(value: number, n: number = 1) :: number:
+function ping_pong(value: number, n: number = 1) -> number:
 	return 0 if {_n} = 0 # Divide by 0 errors
 	return abs(fract(({_value} - {_n}) / ({_n} * 2)) * {_n} * 2 - {_n})
 
@@ -69,7 +69,7 @@ function ping_pong(value: number, n: number = 1) :: number:
 #>
 #> @param value The input number
 #> @return A number between 0 and 1
-function fract(value: number) :: number:
+function fract(value: number) -> number:
 	return {_value} - floor({_value})
 
 #> Wraps a number around a range [low, high].
@@ -80,7 +80,7 @@ function fract(value: number) :: number:
 #> @param low The lower bound (inclusive).
 #> @param high The upper bound (exclusive).
 #> @return The wrapped number within [low, high].
-function wrap(value: number, low: number, high: number) :: number:
+function wrap(value: number, low: number, high: number) -> number:
 	return mod(({_value} - {_low}), ({_high} - {_low})) + {_low}
 
 #> Converts an integer to its hexadecimal string representation.
@@ -90,7 +90,7 @@ function wrap(value: number, low: number, high: number) :: number:
 #>
 #> @param value The integer to convert.
 #> @return The hexadecimal string.
-function hex(value: integer) :: string:
+function hex(value: integer) -> string:
 	return "0" if {_value} <= 0
 	return {-mib_lib::math::hex}[{_value}] if {_value} < 16
 	return hex({_value} >> 4) + {-mib_lib::math::hex}[{_value} & 0xF]
@@ -102,26 +102,26 @@ function hex(value: integer) :: string:
 #>
 #> @param value The input angle in degrees, can be negative / positive
 #> @return The closest angle among [0, 90. 180, 270]
-function closest_angle_value(value: number) :: integer:
+function closest_angle_value(value: number) -> integer:
 	return clamp(round({_x} / 90), 0, 3) * 90
 
-function vec(x: number, y: number, z: number) :: vector:
+function vec(x: number, y: number, z: number) -> vector:
 	return vector({_x}, {_y}, {_z})
 
-function vec(n: number) :: vector:
+function vec(n: number) -> vector:
 	return vector({_n}, {_n}, {_n})
 
-function x(n: number) :: vector:
+function x(n: number) -> vector:
 	return vector({_n}, 0, 0)
 
-function y(n: number) :: vector:
+function y(n: number) -> vector:
 	return vector(0, {_n}, 0)
 
-function z(n: number) :: vector:
+function z(n: number) -> vector:
 	return vector(0, 0, {_n})
 
-function noise(generator: object, vector: vector) :: number:
+function noise(generator: object, vector: vector) -> number:
 	return sknoise value of {_generator} at (x of {_vector}), (y of {_vector}), (z of {_vector})
 
-function noise_at(generator: object, location: location) :: number:
+function noise_at(generator: object, location: location) -> number:
 	return sknoise value of {_generator} at {_location}

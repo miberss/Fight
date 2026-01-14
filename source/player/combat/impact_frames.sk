@@ -1,3 +1,4 @@
+
 function load_impact_frames():
     set {-generator::impact} to SoundGenerator struct instance:
         id: "entity.player.attack.strong", "block.note_block.bell", "block.note_block.bass"

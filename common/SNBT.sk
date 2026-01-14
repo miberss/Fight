@@ -1,4 +1,5 @@
-function read_snbt_file(path: string) :: nbt:
+
+function read_snbt_file(path: string) -> nbt:
     set {_file_contents} to join file_read_lines({_path}) with ""
     return nbt from {_file_contents}
 
@@ -12,7 +13,7 @@ import:
 #>
 #> @param path The path to the file being read
 #> @return A list of lines as strings, or <none> if the file was not found.
-function file_read_lines(path: string) :: strings:
+function file_read_lines(path: string) -> strings:
     set {_file} to new File({_path})
     if ({_file}.exists() = false):
         error("File %{_path}% was not found.")

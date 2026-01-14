@@ -1,4 +1,3 @@
-using for loops
 
 on skript load:
     load_all()

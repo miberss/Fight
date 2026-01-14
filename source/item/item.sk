@@ -1,5 +1,5 @@
+
 using script reflection
-using for loops
 
 import:
     java.util.HashMap
@@ -22,10 +22,10 @@ function delete_item(item: Item struct):
     set slot {_item}->slot of {_item}->owner to air 
     delete {_item}
 
-function item(item: item) :: Item struct:
+function item(item: item) -> Item struct:
     return {-item::%string tag "uuid" of custom nbt of {_item}%}
 
-function a_blank_item(model: string, name: textcomponent, uuid: string) :: item:
+function a_blank_item(model: string, name: textcomponent, uuid: string) -> item:
     set {_item} to gunpowder
     set string tag "uuid" of custom nbt of {_item} to {_uuid}
     set item model of {_item} to {_model}

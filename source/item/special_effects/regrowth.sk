@@ -1,4 +1,4 @@
-using for loops
+
 using script reflection
 
 struct Regrowth:
@@ -10,17 +10,17 @@ struct Regrowth:
     cooldown: timespan = 1 seconds
     on_hit: function = function "on_hit"
 
-local function add() :: struct:
+local function add() -> struct:
     return Regrowth struct instance
 
-local function update(regrowth: Regrowth struct) :: textcomponents:
+local function update(regrowth: Regrowth struct) -> textcomponents:
     set {_title} to a_effect_title({_regrowth}->name, {_regrowth}->color)
     set {_key} to a_event({_regrowth}->event)
     set {_heal} to a_lore_unit({_regrowth}->heal, "hp/s")
     set {_time} to a_lore_unit(seconds of {_regrowth}->duration, "s")
 
-    set {_text::1} to a_effect_description(merge components {_key}, minimessage from " Restores ", {_heal})
-    set {_text::2} to a_effect_description(merge components minimessage from "for ", {_time})
+    set {_text::1} to a_effect_description(merge components ({_key}, minimessage from " Restores ", {_heal}))
+    set {_text::2} to a_effect_description(merge components (minimessage from "for ", {_time}))
 
     return {_title}, {_text::*}, blank()
 

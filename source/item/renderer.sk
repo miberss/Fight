@@ -1,5 +1,5 @@
+
 using script reflection
-using for loops
 
 function render_lore(item: Item struct):
     set {_source} to {_item}->source
@@ -18,7 +18,7 @@ function render_lore(item: Item struct):
         attach_special_effect({_item}, {_effect})
         set {_item}->render_depth to render_special_effect({_item}, {_effect})
 
-function append_lines(item: Item struct, components: textcomponents) :: integer:
+function append_lines(item: Item struct, components: textcomponents) -> integer:
     for {_component} in {_components::*}:
         set_line({_item}->owner, {_item}->slot, {_item}->render_depth, {_component})
         add 1 to {_item}->render_depth

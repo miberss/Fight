@@ -1,3 +1,4 @@
-local function attack_handler(ctx: CombatContext struct) :: boolean:
+
+local function attack_handler(ctx: CombatContext struct) -> boolean:
     shoot_ray({_ctx})
     return whether {_ctx}->victim is set
