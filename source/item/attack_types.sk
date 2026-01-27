@@ -14,7 +14,7 @@ function load_attack_types():
 
     set {-attack_type::throw} to a_attack_type("throw", "trident", 0.4 second, "ray")
     set {-attack_type::charge} to a_attack_type("charge", "crossbow", 0.6 second, "charge")
-    set {-attack_type::shot} to a_attack_type("shot", "spyglass", 0.4 second, "shot")
+    set {-attack_type::shot} to a_attack_type("shot", "spyglass", 2 second, "shot")
 
 function a_attack_type(id: string, animation: string, duration: timespan, type_handler_id: string) -> AttackType struct:
     return AttackType struct instance:

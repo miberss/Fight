@@ -29,7 +29,7 @@ function a_health_bar() -> HealthBar struct:
     apply drop shadow to {_display}
     set {_health_bar}->display to {_display}
 
-    set {_health_bar}->bar to a_ui_bar(5, 10, {_health_bar}, (function "display", function "actionbar"))
+    set {_health_bar}->bar to a_ui_bar(15, 15, {_health_bar}, (function "display", function "actionbar"))
     return {_health_bar}
 
 function attach_health_bar(player: player, health_bar: HealthBar struct):

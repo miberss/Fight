@@ -9,7 +9,7 @@
     stats: [{
         primary_attack: "jab",
         secondary_attack: "throw",
-        accuracy: 70.0d,
+        accuracy: 90.0d,
         attack_width: 0.5d,
         blood_stone: 5.0d,
         critical_chance: 20.0d,

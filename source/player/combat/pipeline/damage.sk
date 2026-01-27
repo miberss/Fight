@@ -6,12 +6,9 @@ function on_damage(ctx: CombatContext struct):
     fx_blood({_ctx})
 
     play hurt animation on {_ctx}->victim
-    if {_ctx}->victim doesn't have metadata "health":
-        set metadata "health" of {_ctx}->victim to 100
-    
-
-    if metadata "health" of {_ctx}->victim - {_ctx}->damage < 0:
+    set {_health} to wrapper({_ctx}->victim)->health_bar->bar->value
+    if {_health}->value - ({_ctx}->damage / 10) < 0:
         on_death({_ctx}->victim)
         stop
     
-    remove 2 from metadata "health" of {_ctx}->victim
+    remove ({_ctx}->damage / 10) from {_health}'s bindable value

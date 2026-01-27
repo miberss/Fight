@@ -10,7 +10,7 @@
         attack_width: 1.0d,
         critical_chance: 50.0d,
         critical_damage: 120.0d,
-        damage: 20.0d,
-        range: 25.0d
+        damage: 15.0d,
+        range: 10.0d
     }]
 }
